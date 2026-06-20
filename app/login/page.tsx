@@ -16,8 +16,6 @@ export default async function LoginPage({
   const { data } = await supabase.auth.getUser();
   if (data?.user) redirect(next ?? "/account");
 
-  const phoneHref = `/login/phone${next ? `?next=${encodeURIComponent(next)}` : ""}`;
-
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 py-16 text-center">
       <Image
@@ -44,18 +42,6 @@ export default async function LoginPage({
       <div className="mt-8 w-full space-y-3">
         <GoogleSignInButton next={next ?? "/account"} />
 
-        <div className="flex items-center gap-3 py-1 text-xs uppercase tracking-wider text-neutral-400">
-          <span className="h-px flex-1 bg-neutral-200" />
-          <span>or</span>
-          <span className="h-px flex-1 bg-neutral-200" />
-        </div>
-
-        <Link
-          href={phoneHref}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-5 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white"
-        >
-          Continue with phone
-        </Link>
       </div>
 
       <p className="mt-8 max-w-xs text-xs text-neutral-500">
