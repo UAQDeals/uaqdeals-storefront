@@ -1,9 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  /* Brand */
   --brand-maroon: #8e1b3a;
   --brand-red: #c72931;
   --brand-orange: #f24732;
@@ -12,7 +9,6 @@
   --brand-muted: #6b6b6b;
   --brand-border: #ececec;
 
-  /* App */
   --bg: var(--brand-cream);
   --fg: var(--brand-dark);
 }
@@ -23,7 +19,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Reusable brand gradient text */
 .text-brand-gradient {
   background: linear-gradient(90deg, var(--brand-maroon), var(--brand-red), var(--brand-orange));
   -webkit-background-clip: text;
@@ -31,7 +26,6 @@ html, body {
   color: transparent;
 }
 
-/* Reusable brand gradient fill (buttons, badges) */
 .bg-brand-gradient {
   background: linear-gradient(90deg, var(--brand-maroon), var(--brand-red), var(--brand-orange));
 }
