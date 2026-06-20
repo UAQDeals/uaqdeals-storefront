@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, User } from "lucide-react";
+import { User } from "lucide-react";
+import { CartIcon } from "@/components/cart-icon";
 
 const NAV = [
   { label: "Deals", href: "/deals" },
@@ -41,13 +42,7 @@ export function SiteHeader() {
           >
             <User className="h-5 w-5" />
           </Link>
-          <Link
-            href="/cart"
-            aria-label="Cart"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-neutral-700 hover:bg-neutral-100"
-          >
-            <ShoppingCart className="h-5 w-5" />
-          </Link>
+          <CartIcon />
         </div>
       </div>
     </header>
