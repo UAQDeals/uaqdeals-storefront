@@ -225,7 +225,7 @@ export function CheckoutForm({
       // 6) Clear cart and go to confirmation
       clear();
       toast.success("Order placed!");
-      router.replace(`/orders/${orderId}`);
+      window.location.assign(`/orders/${orderId}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not place order");
       setPlacing(false);
