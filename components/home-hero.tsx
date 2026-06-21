@@ -1,43 +1,44 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export async function HomeHero() {
   const t = await getTranslations("hero");
   const tc = await getTranslations("common");
   return (
-    <section className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(closest-side, #F24732, #C72931 45%, transparent 75%)",
-        }}
-      />
-      <div className="relative mx-auto max-w-6xl px-4 py-14 sm:py-20">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--brand-maroon)]">
-          {t("tagline")}
-        </p>
-        <h1 className="text-brand-gradient mt-3 max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-          {t("headline")}
-        </h1>
-        <p className="mt-4 max-w-xl text-base text-neutral-700 sm:text-lg">
-          {t("subtext")}
-        </p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Link
-            href="/deals"
-            className="bg-brand-gradient inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
-          >
-            {tc("shopDeals")} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-          </Link>
-          <Link
-            href="/categories"
-            className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-5 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)] hover:text-white"
-          >
-            {tc("browseCategories")}
-          </Link>
+    <section className="w-full bg-[#f5f0ee]">
+      <div className="mx-auto max-w-[1320px] grid grid-cols-1 md:grid-cols-2 min-h-[360px]">
+        {/* Left: copy */}
+        <div className="flex flex-col justify-center px-8 md:px-12 py-14">
+          <p className="text-[11px] font-bold tracking-[2px] uppercase text-[color:var(--brand-maroon)] mb-3">
+            {t("tagline")}
+          </p>
+          <h1 className="text-[36px] md:text-[44px] font-extrabold leading-[1.08] tracking-[-1.5px] text-neutral-900 mb-4">
+            {t("headline")}
+          </h1>
+          <p className="text-[14px] text-neutral-600 leading-relaxed mb-8 max-w-sm">
+            {t("subtext")}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/deals"
+              className="inline-block bg-neutral-900 text-white text-[13px] font-bold tracking-wide px-6 py-3 hover:bg-neutral-700 transition-colors"
+            >
+              {tc("shopDeals")}
+            </Link>
+            <Link
+              href="/categories"
+              className="inline-block border border-neutral-900 text-neutral-900 text-[13px] font-bold tracking-wide px-6 py-3 hover:bg-neutral-900 hover:text-white transition-colors"
+            >
+              {tc("browseCategories")}
+            </Link>
+          </div>
+        </div>
+        {/* Right: image placeholder — replace with real hero img */}
+        <div
+          className="hidden md:flex items-center justify-center bg-[#e8ddd4] min-h-[360px]"
+          style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
+        >
+          <span className="text-7xl select-none">🛒</span>
         </div>
       </div>
     </section>

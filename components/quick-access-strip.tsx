@@ -8,28 +8,28 @@ const TILES = [
     slug: "fish_market",
     href: "/categories/fish_market",
     emoji: "🐟",
-    bg: "from-[#0c4a6e] to-[#075985]",
+    bg: "#0c4a6e",
     badge: null,
-    titleKey: "quickAccess.fish",
-    subtitleKey: "quickAccess.fishSub",
+    titleKey: "fish",
+    subtitleKey: "fishSub",
   },
   {
     slug: "pharmacy",
     href: "/categories/pharmacy",
     emoji: "💊",
-    bg: "from-[#7e1b38] to-[#9f1239]",
+    bg: "#7e1b38",
     badge: "50% OFF",
-    titleKey: "quickAccess.pharmacy",
-    subtitleKey: "quickAccess.pharmacySub",
+    titleKey: "pharmacy",
+    subtitleKey: "pharmacySub",
   },
   {
     slug: "restaurant",
     href: "/categories/restaurant",
     emoji: "🍽️",
-    bg: "from-[#92400e] to-[#b45309]",
+    bg: "#92400e",
     badge: null,
-    titleKey: "quickAccess.food",
-    subtitleKey: "quickAccess.foodSub",
+    titleKey: "food",
+    subtitleKey: "foodSub",
   },
 ] as const;
 
@@ -37,38 +37,39 @@ export function QuickAccessStrip() {
   const t = useTranslations("quickAccess");
 
   return (
-    <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-5">
+    <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
       <div className="grid grid-cols-3 gap-3 md:gap-4">
         {TILES.map((tile) => (
           <Link
             key={tile.slug}
             href={tile.href}
-            className={`relative flex flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br ${tile.bg} p-4 md:p-5 group transition-opacity hover:opacity-90`}
-            style={{ minHeight: 110 }}
+            className="group relative flex flex-col justify-between overflow-hidden p-5 md:p-6 transition-opacity hover:opacity-90"
+            style={{ background: tile.bg, minHeight: 130 }}
           >
             {/* decorative circle */}
             <span
-              className="pointer-events-none absolute -top-5 -right-5 w-20 h-20 rounded-full bg-white/10"
+              className="pointer-events-none absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10"
               aria-hidden
             />
-
-            {/* top row: emoji + badge */}
+            {/* top row */}
             <div className="flex items-start justify-between">
               <span className="text-3xl leading-none">{tile.emoji}</span>
               {tile.badge && (
-                <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold text-white tracking-wide">
+                <span className="bg-[#c72931] text-white text-[9px] font-black tracking-widest px-2 py-1">
                   {tile.badge}
                 </span>
               )}
             </div>
-
-            {/* bottom: title + subtitle */}
-            <div className="mt-3">
-              <p className="text-[14px] md:text-[15px] font-bold text-white leading-tight">
-                {t(tile.titleKey.split(".")[1] as any)}
+            {/* bottom */}
+            <div className="mt-4">
+              <p className="text-[15px] font-extrabold text-white leading-tight tracking-tight">
+                {t(tile.titleKey as any)}
               </p>
-              <p className="mt-0.5 text-[11px] text-white/75 leading-snug">
-                {t(tile.subtitleKey.split(".")[1] as any)}
+              <p className="mt-1 text-[11.5px] text-white/70">
+                {t(tile.subtitleKey as any)}
+              </p>
+              <p className="mt-3 text-[11px] font-bold text-white underline underline-offset-2">
+                Shop now →
               </p>
             </div>
           </Link>
