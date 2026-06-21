@@ -240,5 +240,13 @@
     "sentTitle": "Thank you!",
     "sentDesc": "Your message has been sent. Our team will get back to you shortly.",
     "sentToast": "Message sent! We'll get back to you soon."
+  },
+  "cartDrawer": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "youMightLike": "You might also like",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout",
+    "viewCart": "View full cart"
   }
 }

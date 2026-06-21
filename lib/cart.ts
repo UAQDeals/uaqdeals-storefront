@@ -24,6 +24,10 @@ type CartState = {
   clear: () => void;
   totalQty: () => number;
   subtotal: () => number;
+  // drawer (not persisted)
+  drawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
 };
 
 export const useCart = create<CartState>()(
@@ -36,7 +40,7 @@ export const useCart = create<CartState>()(
         const existing = items.find((i) => i.id === item.id);
         if (existing) existing.qty += qty;
         else items.push({ ...item, qty });
-        set({ items });
+        set({ items, drawerOpen: true });
       },
       remove: (id) => set({ items: get().items.filter((i) => i.id !== id) }),
       setQty: (id, qty) =>
@@ -48,10 +52,14 @@ export const useCart = create<CartState>()(
       clear: () => set({ items: [] }),
       totalQty: () => get().items.reduce((s, i) => s + i.qty, 0),
       subtotal: () => get().items.reduce((s, i) => s + i.qty * i.price, 0),
+      drawerOpen: false,
+      openDrawer: () => set({ drawerOpen: true }),
+      closeDrawer: () => set({ drawerOpen: false }),
     }),
     {
       name: "uaq_cart_v1",
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ items: state.items }),
       onRehydrateStorage: () => (state) => {
         if (state) state.hydrated = true;
       },
