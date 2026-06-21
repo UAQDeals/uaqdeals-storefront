@@ -1,8 +1,12 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { AccountView } from "@/components/account-view";
 
-export const metadata = { title: "Your account" };
+export async function generateMetadata() {
+  const t = await getTranslations("common");
+  return { title: t("account") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
@@ -33,7 +37,6 @@ export default async function AccountPage() {
       .limit(10),
   ]);
 
-  // Fallbacks for missing rows (older accounts may not have wallet/profile rows yet)
   const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
   const initialProfile = {
     full_name:
@@ -48,6 +51,7 @@ export default async function AccountPage() {
       (meta.avatar_url as string | undefined) ??
       null,
     auth_method: (profile?.auth_method as string | null) ?? "google",
+    emirate: (profile?.emirate as string | null) ?? null,
     member_since:
       (profile?.created_at as string | null) ?? user.created_at ?? null,
   };
