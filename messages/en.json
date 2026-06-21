@@ -34,7 +34,9 @@
     "apply": "Apply",
     "remove": "Remove",
     "saving": "Saving…",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "shop": "Shop",
+    "more": "More"
   },
   "hero": {
     "tagline": "Umm Al Quwain's super-app",
