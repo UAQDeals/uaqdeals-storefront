@@ -3,12 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { User, ChevronDown, ShoppingCart } from "lucide-react";
+import { User, ChevronDown } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { CartIcon } from "@/components/cart-icon";
 import { LanguageSwitcher } from "@/components/language-switcher";
-
-// ── Category groups ───────────────────────────────────────────────────────────
 
 const SHOP_GROUPS = [
   {
@@ -92,8 +90,6 @@ const SHOP_GROUPS = [
   },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 export function SiteHeader() {
   const locale = useLocale();
   const isRTL = locale === "ar";
@@ -106,7 +102,6 @@ export function SiteHeader() {
   const shopRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (shopRef.current && !shopRef.current.contains(e.target as Node)) setShopOpen(false);
@@ -116,39 +111,50 @@ export function SiteHeader() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const label = (g: typeof SHOP_GROUPS[0]) => locale === "ar" ? g.label.ar : g.label.en;
-  const itemName = (it: typeof SHOP_GROUPS[0]["items"][0]) => locale === "ar" ? it.ar : it.en;
+  const label = (g: (typeof SHOP_GROUPS)[0]) =>
+    locale === "ar" ? g.label.ar : g.label.en;
+  const itemName = (it: (typeof SHOP_GROUPS)[0]["items"][0]) =>
+    locale === "ar" ? it.ar : it.en;
+
+  const megaPos = isRTL
+    ? { right: "50%", transform: "translateX(50%)" }
+    : { left: "50%", transform: "translateX(-50%)" };
+  const dropPos = isRTL
+    ? { right: "50%", transform: "translateX(50%)" }
+    : { left: "50%", transform: "translateX(-50%)" };
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[color:var(--brand-border)]"
-      style={{ boxShadow: "0 1px 16px rgba(142,27,58,0.07)" }}>
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 md:px-6">
+    <header
+      className="sticky top-0 z-40 bg-white border-b border-[color:var(--brand-border)]"
+      style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}
+    >
+      <div className="mx-auto flex h-[68px] max-w-[1320px] items-center px-5 md:px-8">
 
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center gap-2.5 me-7">
+        <Link href="/" className="flex shrink-0 items-center gap-2 me-8">
           <Image
             src="/uaq_logo.png"
             alt="UAQ Deals"
-            width={120}
-            height={40}
+            width={150}
+            height={50}
             priority
-            className="h-9 w-auto"
+            className="h-11 w-auto"
           />
         </Link>
 
         {/* Nav */}
         <nav className="hidden md:flex flex-1 items-center gap-0.5">
 
-          {/* Shop — mega menu */}
+          {/* Shop */}
           <div className="relative" ref={shopRef}>
             <button
               onClick={() => { setShopOpen(!shopOpen); setMoreOpen(false); }}
-              className="flex items-center gap-1 px-3.5 py-2 rounded-lg text-[13.5px] font-medium text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13.5px] font-medium text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors"
             >
               {t("shop")}
               <ChevronDown
                 className="w-3.5 h-3.5 transition-transform duration-200"
-                style={{ transform: shopOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                style={{ transform: shopOpen ? "rotate(180deg)" : "none" }}
               />
             </button>
 
@@ -156,21 +162,19 @@ export function SiteHeader() {
               <div
                 className="absolute top-[calc(100%+10px)] bg-white rounded-2xl overflow-hidden"
                 style={{
-                  [isRTL ? "right" : "left"]: "50%",
-                  transform: isRTL ? "translateX(50%)" : "translateX(-50%)",
-                  width: 680,
+                  ...megaPos,
+                  width: 700,
                   border: "1px solid rgba(0,0,0,0.08)",
                   boxShadow: "0 20px 60px rgba(0,0,0,0.13), 0 4px 20px rgba(142,27,58,0.05)",
                 }}
               >
                 <div className="flex">
-                  {/* Sidebar tabs */}
-                  <div className="w-44 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
+                  {/* Sidebar */}
+                  <div className="w-48 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
                     {SHOP_GROUPS.map((g, i) => (
                       <button
                         key={i}
                         onMouseEnter={() => setActiveGroup(i)}
-                        onClick={() => setActiveGroup(i)}
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-medium transition-colors text-start"
                         style={{
                           color: activeGroup === i ? "var(--brand-maroon)" : "#666",
@@ -200,10 +204,10 @@ export function SiteHeader() {
                           className="flex items-center gap-2.5 px-3 py-2 rounded-lg group transition-colors hover:bg-[color:var(--brand-maroon)]/[0.05]"
                         >
                           <span
-                            className="w-1.5 h-1.5 rounded-full shrink-0 transition-opacity"
+                            className="w-1.5 h-1.5 rounded-full shrink-0 group-hover:opacity-100"
                             style={{ background: "var(--brand-maroon)", opacity: 0.3 }}
                           />
-                          <span className="text-[12.5px] text-neutral-600 group-hover:text-[color:var(--brand-maroon)] transition-colors">
+                          <span className="text-[12.5px] text-neutral-600 group-hover:text-[color:var(--brand-maroon)] transition-colors leading-snug">
                             {itemName(item)}
                           </span>
                         </Link>
@@ -212,7 +216,6 @@ export function SiteHeader() {
                   </div>
                 </div>
 
-                {/* Footer */}
                 <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-50 border-t border-neutral-100">
                   <span className="text-[11px] text-neutral-400">38 vendor types across UAQ</span>
                   <Link
@@ -235,16 +238,24 @@ export function SiteHeader() {
             {t("deals")}
           </Link>
 
-          {/* More dropdown */}
+          {/* Services */}
+          <Link
+            href="/services"
+            className="px-3.5 py-2 rounded-lg text-[13.5px] font-medium text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors"
+          >
+            {t("services")}
+          </Link>
+
+          {/* More */}
           <div className="relative" ref={moreRef}>
             <button
               onClick={() => { setMoreOpen(!moreOpen); setShopOpen(false); }}
-              className="flex items-center gap-1 px-3.5 py-2 rounded-lg text-[13.5px] font-medium text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[13.5px] font-medium text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors"
             >
               {t("more")}
               <ChevronDown
                 className="w-3.5 h-3.5 transition-transform duration-200"
-                style={{ transform: moreOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                style={{ transform: moreOpen ? "rotate(180deg)" : "none" }}
               />
             </button>
 
@@ -252,8 +263,7 @@ export function SiteHeader() {
               <div
                 className="absolute top-[calc(100%+10px)] bg-white rounded-xl p-1.5 min-w-44"
                 style={{
-                  [isRTL ? "right" : "left"]: "50%",
-                  transform: isRTL ? "translateX(50%)" : "translateX(-50%)",
+                  ...dropPos,
                   border: "1px solid rgba(0,0,0,0.08)",
                   boxShadow: "0 8px 28px rgba(0,0,0,0.1)",
                 }}
@@ -281,9 +291,7 @@ export function SiteHeader() {
         {/* Actions */}
         <div className="ms-auto flex items-center gap-1">
           <LanguageSwitcher />
-
           <div className="w-px h-5 bg-neutral-200 mx-1" />
-
           <Link
             href="/account"
             aria-label={t("account")}
@@ -292,8 +300,6 @@ export function SiteHeader() {
             <User className="w-4 h-4" />
             {t("account")}
           </Link>
-
-          {/* Mobile account icon only */}
           <Link
             href="/account"
             aria-label={t("account")}
@@ -301,7 +307,6 @@ export function SiteHeader() {
           >
             <User className="w-5 h-5" />
           </Link>
-
           <CartIcon />
         </div>
 
