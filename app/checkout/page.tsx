@@ -1,11 +1,16 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { CheckoutForm } from "@/components/checkout-form";
 
-export const metadata = { title: "Checkout" };
+export async function generateMetadata() {
+  const t = await getTranslations("checkout");
+  return { title: t("title") };
+}
 
 export default async function CheckoutPage() {
   const supabase = await createClient();
+  const t = await getTranslations("checkout");
 
   const {
     data: { user },
@@ -27,18 +32,15 @@ export default async function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Checkout</h1>
-      <p className="mt-1 text-sm text-neutral-600">
-        Cash on delivery — pay when you receive your order.
-      </p>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("title")}</h1>
+      <p className="mt-1 text-sm text-neutral-600">{t("subtitle")}</p>
       <div className="mt-6">
         <CheckoutForm
           userId={user.id}
           initialProfile={{
             full_name: (profile?.full_name as string | null) ?? null,
             phone_number: (profile?.phone_number as string | null) ?? null,
-            email:
-              ((profile?.email as string | null) ?? user.email) ?? null,
+            email: ((profile?.email as string | null) ?? user.email) ?? null,
           }}
           coinBalance={(wallet?.coin_balance as number | null) ?? 0}
         />
