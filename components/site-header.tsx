@@ -143,7 +143,7 @@ export function SiteHeader() {
         className="sticky top-0 z-40 bg-white border-b border-[color:var(--brand-border)]"
         style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}
       >
-        <div className="mx-auto flex h-[88px] max-w-[1320px] items-center px-5 md:px-8">
+        <div className="mx-auto flex h-[150px] max-w-[1320px] items-center px-5 md:px-8">
 
           {/* Hamburger — mobile only */}
           <button
@@ -162,7 +162,7 @@ export function SiteHeader() {
               width={150}
               height={50}
               priority
-              className="h-20 w-auto sm:h-24 w-auto"
+              className="h-[150px] w-auto"
             />
           </Link>
 
