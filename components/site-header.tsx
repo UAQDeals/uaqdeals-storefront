@@ -216,7 +216,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
-          <div ref={searchRef} className="hidden md:flex w-[420px] relative">
+          <div ref={searchRef} className="hidden md:flex w-[420px] relative ms-auto">
             <form onSubmit={handleSearchSubmit} className="flex w-full">
               <input
                 ref={inputRef}
