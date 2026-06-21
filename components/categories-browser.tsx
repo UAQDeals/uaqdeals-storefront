@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Search, Store } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Item = {
   id: string;
@@ -13,6 +14,7 @@ type Item = {
 };
 
 export function CategoriesBrowser({ items }: { items: Item[] }) {
+  const t = useTranslations("categoriesPage");
   const [q, setQ] = useState("");
   const query = q.trim().toLowerCase();
   const filtered = query
@@ -26,18 +28,18 @@ export function CategoriesBrowser({ items }: { items: Item[] }) {
   return (
     <div className="mt-6">
       <div className="relative max-w-md">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search categories…"
-          className="h-11 w-full rounded-full border border-[color:var(--brand-border)] bg-white pl-10 pr-4 text-sm outline-none focus:border-[color:var(--brand-maroon)]"
+          placeholder={t("searchPlaceholder")}
+          className="h-11 w-full rounded-full border border-[color:var(--brand-border)] bg-white ps-10 pe-4 text-sm outline-none focus:border-[color:var(--brand-maroon)]"
         />
       </div>
 
       {filtered.length === 0 ? (
         <p className="mt-10 text-center text-sm text-neutral-500">
-          No categories match &ldquo;{q}&rdquo;.
+          {t("noMatch", { query: q })}
         </p>
       ) : (
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -54,9 +56,7 @@ export function CategoriesBrowser({ items }: { items: Item[] }) {
                 <Store className="h-5 w-5" />
               </span>
               <div>
-                <p className="text-sm font-semibold text-neutral-900">
-                  {c.name}
-                </p>
+                <p className="text-sm font-semibold text-neutral-900">{c.name}</p>
                 {c.description && (
                   <p className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
                     {c.description}

@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { Tag } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { aed } from "@/lib/format";
 
-export const metadata = { title: "Deals" };
+export async function generateMetadata() {
+  const t = await getTranslations("deals");
+  return { title: t("title") };
+}
 export const revalidate = 60;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,6 +15,8 @@ type Row = any;
 
 export default async function DealsPage() {
   const supabase = await createClient();
+  const t = await getTranslations("deals");
+  const tc = await getTranslations("common");
   const nowIso = new Date().toISOString();
 
   const { data } = await supabase
@@ -30,28 +36,22 @@ export default async function DealsPage() {
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Today&apos;s Deals
+          {t("title")}
         </h1>
         <p className="text-sm text-neutral-600">
-          {deals.length === 0
-            ? "No active deals right now."
-            : `${deals.length} live deal${deals.length === 1 ? "" : "s"}.`}
+          {t("count", { count: deals.length })}
         </p>
       </div>
 
       {deals.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[color:var(--brand-border)] bg-white p-10 text-center">
-          <p className="text-base font-semibold text-neutral-800">
-            No deals at the moment
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Check back soon — new deals drop every day.
-          </p>
+          <p className="text-base font-semibold text-neutral-800">{t("noDeals")}</p>
+          <p className="mt-1 text-sm text-neutral-500">{t("noDealsDesc")}</p>
           <Link
             href="/categories"
             className="bg-brand-gradient mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
           >
-            Browse categories
+            {tc("browseCategories")}
           </Link>
         </div>
       ) : (
@@ -79,7 +79,7 @@ export default async function DealsPage() {
                     </div>
                   )}
                   {pct > 0 && (
-                    <span className="bg-brand-gradient absolute left-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-bold text-white">
+                    <span className="bg-brand-gradient absolute start-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-bold text-white">
                       -{Math.round(pct)}%
                     </span>
                   )}
