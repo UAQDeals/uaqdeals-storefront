@@ -29,8 +29,8 @@ type CartState = {
   openDrawer: () => void;
   closeDrawer: () => void;
   // coupon (persisted with items, carried to checkout)
-  coupon: { code: string; discount: number; id: string } | null;
-  setCoupon: (c: { code: string; discount: number; id: string } | null) => void;
+  coupon: { code: string; discount: number; id: string; freeShipping: boolean } | null;
+  setCoupon: (c: { code: string; discount: number; id: string; freeShipping: boolean } | null) => void;
 };
 
 export const useCart = create<CartState>()(

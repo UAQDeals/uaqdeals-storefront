@@ -59,24 +59,23 @@ export function CartDrawer({ upsells }: { upsells: UpsellProduct[] }) {
     try {
       const { data, error } = await supabase
         .from("coupons")
-        .select("id, code, discount_type, discount_value, min_order_amount, max_discount, starts_at, expires_at, max_uses, used_count, is_active")
+        .select("id, code, type, amount, min_spend, max_uses, used_count, starts_at, expires_at, is_active, free_shipping")
         .eq("code", code).eq("is_active", true).maybeSingle();
       if (error || !data) throw new Error(tco("invalidCoupon"));
       const now = new Date();
       if (data.starts_at && new Date(data.starts_at) > now) throw new Error(tco("couponNotActive"));
       if (data.expires_at && new Date(data.expires_at) < now) throw new Error(tco("couponExpired"));
       if (data.max_uses != null && (data.used_count ?? 0) >= data.max_uses) throw new Error(tco("couponLimitReached"));
-      if (data.min_order_amount && sub < Number(data.min_order_amount)) throw new Error(tco("minOrderRequired", { amount: aed(data.min_order_amount) }));
+      if (data.min_spend && sub < Number(data.min_spend)) throw new Error(tco("minOrderRequired", { amount: aed(data.min_spend) }));
 
       let discount = 0;
-      if (data.discount_type === "percentage") {
-        discount = (sub * Number(data.discount_value)) / 100;
-        if (data.max_discount) discount = Math.min(discount, Number(data.max_discount));
-      } else {
-        discount = Number(data.discount_value);
+      if (data.type === "percentage" || data.type === "percent") {
+        discount = (sub * Number(data.amount)) / 100;
+      } else if (data.type === "fixed" || data.type === "fixed_cart") {
+        discount = Number(data.amount);
       }
       discount = Math.min(discount, sub);
-      setCoupon({ code: data.code as string, discount, id: data.id as string });
+      setCoupon({ code: data.code as string, discount, id: data.id as string, freeShipping: data.free_shipping ?? false });
       setCouponInput("");
       toast.success(tco("couponApplied", { amount: aed(discount) }));
     } catch (e) {
