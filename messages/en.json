@@ -73,7 +73,10 @@
     "rxNote": "Prescription items can only be ordered through the UAQ Deals app.",
     "description": "Description",
     "needHelp": "Need help?",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "add": "Add",
+    "options": "Options",
+    "added1": "Added {name} to cart"
   },
   "cartPage": {
     "title": "Your Cart",

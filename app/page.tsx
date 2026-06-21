@@ -47,7 +47,7 @@ export default async function HomePage() {
     supabase
       .from("products")
       .select(
-        "id, name, price, sale_price, thumbnail_url, images, is_featured"
+        "id, name, price, sale_price, thumbnail_url, images, is_featured, variants, requires_prescription, stock_quantity, track_stock"
       )
       .eq("status", "active")
       .order("is_featured", { ascending: false })
@@ -88,6 +88,10 @@ export default async function HomePage() {
     sale_price: p.sale_price,
     thumbnail_url: p.thumbnail_url,
     images: p.images ?? null,
+    variants: p.variants ?? null,
+    requires_prescription: p.requires_prescription ?? false,
+    stock_quantity: p.stock_quantity ?? null,
+    track_stock: p.track_stock ?? false,
   }));
 
   const banners: BannerCard[] = (bannersRaw ?? []).map((b: Row) => ({

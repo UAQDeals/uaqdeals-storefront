@@ -55,7 +55,7 @@ export default async function CategoryDetailPage({
   if (vendorIds.length) {
     const { data: prodRaw } = await supabase
       .from("products")
-      .select("id, name, price, sale_price, thumbnail_url, images")
+      .select("id, name, price, sale_price, thumbnail_url, images, variants, requires_prescription, stock_quantity, track_stock")
       .in("vendor_id", vendorIds)
       .eq("status", "active")
       .order("is_featured", { ascending: false })
