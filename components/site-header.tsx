@@ -199,7 +199,7 @@ export function SiteHeader() {
         style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[80px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[150px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
@@ -212,11 +212,11 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/logo_transparent.png" alt="UAQ Deals" width={150} height={150} priority className="h-[72px] w-auto" />
+            <Image src="/logo_transparent.png" alt="UAQ Deals" width={150} height={150} priority className="h-[150px] w-auto" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
-          <div ref={searchRef} className="hidden md:flex flex-1 relative">
+          <div ref={searchRef} className="hidden md:flex w-[420px] relative">
             <form onSubmit={handleSearchSubmit} className="flex w-full">
               <input
                 ref={inputRef}
