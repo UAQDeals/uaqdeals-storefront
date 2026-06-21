@@ -93,8 +93,8 @@ const SHOP_GROUPS = [
 ];
 
 const SUGGESTIONS_DEFAULT = [
-  "Fresh fish", "Pharmacy", "Restaurants", "Grocery", "Mobile repair",
-  "Real estate", "Used cars", "Cleaning service", "Business setup", "Fancy numbers",
+  "iPhone", "Samsung Galaxy", "Panadol", "Vitamin C", "Fresh Hammour",
+  "Chicken Mandi", "Laptop", "AirPods", "Protein powder", "Gold ring",
 ];
 
 type Suggestion = { type: "product" | "deal" | "category"; label: string; href: string };
