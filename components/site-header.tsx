@@ -140,7 +140,7 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className="sticky top-0 z-40 bg-white border-b border-[color:var(--brand-border)]"
+        className="sticky top-0 z-30 bg-white border-b border-[color:var(--brand-border)]"
         style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}
       >
         <div className="mx-auto flex h-[150px] max-w-[1320px] items-center px-5 md:px-8">
@@ -310,7 +310,7 @@ export function SiteHeader() {
             </button>
           ) : (
             <Link href="/" onClick={closeMobile}>
-              <Image src="/logo_transparent.png" alt="UAQ Deals" width={110} height={36} className="h-10 w-auto" />
+              <span className="text-[15px] font-bold text-neutral-800">Menu</span>
             </Link>
           )}
           <button onClick={closeMobile} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600">
