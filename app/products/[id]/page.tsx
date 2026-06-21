@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { ProductDetail } from "@/components/product-detail";
 
 export const revalidate = 60;
@@ -34,6 +35,7 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const tc = await getTranslations("common");
 
   const { data: p } = await supabase
     .from("products")
@@ -45,7 +47,6 @@ export default async function ProductDetailPage({
 
   if (!p || p.status !== "active") notFound();
 
-  // Vendor name (respect masking) — fetched separately so RLS stays simple
   let vendor_name: string | null = null;
   if (p.vendor_id) {
     const { data: v } = await supabase
@@ -81,19 +82,15 @@ export default async function ProductDetailPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* Breadcrumb */}
       <nav className="mb-4 flex items-center gap-1 text-xs text-neutral-500">
         <Link href="/" className="hover:text-[color:var(--brand-maroon)]">
-          Home
+          {tc("home")}
         </Link>
-        <ChevronRight className="h-3 w-3" />
-        <Link
-          href="/categories"
-          className="hover:text-[color:var(--brand-maroon)]"
-        >
-          Categories
+        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+        <Link href="/categories" className="hover:text-[color:var(--brand-maroon)]">
+          {tc("categories")}
         </Link>
-        <ChevronRight className="h-3 w-3" />
+        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
         <span className="line-clamp-1 text-neutral-700">{product.name}</span>
       </nav>
 
