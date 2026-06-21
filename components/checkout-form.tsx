@@ -35,7 +35,7 @@ export function CheckoutForm({
   const tc = useTranslations("common");
   const toc = useTranslations("orderConfirm");
   const router = useRouter();
-  const { items, hydrated, subtotal, clear } = useCart();
+  const { items, hydrated, subtotal, clear, coupon: storedCoupon, setCoupon: setStoredCoupon } = useCart();
 
   const [fullName, setFullName] = useState(initialProfile.full_name ?? "");
   const [phone, setPhone] = useState(initialProfile.phone_number ?? "");
@@ -44,7 +44,7 @@ export function CheckoutForm({
   const [notes, setNotes] = useState("");
 
   const [couponInput, setCouponInput] = useState("");
-  const [coupon, setCoupon] = useState<{ code: string; discount: number; id: string } | null>(null);
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; id: string } | null>(storedCoupon ?? null);
   const [couponBusy, setCouponBusy] = useState(false);
 
   const [useCoins, setUseCoins] = useState(false);
@@ -113,6 +113,7 @@ export function CheckoutForm({
 
   function removeCoupon() {
     setCoupon(null);
+    setStoredCoupon(null);
     setCouponInput("");
   }
 

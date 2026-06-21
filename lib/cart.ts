@@ -28,6 +28,9 @@ type CartState = {
   drawerOpen: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
+  // coupon (persisted with items, carried to checkout)
+  coupon: { code: string; discount: number; id: string } | null;
+  setCoupon: (c: { code: string; discount: number; id: string } | null) => void;
 };
 
 export const useCart = create<CartState>()(
@@ -49,17 +52,19 @@ export const useCart = create<CartState>()(
             .items.map((i) => (i.id === id ? { ...i, qty } : i))
             .filter((i) => i.qty > 0),
         }),
-      clear: () => set({ items: [] }),
+      clear: () => set({ items: [], coupon: null }),
       totalQty: () => get().items.reduce((s, i) => s + i.qty, 0),
       subtotal: () => get().items.reduce((s, i) => s + i.qty * i.price, 0),
       drawerOpen: false,
       openDrawer: () => set({ drawerOpen: true }),
       closeDrawer: () => set({ drawerOpen: false }),
+      coupon: null,
+      setCoupon: (c) => set({ coupon: c }),
     }),
     {
       name: "uaq_cart_v1",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, coupon: state.coupon }),
       onRehydrateStorage: () => (state) => {
         if (state) state.hydrated = true;
       },
