@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 import { HomeHero } from "@/components/home-hero";
 import { HomeBanners, type BannerCard } from "@/components/home-banners";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
@@ -15,6 +16,7 @@ type Row = any;
 
 export default async function HomePage() {
   const supabase = await createClient();
+  const t = await getTranslations();
   const nowIso = new Date().toISOString();
 
   const [
@@ -100,7 +102,12 @@ export default async function HomePage() {
     <>
       <HomeHero />
       <HomeBanners banners={banners} />
-      <DealsStrip deals={deals} />
+      <DealsStrip
+        deals={deals}
+        title={t("dealsStrip.title")}
+        subtitle={t("dealsStrip.subtitle")}
+        seeAll={t("common.seeAll")}
+      />
       <CategoriesGrid items={categories} />
       <FeaturedProducts products={products} />
     </>
