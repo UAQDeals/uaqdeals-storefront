@@ -6,7 +6,6 @@ import { CartIcon } from "@/components/cart-icon";
 const NAV = [
   { label: "Deals", href: "/deals" },
   { label: "Categories", href: "/categories" },
-  { label: "Vendors", href: "/vendors" },
 ];
 
 export function SiteHeader() {
