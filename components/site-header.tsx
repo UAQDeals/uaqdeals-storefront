@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { User, ChevronDown, ChevronRight, Menu, X } from "lucide-react";
+import { User, ChevronDown, ChevronRight, Menu, X, Search } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { CartIcon } from "@/components/cart-icon";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -267,7 +267,8 @@ export function SiteHeader() {
 
           {/* Actions */}
           <div className="ms-auto flex items-center gap-1">
-            <LanguageSwitcher />
+            <Link href="/search" aria-label="Search" className="flex items-center justify-center w-9 h-9 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"><Search className="w-5 h-5" /></Link>
+          <LanguageSwitcher />
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
             <Link href="/account" aria-label={t("account")} className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors">
               <User className="w-4 h-4" />
@@ -370,7 +371,8 @@ export function SiteHeader() {
 
               {/* Language switcher in drawer */}
               <div className="px-5 pb-4">
-                <LanguageSwitcher />
+                <Link href="/search" aria-label="Search" className="flex items-center justify-center w-9 h-9 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"><Search className="w-5 h-5" /></Link>
+          <LanguageSwitcher />
               </div>
             </div>
 
