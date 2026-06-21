@@ -1,6 +1,10 @@
+import { getTranslations } from "next-intl/server";
 import { CartView } from "@/components/cart-view";
 
-export const metadata = { title: "Your Cart" };
+export async function generateMetadata() {
+  const t = await getTranslations("cartPage");
+  return { title: t("title") };
+}
 
 export default function CartPage() {
   return <CartView />;
