@@ -162,7 +162,7 @@ export function SiteHeader() {
               width={150}
               height={50}
               priority
-              className="h-11 w-auto"
+              className="h-14 w-auto sm:h-16 w-auto"
             />
           </Link>
 
@@ -310,7 +310,7 @@ export function SiteHeader() {
             </button>
           ) : (
             <Link href="/" onClick={closeMobile}>
-              <Image src="/uaq_logo.png" alt="UAQ Deals" width={110} height={36} className="h-8 w-auto" />
+              <Image src="/uaq_logo.png" alt="UAQ Deals" width={110} height={36} className="h-10 w-auto" />
             </Link>
           )}
           <button onClick={closeMobile} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600">
