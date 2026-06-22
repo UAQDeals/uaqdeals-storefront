@@ -45,8 +45,8 @@ const SHOP_GROUPS = [
     ],
   },
   {
-    icon: "🛍️",
-    label: { en: "Retail", ar: "التجزئة" },
+    icon: "📱",
+    label: { en: "Electronics & Gaming", ar: "إلكترونيات وألعاب" },
     items: [
       { en: "Electronics", ar: "إلكترونيات", slug: "electronics" },
       { en: "Gaming", ar: "ألعاب", slug: "gaming" },
