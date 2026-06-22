@@ -382,9 +382,7 @@ export function SiteHeader() {
                       </div>
                       {/* Right: Image cards grid */}
                       <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: 420 }}>
-                        <p className="text-[10px] font-bold tracking-[0.15em] text-neutral-400 uppercase mb-3">
-                          {label(SHOP_GROUPS[activeGroup])}
-                        </p>
+
                         <div className="grid grid-cols-3 gap-2.5">
                           {SHOP_GROUPS[activeGroup].items.map((item) => {
                             const img = catImages[item.slug];
