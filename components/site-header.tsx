@@ -233,7 +233,7 @@ export function SiteHeader() {
 
   const label = (g: (typeof SHOP_GROUPS)[0]) => locale === "ar" ? g.label.ar : g.label.en;
   const itemName = (it: (typeof SHOP_GROUPS)[0]["items"][0]) => locale === "ar" ? it.ar : it.en;
-  const megaPos = isRTL ? { right: "50%", transform: "translateX(50%)" } : { left: "50%", transform: "translateX(-50%)" };
+  const megaPos = isRTL ? { right: 0 } : { left: 0 };
   const dropPos = isRTL ? { right: "50%", transform: "translateX(50%)" } : { left: "50%", transform: "translateX(-50%)" };
 
   function closeMobile() { setMobileOpen(false); setMobileGroup(null); }
@@ -368,7 +368,7 @@ export function SiteHeader() {
                 </button>
                 {shopOpen && (
                   <div className="absolute top-[calc(100%+1px)] bg-white rounded-b-2xl overflow-hidden"
-                    style={{ ...megaPos, width: 700, border: "1px solid rgba(0,0,0,0.08)", borderTop: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.13)" }}>
+                    style={{ ...megaPos, width: 780, border: "1px solid rgba(0,0,0,0.08)", borderTop: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.13)" }}>
                     <div className="flex" style={{ minHeight: 320 }}>
                       {/* Left: Group tabs */}
                       <div className="w-44 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
