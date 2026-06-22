@@ -37,13 +37,23 @@ export default async function ProductDetailPage({
   const supabase = await createClient();
   const tc = await getTranslations("common");
 
-  const { data: p } = await supabase
+  const [{ data: p }, { data: reviewsRaw }] = await Promise.all([
+    supabase
     .from("products")
     .select(
-      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, brand, unit"
+      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, brand, unit, average_rating, review_count"
     )
     .eq("id", id)
-    .maybeSingle();
+    .maybeSingle(),
+
+  supabase
+    .from("reviews")
+    .select("id, rating, comment, created_at, profiles(full_name, avatar_url)")
+    .eq("product_id", id)
+    .eq("is_approved", true)
+    .order("created_at", { ascending: false })
+    .limit(20),
+  ]);
 
   if (!p || p.status !== "active") notFound();
 
@@ -78,6 +88,8 @@ export default async function ProductDetailPage({
     brand: (p.brand as string | null) ?? null,
     unit: (p.unit as string | null) ?? null,
     vendor_name,
+    average_rating: (p.average_rating as number | null) ?? null,
+    review_count: (p.review_count as number | null) ?? 0,
   };
 
   return (
@@ -94,7 +106,17 @@ export default async function ProductDetailPage({
         <span className="line-clamp-1 text-neutral-700">{product.name}</span>
       </nav>
 
-      <ProductDetail product={product} />
+      <ProductDetail
+        product={product}
+        reviews={(reviewsRaw ?? []).map((r: Row) => ({
+          id: r.id,
+          rating: Number(r.rating),
+          comment: (r.comment as string | null) ?? null,
+          created_at: r.created_at,
+          reviewer_name: (r.profiles as any)?.full_name ?? null,
+          reviewer_avatar: (r.profiles as any)?.avatar_url ?? null,
+        }))}
+      />
     </div>
   );
 }

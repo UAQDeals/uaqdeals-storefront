@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, Smartphone, ShoppingCart, Tag, Store } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Smartphone, ShoppingCart, Tag, Store, Star, ChevronDown } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { aed } from "@/lib/format";
@@ -16,9 +17,15 @@ type Product = {
   stock_quantity: number | null; track_stock: boolean;
   requires_prescription: boolean; brand: string | null;
   unit: string | null; vendor_name: string | null;
+  average_rating: number | null; review_count: number;
 };
 
-export function ProductDetail({ product: p }: { product: Product }) {
+type Review = {
+  id: string; rating: number; comment: string | null;
+  created_at: string; reviewer_name: string | null; reviewer_avatar: string | null;
+};
+
+export function ProductDetail({ product: p, reviews: initialReviews = [] }: { product: Product; reviews?: Review[] }) {
   const t = useTranslations("product");
   const tc = useTranslations("common");
 
@@ -39,6 +46,43 @@ export function ProductDetail({ product: p }: { product: Product }) {
   });
   const [qty, setQty] = useState(1);
   const { add } = useCart();
+
+  // Reviews state
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+    : (p.average_rating ?? 0);
+
+  async function submitReview() {
+    if (reviewSubmitting) return;
+    setReviewSubmitting(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { toast.error("Please sign in to leave a review"); return; }
+      const { error } = await supabase.from("reviews").insert({
+        product_id: p.id,
+        customer_id: user.id,
+        rating: reviewRating,
+        comment: reviewComment.trim() || null,
+        is_approved: false,
+      });
+      if (error) throw error;
+      setReviewSubmitted(true);
+      setShowReviewForm(false);
+      toast.success("Review submitted! It will appear after approval.");
+    } catch (e: any) {
+      toast.error(e.message ?? "Failed to submit review");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  }
 
   const hasSale = p.sale_price != null && p.sale_price > 0 && p.sale_price < p.price;
   const unitPrice = hasSale ? (p.sale_price as number) : p.price;
@@ -163,6 +207,111 @@ export function ProductDetail({ product: p }: { product: Product }) {
           {t("needHelp")}{" "}
           <Link href="/contact" className="font-semibold text-[color:var(--brand-maroon)] hover:underline">{t("contactUs")}</Link>
         </p>
+      </div>
+
+      {/* ── Reviews section ──────────────────────────────────────────── */}
+      <div className="md:col-span-2 border-t border-[color:var(--brand-border)] pt-8 mt-2">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">Customer Reviews</h2>
+            {avgRating > 0 && (
+              <div className="flex items-center gap-2 mt-1">
+                <div className="flex">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
+                <span className="text-sm text-neutral-500">({p.review_count} review{p.review_count !== 1 ? "s" : ""})</span>
+              </div>
+            )}
+          </div>
+          {!reviewSubmitted && !showReviewForm && (
+            <button
+              onClick={() => setShowReviewForm(true)}
+              className="flex items-center gap-2 border border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors"
+            >
+              <Star className="w-4 h-4" /> Write a Review
+            </button>
+          )}
+        </div>
+
+        {/* Review form */}
+        {showReviewForm && !reviewSubmitted && (
+          <div className="mb-8 border border-[color:var(--brand-border)] p-5 bg-neutral-50">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4">Your Review</h3>
+            {/* Star picker */}
+            <div className="flex items-center gap-1 mb-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <button key={i} onClick={() => setReviewRating(i + 1)}>
+                  <Star className={`w-7 h-7 transition-colors ${i < reviewRating ? "fill-amber-400 text-amber-400" : "text-neutral-300 hover:text-amber-300"}`} />
+                </button>
+              ))}
+              <span className="ms-2 text-sm text-neutral-500">{reviewRating} star{reviewRating !== 1 ? "s" : ""}</span>
+            </div>
+            <textarea
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="Share your experience with this product (optional)"
+              rows={3}
+              className="w-full border border-neutral-200 px-3 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 resize-none mb-4"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={submitReview}
+                disabled={reviewSubmitting}
+                className="bg-neutral-900 text-white text-sm font-bold px-6 py-2.5 hover:bg-neutral-700 transition-colors disabled:opacity-50"
+              >
+                {reviewSubmitting ? "Submitting…" : "Submit Review"}
+              </button>
+              <button
+                onClick={() => setShowReviewForm(false)}
+                className="border border-neutral-200 text-sm font-semibold px-6 py-2.5 hover:bg-neutral-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {reviewSubmitted && (
+          <div className="mb-6 bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 font-medium flex items-center gap-2">
+            <Star className="w-4 h-4" /> Thank you! Your review will appear after approval.
+          </div>
+        )}
+
+        {/* Review list */}
+        {reviews.length === 0 ? (
+          <div className="py-10 text-center text-neutral-400 text-sm border border-dashed border-neutral-200">
+            No reviews yet. Be the first to review this product!
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {reviews.map((r) => (
+              <div key={r.id} className="border-b border-neutral-100 pb-5 last:border-0">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-full bg-neutral-200 shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold text-neutral-600">
+                    {r.reviewer_avatar
+                      ? <img src={r.reviewer_avatar} alt="" className="w-full h-full object-cover" />
+                      : (r.reviewer_name?.[0] ?? "?").toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold">{r.reviewer_name ?? "Customer"}</p>
+                      <p className="text-xs text-neutral-400">{new Date(r.created_at).toLocaleDateString("en-AE", { day: "numeric", month: "short", year: "numeric" })}</p>
+                    </div>
+                    <div className="flex mt-0.5 mb-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < r.rating ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
+                      ))}
+                    </div>
+                    {r.comment && <p className="text-sm text-neutral-700 leading-relaxed">{r.comment}</p>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
