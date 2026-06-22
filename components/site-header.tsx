@@ -108,6 +108,51 @@ export function SiteHeader() {
   // Desktop dropdown state
   const [shopOpen, setShopOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+
+  // Category images for mega menu
+  const [catImages, setCatImages] = useState<Record<string, string | null>>({});
+  const catImagesFetched = useRef(false);
+
+  async function fetchCategoryImages() {
+    if (catImagesFetched.current) return;
+    catImagesFetched.current = true;
+    try {
+      const supabase = createClient();
+      const allSlugs = SHOP_GROUPS.flatMap((g) => g.items.map((i) => i.slug));
+      const { data: vendorTypes } = await supabase
+        .from("vendor_types")
+        .select("id, slug")
+        .in("slug", allSlugs);
+      if (!vendorTypes?.length) return;
+      const vtMap: Record<string, string> = {};
+      vendorTypes.forEach((vt: any) => { vtMap[vt.id] = vt.slug; });
+      const vtIds = vendorTypes.map((vt: any) => vt.id);
+      const { data: vendors } = await supabase
+        .from("vendors")
+        .select("id, vendor_type_id")
+        .in("vendor_type_id", vtIds)
+        .eq("status", "approved")
+        .limit(200);
+      if (!vendors?.length) return;
+      const vendorIds = vendors.map((v: any) => v.id);
+      const { data: products } = await supabase
+        .from("products")
+        .select("vendor_id, thumbnail_url")
+        .in("vendor_id", vendorIds)
+        .eq("status", "active")
+        .not("thumbnail_url", "is", null)
+        .limit(500);
+      if (!products?.length) return;
+      const vendorToSlug: Record<string, string> = {};
+      vendors.forEach((v: any) => { vendorToSlug[v.id] = vtMap[v.vendor_type_id]; });
+      const imgs: Record<string, string | null> = {};
+      products.forEach((p: any) => {
+        const slug = vendorToSlug[p.vendor_id];
+        if (slug && !imgs[slug] && p.thumbnail_url) imgs[slug] = p.thumbnail_url;
+      });
+      setCatImages(imgs);
+    } catch (_) {}
+  }
   const [activeGroup, setActiveGroup] = useState(0);
   const shopRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -314,7 +359,8 @@ export function SiteHeader() {
               {/* Shop */}
               <div className="relative" ref={shopRef}>
                 <button
-                  onClick={() => { setShopOpen(!shopOpen); setMoreOpen(false); }}
+                  onMouseEnter={() => { if (!shopOpen) { setShopOpen(true); setMoreOpen(false); fetchCategoryImages(); } }}
+                  onClick={() => { const next = !shopOpen; setShopOpen(next); setMoreOpen(false); if (next) fetchCategoryImages(); }}
                   className="flex items-center gap-1.5 px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors"
                 >
                   {t("shop")}
@@ -323,26 +369,47 @@ export function SiteHeader() {
                 {shopOpen && (
                   <div className="absolute top-[calc(100%+1px)] bg-white rounded-b-2xl overflow-hidden"
                     style={{ ...megaPos, width: 700, border: "1px solid rgba(0,0,0,0.08)", borderTop: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.13)" }}>
-                    <div className="flex">
-                      <div className="w-48 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
+                    <div className="flex" style={{ minHeight: 320 }}>
+                      {/* Left: Group tabs */}
+                      <div className="w-44 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
                         {SHOP_GROUPS.map((g, i) => (
                           <button key={i} onMouseEnter={() => setActiveGroup(i)}
-                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-medium transition-colors text-start"
-                            style={{ color: activeGroup === i ? "var(--brand-maroon)" : "#666", background: activeGroup === i ? "#fff" : "transparent", borderInlineStart: activeGroup === i ? "2px solid var(--brand-maroon)" : "2px solid transparent" }}>
-                            <span className="text-base leading-none">{g.icon}</span>{label(g)}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-medium transition-colors text-start"
+                            style={{ color: activeGroup === i ? "var(--brand-maroon)" : "#555", background: activeGroup === i ? "#fff" : "transparent", borderInlineStart: activeGroup === i ? "2px solid var(--brand-maroon)" : "2px solid transparent" }}>
+                            {label(g)}
                           </button>
                         ))}
                       </div>
-                      <div className="flex-1 p-4">
-                        <p className="text-[10.5px] font-semibold tracking-widest text-neutral-400 uppercase mb-3">{label(SHOP_GROUPS[activeGroup])}</p>
-                        <div className="grid grid-cols-2 gap-0.5">
-                          {SHOP_GROUPS[activeGroup].items.map((item) => (
-                            <Link key={item.slug} href={`/categories/${item.slug}`} onClick={() => setShopOpen(false)}
-                              className="flex items-center gap-2.5 px-3 py-2 rounded-lg group transition-colors hover:bg-[color:var(--brand-maroon)]/[0.05]">
-                              <span className="w-1.5 h-1.5 rounded-full shrink-0 group-hover:opacity-100" style={{ background: "var(--brand-maroon)", opacity: 0.3 }} />
-                              <span className="text-[12.5px] text-neutral-600 group-hover:text-[color:var(--brand-maroon)] transition-colors leading-snug">{itemName(item)}</span>
-                            </Link>
-                          ))}
+                      {/* Right: Image cards grid */}
+                      <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: 420 }}>
+                        <p className="text-[10px] font-bold tracking-[0.15em] text-neutral-400 uppercase mb-3">
+                          {label(SHOP_GROUPS[activeGroup])}
+                        </p>
+                        <div className="grid grid-cols-3 gap-2.5">
+                          {SHOP_GROUPS[activeGroup].items.map((item) => {
+                            const img = catImages[item.slug];
+                            return (
+                              <Link key={item.slug} href={`/categories/${item.slug}`} onClick={() => setShopOpen(false)}
+                                className="group flex flex-col overflow-hidden border border-neutral-100 hover:border-[color:var(--brand-maroon)] transition-colors">
+                                <div className="aspect-[4/3] bg-neutral-100 overflow-hidden">
+                                  {img ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={img} alt={itemName(item)}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                                  ) : (
+                                    <div className="w-full h-full bg-neutral-200 flex items-center justify-center">
+                                      <span className="text-[10px] text-neutral-400 font-medium text-center px-1 leading-snug">{itemName(item)}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="px-2 py-1.5">
+                                  <p className="text-[11px] font-semibold text-neutral-700 group-hover:text-[color:var(--brand-maroon)] transition-colors leading-snug line-clamp-1">
+                                    {itemName(item)}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
