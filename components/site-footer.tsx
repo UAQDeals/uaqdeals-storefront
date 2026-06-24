@@ -72,9 +72,9 @@ export async function SiteFooter() {
           </ul>
           <Link
             href="/vendor/signup"
-            className="mt-4 inline-block rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-[12px] font-bold text-white transition-opacity hover:opacity-90"
+            className="mt-4 inline-block text-[12.5px] font-bold text-white hover:text-[#C72931] transition-colors"
           >
-            Sell on UAQDeals
+            Sell on UAQDeals →
           </Link>
         </div>
 
@@ -95,9 +95,9 @@ export async function SiteFooter() {
           </ul>
           <Link
             href="/vendor/signup"
-            className="mt-4 inline-block rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-[12px] font-bold text-white transition-opacity hover:opacity-90"
+            className="mt-4 inline-block text-[12.5px] font-bold text-white hover:text-[#C72931] transition-colors"
           >
-            List on UAQDeals
+            List on UAQDeals →
           </Link>
         </div>
 
