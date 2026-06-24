@@ -53,6 +53,12 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
       if (video) {
         videoUrl = await uploadToStorage(video, "used-items-videos");
       }
+      // Ensure a profiles row exists for this user (trigger downstream needs it)
+      await supabase.from("profiles").upsert(
+        { id: userId, email: (await supabase.auth.getUser()).data.user?.email ?? null },
+        { onConflict: "id", ignoreDuplicates: false }
+      );
+
       const { error } = await supabase.from("used_items_submissions").insert({
         user_id: userId,
         title: title.trim(),
