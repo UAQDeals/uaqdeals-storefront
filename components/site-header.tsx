@@ -257,7 +257,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "6px 6px 16px rgba(0,0,0,0.45), -3px -3px 10px rgba(255,255,255,0.08)" }} />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.5)", border: "none", outline: "none" }} />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -354,7 +354,7 @@ export function SiteHeader() {
         {/* ── Row 2: Desktop Nav ── */}
         <div className="hidden md:block bg-white shadow-md">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
-            <nav className="flex items-center justify-center gap-0.5">
+            <nav className="flex items-center gap-0.5 w-full">
 
               {/* Category links */}
               <div className="relative" ref={shopRef}>
@@ -415,30 +415,40 @@ export function SiteHeader() {
               </div>
               </div>
 
-              {[
-                { label: "Electronics",       id: "a1000000-0000-0000-0000-000000000001" },
-                { label: "Grocery",           id: "a1000000-0000-0000-0000-000000000002" },
-                { label: "Beauty",            id: "a1000000-0000-0000-0000-000000000003" },
-                { label: "Home & Kitchen",    id: "a1000000-0000-0000-0000-000000000004" },
-                { label: "Fashion",           id: "a1000000-0000-0000-0000-000000000005" },
-                { label: "Baby",              id: "a1000000-0000-0000-0000-000000000006" },
-                { label: "Toys",              id: "a1000000-0000-0000-0000-000000000007" },
-                { label: "Books",             id: "a1000000-0000-0000-0000-000000000011" },
-              ].map((c) => (
-                <Link key={c.id} href={"/shop/" + c.id}
-                  className="px-3 py-3 text-[13px] font-semibold text-neutral-700 hover:text-[#8E1B3A] whitespace-nowrap transition-colors">
-                  {c.label}
+              <div className="flex items-center justify-center flex-1 gap-0.5">
+                {[
+                  { label: "Electronics",    id: "a1000000-0000-0000-0000-000000000001" },
+                  { label: "Grocery",        id: "a1000000-0000-0000-0000-000000000002" },
+                  { label: "Beauty",         id: "a1000000-0000-0000-0000-000000000003" },
+                  { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004" },
+                  { label: "Fashion",        id: "a1000000-0000-0000-0000-000000000005" },
+                  { label: "Baby",           id: "a1000000-0000-0000-0000-000000000006" },
+                  { label: "Toys",           id: "a1000000-0000-0000-0000-000000000007" },
+                  { label: "Books",          id: "a1000000-0000-0000-0000-000000000011" },
+                ].map((c) => (
+                  <Link key={c.id} href={"/shop/" + c.id}
+                    className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                    {c.label}
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
+                  </Link>
+                ))}
+                <div className="w-px h-4 bg-neutral-200 mx-1" />
+                <Link href="/services"
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                  {t("services")}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
-              ))}
-              <div className="w-px h-4 bg-neutral-200 mx-1" />
-              <div className="flex-1" />
+                <Link href="/marketplace/real_estate"
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                  Marketplace
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
+                </Link>
+              </div>
               <Link href="/deals"
-                className="mx-2 px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
-                style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.6)" }}>
+                className="ml-auto px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
+                style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.5)" }}>
                 🔥 Deals
               </Link>
-              <Link href="/services" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
-              <Link href="/marketplace/real_estate" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">Marketplace</Link>
 
 
             </nav>
