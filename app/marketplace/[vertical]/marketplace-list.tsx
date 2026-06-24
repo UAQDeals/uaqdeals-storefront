@@ -39,16 +39,29 @@ export function MarketplaceList({
     [listings, selectedCat]
   );
 
+  const ctaLabel: Record<string, string> = {
+    used_items: "Sell Item",
+    automotive: "Submit Vehicle",
+    real_estate: "Submit Property",
+    fancy_numbers: "List Number",
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6 flex items-center gap-3">
         <span className="text-3xl">{emoji}</span>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-extrabold text-neutral-900">{title}</h1>
           <p className="text-sm text-neutral-500">
             {filtered.length} listing{filtered.length === 1 ? "" : "s"} in {selectedCat}
           </p>
         </div>
+        <Link
+          href={`/marketplace/${vertical}/sell`}
+          className="rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap"
+        >
+          + {ctaLabel[vertical] ?? "List"}
+        </Link>
       </div>
 
       {/* Category chips */}
