@@ -47,7 +47,7 @@ export async function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-neutral-900 text-neutral-400">
+    <footer className="bg-neutral-900 text-neutral-400 pb-20 md:pb-0">
 
       {/* Promise bar */}
       <div className="border-b border-neutral-800">

@@ -21,8 +21,8 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-neutral-200"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)", boxShadow: "0 -2px 16px rgba(0,0,0,0.08)" }}
+      className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-neutral-200"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)", boxShadow: "0 -4px 20px rgba(0,0,0,0.12)" }}
     >
       <div className="grid grid-cols-5">
         {ITEMS.map(({ label, href, icon: Icon }) => {

@@ -41,7 +41,7 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex min-h-[100dvh] flex-col">
             <SiteHeader />
-            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+            <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />
