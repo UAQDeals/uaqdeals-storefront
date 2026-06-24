@@ -109,10 +109,10 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
       </div>
 
       {/* Two-panel layout */}
-      <div className="flex bg-[#f5f5f5]" style={{ minHeight: "calc(100vh - 120px)" }}>
+      <div className="flex bg-[#f5f5f5]">
 
         {/* LEFT SIDEBAR — subcategories of current category */}
-        <aside className="w-[82px] flex-shrink-0 bg-[#f0f0f0] border-r border-neutral-200 overflow-y-auto" style={{ position: "sticky", top: 0, maxHeight: "calc(100vh - 120px)" }}>
+        <aside className="w-[82px] flex-shrink-0 bg-[#f0f0f0] border-r border-neutral-200">
           {children.map((c, i) => {
             const active = selectedSidebar?.id === c.id;
             const color = SIDEBAR_COLORS[i % SIDEBAR_COLORS.length];
@@ -141,7 +141,7 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
         </aside>
 
         {/* RIGHT PANEL */}
-        <div className="flex-1 min-w-0 bg-white overflow-y-auto">
+        <div className="flex-1 min-w-0 bg-white">
           <div className="px-3 pt-4 pb-2 border-b border-neutral-50">
             <h1 className="text-[15px] font-extrabold text-neutral-900">
               {selectedSidebar?.name ?? category.name}
