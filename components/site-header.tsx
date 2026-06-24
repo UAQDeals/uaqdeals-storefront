@@ -257,7 +257,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "4px 4px 12px rgba(0,0,0,0.4), -2px -2px 8px rgba(255,255,255,0.08), inset 0 1px 1px rgba(255,255,255,0.15)" }} />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "6px 6px 16px rgba(0,0,0,0.45), -3px -3px 10px rgba(255,255,255,0.08)" }} />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -431,9 +431,10 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="w-px h-4 bg-neutral-200 mx-1" />
+              <div className="flex-1" />
               <Link href="/deals"
                 className="mx-2 px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
-                style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.6)", border: "2px solid rgba(255,255,255,0.3)" }}>
+                style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.6)" }}>
                 🔥 Deals
               </Link>
               <Link href="/services" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
