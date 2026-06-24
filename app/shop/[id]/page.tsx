@@ -15,28 +15,38 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const supabase = await createClient();
 
-  // Get current category
-  const { data: cat } = await supabase.from("categories").select("id, name, parent_id").eq("id", id).maybeSingle();
+  const [{ data: cat }, { data: rootCats }, { data: children }] = await Promise.all([
+    supabase.from("categories").select("id, name, parent_id").eq("id", id).maybeSingle(),
+    supabase.from("categories").select("id, name").filter("parent_id", "is", null)
+      .eq("is_active", true).order("sort_order").order("name"),
+    supabase.from("categories").select("id, name").eq("parent_id", id)
+      .eq("is_active", true).order("sort_order").order("name"),
+  ]);
+
   if (!cat) notFound();
+  if (!children || children.length === 0) redirect("/products?cat=" + id);
 
-  // Get children
-  const { data: children } = await supabase.from("categories").select("id, name")
-    .eq("parent_id", id).eq("is_active", true).order("sort_order").order("name");
-
-  // If no children — leaf category, go to products
-  if (!children || children.length === 0) {
-    redirect("/products?cat=" + id);
-  }
-
-  // Build breadcrumb by walking up the tree
+  // Build breadcrumb
   const breadcrumb: { id: string; name: string }[] = [{ id: cat.id, name: cat.name }];
   let current = cat;
   while (current.parent_id) {
-    const { data: parent } = await supabase.from("categories").select("id, name, parent_id").eq("id", current.parent_id).maybeSingle();
+    const { data: parent } = await supabase.from("categories")
+      .select("id, name, parent_id").eq("id", current.parent_id).maybeSingle();
     if (!parent) break;
     breadcrumb.unshift({ id: parent.id, name: parent.name });
     current = parent;
   }
 
-  return <ShopDrillClient category={cat} children={children} breadcrumb={breadcrumb} />;
+  // Find the L1 ancestor
+  const l1Id = breadcrumb[0]?.id ?? id;
+
+  return (
+    <ShopDrillClient
+      category={cat}
+      children={children}
+      breadcrumb={breadcrumb}
+      rootCats={rootCats ?? []}
+      l1Id={l1Id}
+    />
+  );
 }
