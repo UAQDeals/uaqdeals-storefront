@@ -16,7 +16,7 @@ type Product = {
   variants: Array<{ name: string; options: string[] }>;
   stock_quantity: number | null; track_stock: boolean;
   requires_prescription: boolean; brand: string | null;
-  unit: string | null; vendor_name: string | null;
+  unit: string | null; vendor_name: string | null; condition?: string | null;
   average_rating: number | null; review_count: number;
 };
 
@@ -130,6 +130,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       </div>
 
       <div className="flex flex-col">
+        {p.condition === "used" && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-black tracking-widest text-amber-700 uppercase">Used Item</span>
+            <VerifiedBadge />
+          </div>
+        )}
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{p.name}</h1>
 
         {(p.vendor_name || p.brand) && (
@@ -313,6 +319,33 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function VerifiedBadge() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative inline-flex">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1 rounded-md bg-green-100 px-2.5 py-1 text-xs font-bold text-green-700 hover:bg-green-200 transition-colors"
+      >
+        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+        Verified
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 top-8 z-50 w-64 rounded-xl border border-green-200 bg-white p-4 shadow-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-5 h-5 text-green-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              <p className="text-sm font-bold text-neutral-900">UAQ Deals Verified</p>
+            </div>
+            <p className="text-xs text-neutral-600 leading-relaxed">This used item has been manually reviewed and verified by the UAQ Deals team. The condition, details, and pricing have been checked before listing.</p>
+          </div>
+        </>
+      )}
     </div>
   );
 }
