@@ -15,10 +15,8 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: cat }, { data: rootCats }, { data: children }] = await Promise.all([
+  const [{ data: cat }, { data: children }] = await Promise.all([
     supabase.from("categories").select("id, name, parent_id").eq("id", id).maybeSingle(),
-    supabase.from("categories").select("id, name").filter("parent_id", "is", null)
-      .eq("is_active", true).order("sort_order").order("name"),
     supabase.from("categories").select("id, name").eq("parent_id", id)
       .eq("is_active", true).order("sort_order").order("name"),
   ]);
@@ -37,16 +35,12 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     current = parent;
   }
 
-  // Find the L1 ancestor
-  const l1Id = breadcrumb[0]?.id ?? id;
 
   return (
     <ShopDrillClient
       category={cat}
       children={children}
       breadcrumb={breadcrumb}
-      rootCats={rootCats ?? []}
-      l1Id={l1Id}
     />
   );
 }
