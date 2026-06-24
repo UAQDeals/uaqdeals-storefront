@@ -240,6 +240,20 @@ export function SiteHeader() {
 
   return (
     <>
+      <style>{`
+        @keyframes uaqSway {
+          0%   { transform: rotate(-4deg) translateX(-2px); }
+          50%  { transform: rotate(4deg) translateX(2px); }
+          100% { transform: rotate(-4deg) translateX(-2px); }
+        }
+        .uaq-logo-sway {
+          animation: uaqSway 3s ease-in-out infinite;
+          transform-origin: center center;
+        }
+        .uaq-logo-sway:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
       <header className="sticky top-0 z-30"
         style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
 
@@ -257,7 +271,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.5)", border: "none", outline: "none" }} />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover uaq-logo-sway" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
