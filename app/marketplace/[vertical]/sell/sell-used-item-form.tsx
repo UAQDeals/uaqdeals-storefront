@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-const CATEGORIES = ["Electronics", "Fashion & Accessories", "Home & Garden", "Furniture", "Sports & Outdoors", "Books & Media", "Baby & Kids", "Other"];
+const CATEGORIES = ["Phones & Accessories", "Tablets", "Laptops", "TV", "Refrigerator", "Washing Machine", "AC"];
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 
 export function SellUsedItemForm({ userId }: { userId: string }) {
@@ -98,7 +98,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
     <div className="space-y-5">
       <div>
         <label className={labelCls}>Title *</label>
-        <input className={inputCls} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What are you selling?" />
+        <input className={inputCls} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. iPhone 13, Samsung 55 inch TV, MacBook Air M2..." />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

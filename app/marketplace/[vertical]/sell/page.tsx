@@ -6,7 +6,7 @@ import { SellUsedItemForm } from "./sell-used-item-form";
 export const dynamic = "force-dynamic";
 
 const VERTICAL_META: Record<string, { title: string; ctaLabel: string }> = {
-  used_items: { title: "Sell an Item", ctaLabel: "Sell Item" },
+  used_items: { title: "List Your Electronic Device", ctaLabel: "List Device" },
   automotive: { title: "Submit Vehicle", ctaLabel: "Submit Vehicle" },
   real_estate: { title: "Submit Property", ctaLabel: "Submit Property" },
   fancy_numbers: { title: "List a Number", ctaLabel: "List Number" },
