@@ -7,6 +7,7 @@ import { FloatingContact } from "@/components/floating-contact";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -40,11 +41,12 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex min-h-[100dvh] flex-col">
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-16 md:pb-0">{children}</main>
             <SiteFooter />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />
           <FloatingContact />
+          <MobileBottomNav />
           <CartDrawerLoader />
         </NextIntlClientProvider>
       </body>

@@ -6,7 +6,7 @@ const WA_MESSAGE = "Hi UAQ Deals, I have a question.";
 
 export function FloatingContact() {
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
+    <div className="fixed right-5 z-40 flex flex-col gap-3 bottom-20 md:bottom-5">
       <Link
         href={`https://wa.me/${PHONE_WA}?text=${encodeURIComponent(WA_MESSAGE)}`}
         target="_blank"
