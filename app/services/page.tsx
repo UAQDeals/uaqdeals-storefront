@@ -77,7 +77,7 @@ function ServiceCard({
 }) {
   return (
     <Link
-      href={`/categories/${slug}`}
+      href={["automotive","real_estate","used_items","fancy_numbers"].includes(slug) ? `/marketplace/${slug}` : `/categories/${slug}`}
       className="group relative block overflow-hidden rounded-2xl"
       style={{ aspectRatio: "16/9" }}
     >
