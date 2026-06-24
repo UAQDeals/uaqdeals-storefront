@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { ContactButtons } from "./contact-buttons";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,6 @@ export default async function MarketplaceDetailPage({
 
   const images: string[] = Array.isArray(r.images) ? r.images : [];
   const specs = (SPECS[vertical] ?? []).filter(([, key]) => r[key] != null && r[key] !== "");
-  const phone = r.display_phone || r.owner_phone || null;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -107,14 +107,9 @@ export default async function MarketplaceDetailPage({
             </div>
           )}
 
-          {phone && (
-            <a
-              href={`tel:${phone}`}
-              className="mt-6 block rounded-xl bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-center text-sm font-bold text-white"
-            >
-              Call {phone}
-            </a>
-          )}
+          <div className="mt-6">
+            <ContactButtons vertical={vertical} listingId={r.id} listingTitle={r.title} />
+          </div>
         </div>
       </div>
     </div>
