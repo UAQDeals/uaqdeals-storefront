@@ -41,7 +41,7 @@ export default async function ProductDetailPage({
     supabase
     .from("products")
     .select(
-      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, brand, unit, average_rating, review_count"
+      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, brand, unit, average_rating, review_count, condition"
     )
     .eq("id", id)
     .maybeSingle(),
