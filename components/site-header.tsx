@@ -240,11 +240,11 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-[#8E1B3A]"
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
+      <header className="sticky top-0 z-30"
+        style={{ background: "#8E1B3A", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[68px] max-w-[1320px] items-center px-5 md:px-8 gap-4 bg-[#8E1B3A]">
+        <div className="mx-auto flex h-[72px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
@@ -257,11 +257,11 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.jpeg" alt="UAQ Deals" width={56} height={56} priority className="h-[56px] w-[56px] rounded-xl object-cover" />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={56} height={56} priority className="h-[56px] w-[56px] rounded-xl object-cover" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
-          <div ref={searchRef} className="hidden md:flex flex-1 max-w-2xl relative mx-6">
+          <div ref={searchRef} className="hidden md:flex w-[480px] relative ms-auto">
             <form onSubmit={handleSearchSubmit} className="flex w-full">
               <input
                 ref={inputRef}
@@ -270,11 +270,11 @@ export function SiteHeader() {
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Search products, deals, services…"
-                className="flex-1 h-12 rounded-l-full border-0 px-5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                className="flex-1 h-11 bg-white/10 border border-white/50 border-r-0 rounded-l-full px-5 text-[14px] font-semibold text-white placeholder:text-white/70 focus:outline-none focus:bg-white/20"
               />
               <button
                 type="submit"
-                className="h-12 px-6 bg-white text-[#8E1B3A] hover:bg-neutral-100 transition-colors shrink-0 flex items-center justify-center rounded-r-full"
+                className="h-11 px-5 bg-white/20 border border-white/50 border-l-0 rounded-r-full text-white hover:bg-white/30 transition-colors shrink-0 flex items-center justify-center"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -333,14 +333,14 @@ export function SiteHeader() {
           </div>
 
           {/* Actions */}
-          <div className="ms-auto md:ms-0 flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0">
             {/* Mobile search icon */}
             <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
               <Search className="w-5 h-5" />
             </Link>
             <div className="text-white [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/10"><LanguageSwitcher /></div>
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
-            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-medium text-white hover:bg-white/10 transition-colors">
+            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-white hover:bg-white/10 transition-colors">
               <User className="w-4 h-4" />
               {t("account")}
             </Link>
@@ -352,7 +352,7 @@ export function SiteHeader() {
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
-        <div className="hidden md:block bg-white border-t border-neutral-100 shadow-sm">
+        <div className="hidden md:block bg-white shadow-md">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <nav className="flex items-center gap-0.5">
 
@@ -426,7 +426,7 @@ export function SiteHeader() {
                 { label: "Books",             id: "a1000000-0000-0000-0000-000000000011" },
               ].map((c) => (
                 <Link key={c.id} href={"/shop/" + c.id}
-                  className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] whitespace-nowrap transition-colors">
+                  className="px-3 py-3 text-[13px] font-semibold text-neutral-700 hover:text-[#8E1B3A] whitespace-nowrap transition-colors">
                   {c.label}
                 </Link>
               ))}

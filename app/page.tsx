@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations, getLocale } from "next-intl/server";
-import { HomeHero } from "@/components/home-hero";
 import { HomeBanners, type BannerCard } from "@/components/home-banners";
 import { QuickAccessStrip } from "@/components/quick-access-strip";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
@@ -90,9 +89,6 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 1. Split hero */}
-      <HomeHero />
-
       {/* 3. Banner carousel (kept for admin-managed promos) */}
       <HomeBanners banners={banners} />
 
