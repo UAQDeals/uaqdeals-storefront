@@ -476,36 +476,57 @@ export function SiteHeader() {
         <div className="flex-1 overflow-y-auto">
           {mobileGroup === null ? (
             <div className="py-2">
-              <div className="px-2">
-                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("shop")}</p>
-                {SHOP_GROUPS.map((g, i) => (
-                  <button key={i} onClick={() => setMobileGroup(i)}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-lg hover:bg-neutral-50 transition-colors">
-                    <span className="flex items-center gap-3 text-[14px] font-medium text-neutral-700">
-                      <span className="text-xl">{g.icon}</span>{label(g)}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-neutral-400" style={{ transform: isRTL ? "rotate(180deg)" : "none" }} />
-                  </button>
-                ))}
-              </div>
-              <div className="px-3 pt-3 pb-1">
+              {/* Deals button */}
+              <div className="px-3 pt-3 pb-2">
                 <Link href="/deals" onClick={closeMobile}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-[14px] font-extrabold text-white"
                   style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
                   🔥 Deals &amp; Offers
                 </Link>
               </div>
-              <div className="h-px bg-neutral-100 my-3 mx-5" />
+              <div className="h-px bg-neutral-100 my-2 mx-5" />
+              {/* Product Categories */}
               <div className="px-2">
-                {[{ label: t("services"), href: "/services" }, { label: t("account"), href: "/account" }, { label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }].map((item) => (
+                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">Shop</p>
+                {[
+                  { label: "Electronics", id: "a1000000-0000-0000-0000-000000000001", emoji: "📱" },
+                  { label: "Grocery", id: "a1000000-0000-0000-0000-000000000002", emoji: "🛒" },
+                  { label: "Beauty & Fragrance", id: "a1000000-0000-0000-0000-000000000003", emoji: "💄" },
+                  { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004", emoji: "🏠" },
+                  { label: "Fashion", id: "a1000000-0000-0000-0000-000000000005", emoji: "👗" },
+                  { label: "Baby", id: "a1000000-0000-0000-0000-000000000006", emoji: "👶" },
+                  { label: "Toys", id: "a1000000-0000-0000-0000-000000000007", emoji: "🧸" },
+                  { label: "Health & Nutrition", id: "a1000000-0000-0000-0000-000000000009", emoji: "💊" },
+                  { label: "Stationery", id: "a1000000-0000-0000-0000-000000000010", emoji: "✏️" },
+                  { label: "Books", id: "a1000000-0000-0000-0000-000000000011", emoji: "📚" },
+                ].map((c) => (
+                  <Link key={c.id} href={"/shop/" + c.id} onClick={closeMobile}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-50 transition-colors">
+                    <span className="text-xl">{c.emoji}</span>
+                    <span className="text-[14px] font-medium text-neutral-700">{c.label}</span>
+                  </Link>
+                ))}
+              </div>
+              <div className="h-px bg-neutral-100 my-2 mx-5" />
+              {/* Other links */}
+              <div className="px-2">
+                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">More</p>
+                {[
+                  { label: "Marketplace", href: "/marketplace/real_estate", emoji: "🏗️" },
+                  { label: "Services", href: "/services", emoji: "🔧" },
+                  { label: "Account", href: "/account", emoji: "👤" },
+                  { label: "About", href: "/about", emoji: "ℹ️" },
+                  { label: "Contact", href: "/contact", emoji: "📞" },
+                ].map((item) => (
                   <Link key={item.href} href={item.href} onClick={closeMobile}
-                    className="flex items-center px-3 py-3 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
+                    <span className="text-xl">{item.emoji}</span>
                     {item.label}
                   </Link>
                 ))}
               </div>
-              <div className="h-px bg-neutral-100 my-3 mx-5" />
-              <div className="px-5 pb-4"><div className="text-white [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/10"><LanguageSwitcher /></div></div>
+              <div className="h-px bg-neutral-100 my-2 mx-5" />
+              <div className="px-5 pb-4"><LanguageSwitcher /></div>
             </div>
           ) : (
             <div className="py-2 px-2">
