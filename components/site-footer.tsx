@@ -30,7 +30,7 @@ const HELP_LINKS = [
   { en: "About UAQ Deals",      ar: "عن أم القيوين ديلز",href: "/about" },
   { en: "Terms of Service",     ar: "الشروط والأحكام",  href: "/terms" },
   { en: "Privacy Policy",       ar: "سياسة الخصوصية",  href: "/privacy" },
-  { en: "Vendor Sign Up",       ar: "انضم كبائع",       href: "#" },
+  { en: "Vendor Sign Up",       ar: "انضم كبائع",       href: "/vendor/signup" },
 ];
 
 const PROMISES = [
