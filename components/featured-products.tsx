@@ -16,6 +16,7 @@ export type ProductCard = {
   stock_quantity?: number | null;
   track_stock?: boolean | null;
   vendor_name?: string | null;
+  condition?: string | null;
 };
 
 export async function FeaturedProducts({
@@ -78,6 +79,11 @@ export async function FeaturedProducts({
                     {hasSale && (
                       <span className="absolute top-2 start-2 bg-[#c72931] text-white text-[9px] font-black tracking-widest px-2 py-1">
                         -{salePct}%
+                      </span>
+                    )}
+                    {p.condition === "used" && (
+                      <span className="absolute top-2 end-2 bg-amber-500 text-white text-[9px] font-black tracking-widest px-2 py-1">
+                        USED
                       </span>
                     )}
                   </div>
