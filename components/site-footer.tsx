@@ -30,7 +30,6 @@ const HELP_LINKS = [
   { en: "About UAQ Deals",      ar: "عن أم القيوين ديلز",href: "/about" },
   { en: "Terms of Service",     ar: "الشروط والأحكام",  href: "/terms" },
   { en: "Privacy Policy",       ar: "سياسة الخصوصية",  href: "/privacy" },
-  { en: "Vendor Sign Up",       ar: "انضم كبائع",       href: "/vendor/signup" },
 ];
 
 const PROMISES = [
@@ -104,6 +103,12 @@ export async function SiteFooter() {
               </li>
             ))}
           </ul>
+          <Link
+            href="/vendor/signup"
+            className="mt-4 inline-block rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-[12px] font-bold text-white transition-opacity hover:opacity-90"
+          >
+            Sell on UAQDeals
+          </Link>
         </div>
 
         {/* Services col */}
@@ -121,6 +126,12 @@ export async function SiteFooter() {
               </li>
             ))}
           </ul>
+          <Link
+            href="/vendor/signup"
+            className="mt-4 inline-block rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-[12px] font-bold text-white transition-opacity hover:opacity-90"
+          >
+            List on UAQDeals
+          </Link>
         </div>
 
         {/* Help col */}
