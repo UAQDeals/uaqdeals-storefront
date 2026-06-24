@@ -431,7 +431,11 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="w-px h-4 bg-neutral-200 mx-1" />
-              <Link href="/deals" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("deals")}</Link>
+              <Link href="/deals"
+                className="mx-2 px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
+                style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.6)", border: "2px solid rgba(255,255,255,0.3)" }}>
+                🔥 Deals
+              </Link>
               <Link href="/services" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
               <Link href="/marketplace/real_estate" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">Marketplace</Link>
 
