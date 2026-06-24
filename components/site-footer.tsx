@@ -53,23 +53,6 @@ export async function SiteFooter() {
           <p className="text-[12.5px] leading-relaxed text-neutral-500 mb-6 max-w-xs">
             Umm Al Quwain's super-app — groceries, food, services, real estate and more. Delivered locally, priced fairly.
           </p>
-          {/* Social */}
-          <div className="flex gap-3">
-            {[
-              { label: "Instagram", href: "#", icon: "📸" },
-              { label: "TikTok",    href: "#", icon: "🎵" },
-              { label: "WhatsApp",  href: "#", icon: "💬" },
-            ].map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                aria-label={s.label}
-                className="w-9 h-9 flex items-center justify-center border border-neutral-700 text-base hover:border-neutral-400 transition-colors"
-              >
-                {s.icon}
-              </a>
-            ))}
-          </div>
         </div>
 
         {/* Shop col */}

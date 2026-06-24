@@ -7,6 +7,7 @@ import { EditorialBand } from "@/components/editorial-band";
 import { FeaturedProducts, type ProductCard } from "@/components/featured-products";
 import { StoriesGrid } from "@/components/stories-grid";
 import { AppDownloadCta } from "@/components/app-download-cta";
+import { TrustBand } from "@/components/trust-band";
 
 export const revalidate = 60;
 
@@ -132,6 +133,8 @@ export default async function HomePage() {
 
       {/* 9. Stories / Explore UAQ grid */}
       <StoriesGrid />
+
+      <TrustBand />
 
       {/* 10. App download CTA */}
       <AppDownloadCta />
