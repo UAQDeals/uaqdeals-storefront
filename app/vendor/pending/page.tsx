@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -26,7 +25,6 @@ export default async function VendorPendingPage() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16 text-center">
-      <Image src="/uaq_logo.png" alt="UAQ Deals" width={120} height={40} priority className="mx-auto h-12 w-auto" />
       <div className="mt-8 rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
         {rejected ? (
           <>
