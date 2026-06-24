@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { FloatingContact } from "@/components/floating-contact";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { TrustBand } from "@/components/trust-band";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import "./globals.css";
@@ -42,6 +43,7 @@ export default async function RootLayout({
           <div className="flex min-h-[100dvh] flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>
+            <TrustBand />
             <SiteFooter />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />

@@ -35,31 +35,12 @@ const HELP_LINKS = [
   { en: "Privacy Policy",       ar: "سياسة الخصوصية",  href: "/privacy" },
 ];
 
-const PROMISES = [
-  { emoji: "🚚", en: "Free delivery on AED 100+", ar: "توصيل مجاني عند AED 100+" },
-  { emoji: "🔒", en: "Secure checkout",            ar: "دفع آمن" },
-  { emoji: "✅", en: "Verified local vendors",     ar: "بائعون محليون موثوقون" },
-  { emoji: "🪙", en: "Earn coins on every order",  ar: "اكسب عملات مع كل طلب" },
-];
-
 export async function SiteFooter() {
   const t = await getTranslations("common");
   const year = new Date().getFullYear();
 
   return (
     <footer className="bg-neutral-900 text-neutral-400 pb-20 md:pb-0">
-
-      {/* Promise bar */}
-      <div className="border-b border-neutral-800">
-        <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {PROMISES.map((p) => (
-            <div key={p.en} className="flex items-center gap-3">
-              <span className="text-xl">{p.emoji}</span>
-              <span className="text-[12.5px] font-semibold text-neutral-300">{p.en}</span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Main columns */}
       <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
