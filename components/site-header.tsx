@@ -421,6 +421,7 @@ export function SiteHeader() {
                 )}
               </div>
 
+              <Link href="/products" className="px-3.5 py-3 text-[13px] font-bold text-[color:var(--brand-maroon)] hover:text-[color:var(--brand-red)] transition-colors">Shop</Link>
               <Link href="/deals" className="px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("deals")}</Link>
               <Link href="/services" className="px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
 
@@ -493,7 +494,7 @@ export function SiteHeader() {
               </div>
               <div className="h-px bg-neutral-100 my-3 mx-5" />
               <div className="px-2">
-                {[{ label: t("deals"), href: "/deals" }, { label: t("services"), href: "/services" }, { label: t("account"), href: "/account" }, { label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }].map((item) => (
+                {[{ label: "Shop", href: "/products" }, { label: t("deals"), href: "/deals" }, { label: t("services"), href: "/services" }, { label: t("account"), href: "/account" }, { label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }].map((item) => (
                   <Link key={item.href} href={item.href} onClick={closeMobile}
                     className="flex items-center px-3 py-3 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
                     {item.label}
