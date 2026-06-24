@@ -2,26 +2,29 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 const SHOP_LINKS = [
-  { en: "Food & Grocery",       ar: "طعام وبقالة",     href: "/categories/restaurant" },
-  { en: "Health & Beauty",      ar: "صحة وجمال",       href: "/categories/pharmacy" },
-  { en: "Home & Services",      ar: "منزل وخدمات",     href: "/services" },
-  { en: "Retail",               ar: "تجزئة",           href: "/categories/electronics" },
-  { en: "Real Estate",          ar: "عقارات",          href: "/categories/real_estate" },
-  { en: "Automotive",           ar: "سيارات",          href: "/categories/automotive" },
-  { en: "Used Items",           ar: "مستعمل",          href: "/categories/used_items" },
-  { en: "Fancy Numbers",        ar: "أرقام مميزة",     href: "/categories/fancy_numbers" },
-  { en: "Job Portal",           ar: "بوابة وظائف",     href: "/categories/job_portal" },
+  { en: "Electronics",          ar: "إلكترونيات",      href: "/shop/a1000000-0000-0000-0000-000000000001" },
+  { en: "Grocery",              ar: "بقالة",           href: "/shop/a1000000-0000-0000-0000-000000000002" },
+  { en: "Beauty & Fragrance",   ar: "جمال وعطور",      href: "/shop/a1000000-0000-0000-0000-000000000003" },
+  { en: "Home & Kitchen",       ar: "منزل ومطبخ",      href: "/shop/a1000000-0000-0000-0000-000000000004" },
+  { en: "Fashion",              ar: "موضة",            href: "/shop/a1000000-0000-0000-0000-000000000005" },
+  { en: "Baby",                 ar: "أطفال",           href: "/shop/a1000000-0000-0000-0000-000000000006" },
+  { en: "Toys",                 ar: "ألعاب",           href: "/shop/a1000000-0000-0000-0000-000000000007" },
+  { en: "Health & Nutrition",   ar: "صحة وتغذية",      href: "/shop/a1000000-0000-0000-0000-000000000009" },
+  { en: "Stationery",           ar: "قرطاسية",         href: "/shop/a1000000-0000-0000-0000-000000000010" },
+  { en: "Books",                ar: "كتب",             href: "/shop/a1000000-0000-0000-0000-000000000011" },
+  { en: "Marketplace",          ar: "سوق",             href: "/marketplace/real_estate" },
 ];
 
 const SERVICES_LINKS = [
-  { en: "Typing Center",        ar: "مركز تايبنج",     href: "/categories/typing_center" },
-  { en: "Business Setup",       ar: "تأسيس شركات",     href: "/categories/business_setup" },
-  { en: "Mobile Repair",        ar: "إصلاح جوالات",    href: "/categories/mobile_repair" },
+  { en: "Home Services",        ar: "خدمات منزلية",    href: "/categories/home_services" },
   { en: "Cleaning Service",     ar: "خدمة تنظيف",      href: "/categories/cleaning_service" },
   { en: "Pest Control",         ar: "مكافحة الحشرات",  href: "/categories/pest_control" },
-  { en: "Web Dev & Design",     ar: "تطوير مواقع",     href: "/categories/web_dev_design" },
-  { en: "SEO & Content",        ar: "سيو ومحتوى",      href: "/categories/seo_content" },
+  { en: "Mobile Repair",        ar: "إصلاح جوالات",    href: "/categories/mobile_repair" },
+  { en: "Typing Center",        ar: "مركز تايبنج",     href: "/categories/typing_center" },
+  { en: "Business Setup",       ar: "تأسيس شركات",     href: "/categories/business_setup" },
   { en: "Explore UAQ",          ar: "استكشف أم القيوين",href: "/categories/explore_uaq" },
+  { en: "Hotel Booking",        ar: "حجز فنادق",       href: "/categories/hotel_booking" },
+  { en: "Flight Booking",       ar: "حجز رحلات",       href: "/categories/flight_booking" },
 ];
 
 const HELP_LINKS = [

@@ -244,7 +244,7 @@ export function SiteHeader() {
         style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[150px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[68px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
@@ -257,11 +257,11 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/logo_transparent.png" alt="UAQ Deals" width={150} height={150} priority className="h-[150px] w-auto" />
+            <Image src="/logo_transparent.png" alt="UAQ Deals" width={120} height={48} priority className="h-[48px] w-auto" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
-          <div ref={searchRef} className="hidden md:flex w-[420px] relative ms-auto">
+          <div ref={searchRef} className="hidden md:flex flex-1 max-w-2xl relative mx-6">
             <form onSubmit={handleSearchSubmit} className="flex w-full">
               <input
                 ref={inputRef}
@@ -270,11 +270,11 @@ export function SiteHeader() {
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Search products, deals, services…"
-                className="flex-1 h-11 border border-neutral-300 border-e-0 px-4 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+                className="flex-1 h-12 rounded-l-full border border-neutral-300 border-e-0 px-5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#8E1B3A] transition-colors"
               />
               <button
                 type="submit"
-                className="h-11 px-5 bg-[color:var(--brand-maroon)] text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center"
+                className="h-12 px-6 bg-[color:var(--brand-maroon)] text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center rounded-r-full"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -421,9 +421,25 @@ export function SiteHeader() {
                 )}
               </div>
 
-              <Link href="/products" className="px-3.5 py-3 text-[13px] font-bold text-[color:var(--brand-maroon)] hover:text-[color:var(--brand-red)] transition-colors">Shop</Link>
-              <Link href="/deals" className="px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("deals")}</Link>
-              <Link href="/services" className="px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
+              {[
+                { label: "Electronics",       id: "a1000000-0000-0000-0000-000000000001" },
+                { label: "Grocery",           id: "a1000000-0000-0000-0000-000000000002" },
+                { label: "Beauty",            id: "a1000000-0000-0000-0000-000000000003" },
+                { label: "Home & Kitchen",    id: "a1000000-0000-0000-0000-000000000004" },
+                { label: "Fashion",           id: "a1000000-0000-0000-0000-000000000005" },
+                { label: "Baby",              id: "a1000000-0000-0000-0000-000000000006" },
+                { label: "Toys",              id: "a1000000-0000-0000-0000-000000000007" },
+                { label: "Books",             id: "a1000000-0000-0000-0000-000000000011" },
+              ].map((c) => (
+                <Link key={c.id} href={"/shop/" + c.id}
+                  className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] whitespace-nowrap transition-colors">
+                  {c.label}
+                </Link>
+              ))}
+              <div className="w-px h-4 bg-neutral-200 mx-1" />
+              <Link href="/deals" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("deals")}</Link>
+              <Link href="/services" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
+              <Link href="/marketplace/real_estate" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">Marketplace</Link>
 
               {/* More */}
               <div className="relative" ref={moreRef}>
