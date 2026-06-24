@@ -23,7 +23,7 @@ export default async function VendorPortalLayout({
   }
 
   return (
-    <div className="mx-auto flex max-w-7xl gap-6 px-4 pt-10 pb-24">
+    <div className="mx-auto flex max-w-7xl gap-6 px-4 pt-20 pb-40">
       <VendorPortalNav vendorName={vendor.name} />
       <main className="min-w-0 flex-1">{children}</main>
     </div>
