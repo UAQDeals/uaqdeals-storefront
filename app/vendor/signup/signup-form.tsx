@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-
-type VendorType = { id: string; name: string };
 
 const EMIRATES = [
   "Umm Al Quwain", "Al Hamriyah", "Dubai", "Abu Dhabi",
@@ -15,7 +13,6 @@ export function VendorSignupForm() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [vendorTypes, setVendorTypes] = useState<VendorType[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,21 +22,12 @@ export function VendorSignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emirate, setEmirate] = useState("");
-  const [vendorTypeId, setVendorTypeId] = useState("");
+  const [businessType, setBusinessType] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [tradeLicense, setTradeLicense] = useState<File | null>(null);
   const [emiratesIdFront, setEmiratesIdFront] = useState<File | null>(null);
   const [emiratesIdBack, setEmiratesIdBack] = useState<File | null>(null);
-
-  useEffect(() => {
-    supabase
-      .from("vendor_types")
-      .select("id, name")
-      .eq("is_active", true)
-      .order("display_order")
-      .then(({ data }) => setVendorTypes(data ?? []));
-  }, [supabase]);
 
   async function uploadDoc(userId: string, file: File, label: string) {
     const ext = file.name.split(".").pop() || "png";
@@ -58,7 +46,7 @@ export function VendorSignupForm() {
     if (!email.trim()) return setError("Email is required");
     if (password.length < 6) return setError("Password must be at least 6 characters");
     if (!emirate) return setError("Please select an emirate");
-    if (!vendorTypeId) return setError("Please select a business type");
+    if (!businessType.trim()) return setError("Please describe your business type");
     if (!tradeLicense) return setError("Trade license is required");
 
     setSubmitting(true);
@@ -88,7 +76,7 @@ export function VendorSignupForm() {
         emirate,
         phone: phone.trim(),
         email: email.trim(),
-        vendor_type_id: vendorTypeId,
+        custom_fields: { business_type_note: businessType.trim() },
         address: address.trim() || null,
         description: description.trim() || null,
         status: "pending",
@@ -151,10 +139,7 @@ export function VendorSignupForm() {
         </div>
         <div>
           <label className={labelCls}>Business Type *</label>
-          <select className={inputCls} value={vendorTypeId} onChange={(e) => setVendorTypeId(e.target.value)}>
-            <option value="">Select type</option>
-            {vendorTypes.map((vt) => (<option key={vt.id} value={vt.id}>{vt.name}</option>))}
-          </select>
+          <input className={inputCls} value={businessType} onChange={(e) => setBusinessType(e.target.value)} placeholder="e.g. Electronics, Grocery, Pharmacy" />
         </div>
       </div>
 
