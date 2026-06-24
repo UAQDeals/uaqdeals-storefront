@@ -240,15 +240,15 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white border-b border-[color:var(--brand-border)]"
-        style={{ boxShadow: "0 1px 20px rgba(142,27,58,0.07)" }}>
+      <header className="sticky top-0 z-30 bg-[#8E1B3A]"
+        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[68px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[68px] max-w-[1320px] items-center px-5 md:px-8 gap-4 bg-[#8E1B3A]">
 
           {/* Hamburger mobile */}
           <button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors shrink-0"
             onClick={() => { setMobileOpen(true); setMobileGroup(null); }}
             aria-label="Open menu"
           >
@@ -257,7 +257,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/logo_transparent.png" alt="UAQ Deals" width={120} height={48} priority className="h-[48px] w-auto" />
+            <Image src="/logo_transparent.png" alt="UAQ Deals" width={160} height={56} priority className="h-[56px] w-auto brightness-0 invert" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -270,11 +270,11 @@ export function SiteHeader() {
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Search products, deals, services…"
-                className="flex-1 h-12 rounded-l-full border border-neutral-300 border-e-0 px-5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#8E1B3A] transition-colors"
+                className="flex-1 h-12 rounded-l-full border-0 px-5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
               />
               <button
                 type="submit"
-                className="h-12 px-6 bg-[color:var(--brand-maroon)] text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center rounded-r-full"
+                className="h-12 px-6 bg-white text-[#8E1B3A] hover:bg-neutral-100 transition-colors shrink-0 flex items-center justify-center rounded-r-full"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -335,16 +335,16 @@ export function SiteHeader() {
           {/* Actions */}
           <div className="ms-auto md:ms-0 flex items-center gap-1 shrink-0">
             {/* Mobile search icon */}
-            <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors">
+            <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
               <Search className="w-5 h-5" />
             </Link>
             <LanguageSwitcher />
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
-            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-medium text-neutral-600 hover:bg-neutral-100 transition-colors">
+            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-medium text-white hover:bg-white/10 transition-colors">
               <User className="w-4 h-4" />
               {t("account")}
             </Link>
-            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors">
+            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
               <User className="w-5 h-5" />
             </Link>
             <CartIcon />
@@ -352,20 +352,13 @@ export function SiteHeader() {
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
-        <div className="hidden md:block border-t border-neutral-100">
+        <div className="hidden md:block bg-white border-t border-neutral-100 shadow-sm">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <nav className="flex items-center gap-0.5">
 
-              {/* Shop */}
+              {/* Category links */}
               <div className="relative" ref={shopRef}>
-                <button
-                  onMouseEnter={() => { if (!shopOpen) { setShopOpen(true); setMoreOpen(false); fetchCategoryImages(); } }}
-                  onClick={() => { const next = !shopOpen; setShopOpen(next); setMoreOpen(false); if (next) fetchCategoryImages(); }}
-                  className="flex items-center gap-1.5 px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors"
-                >
-                  {t("shop")}
-                  <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200" style={{ transform: shopOpen ? "rotate(180deg)" : "none" }} />
-                </button>
+                <div className="w-0 h-0 overflow-hidden">
                 {shopOpen && (
                   <div className="absolute top-[calc(100%+1px)] bg-white rounded-b-2xl overflow-hidden"
                     style={{ ...megaPos, width: 780, border: "1px solid rgba(0,0,0,0.08)", borderTop: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.13)" }}>
@@ -420,6 +413,7 @@ export function SiteHeader() {
                   </div>
                 )}
               </div>
+              </div>
 
               {[
                 { label: "Electronics",       id: "a1000000-0000-0000-0000-000000000001" },
@@ -441,25 +435,7 @@ export function SiteHeader() {
               <Link href="/services" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">{t("services")}</Link>
               <Link href="/marketplace/real_estate" className="px-3 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">Marketplace</Link>
 
-              {/* More */}
-              <div className="relative" ref={moreRef}>
-                <button onClick={() => { setMoreOpen(!moreOpen); setShopOpen(false); }}
-                  className="flex items-center gap-1.5 px-3.5 py-3 text-[13px] font-medium text-neutral-600 hover:text-[color:var(--brand-maroon)] transition-colors">
-                  {t("more")}
-                  <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200" style={{ transform: moreOpen ? "rotate(180deg)" : "none" }} />
-                </button>
-                {moreOpen && (
-                  <div className="absolute top-[calc(100%+1px)] bg-white rounded-xl p-1.5 min-w-44"
-                    style={{ ...dropPos, border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 8px 28px rgba(0,0,0,0.1)" }}>
-                    {[{ label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }, { label: t("terms"), href: "/terms" }, { label: t("privacy"), href: "/privacy" }].map((item) => (
-                      <Link key={item.href} href={item.href} onClick={() => setMoreOpen(false)}
-                        className="block px-3.5 py-2 rounded-lg text-[13px] text-neutral-600 hover:bg-[color:var(--brand-maroon)]/[0.06] hover:text-[color:var(--brand-maroon)] transition-colors">
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+
             </nav>
           </div>
         </div>

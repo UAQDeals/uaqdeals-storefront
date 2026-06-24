@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations, getLocale } from "next-intl/server";
 import { HomeHero } from "@/components/home-hero";
 import { HomeBanners, type BannerCard } from "@/components/home-banners";
-import { CategoryPills } from "@/components/category-pills";
 import { QuickAccessStrip } from "@/components/quick-access-strip";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
 import { EditorialBand } from "@/components/editorial-band";
@@ -93,9 +92,6 @@ export default async function HomePage() {
     <>
       {/* 1. Split hero */}
       <HomeHero />
-
-      {/* 2. Category pill scroller */}
-      <CategoryPills locale={locale} />
 
       {/* 3. Banner carousel (kept for admin-managed promos) */}
       <HomeBanners banners={banners} />
