@@ -133,17 +133,6 @@ export async function SiteFooter() {
               </li>
             ))}
           </ul>
-
-          {/* App links */}
-          <p className="text-[11px] font-bold tracking-[2px] uppercase text-neutral-500 mt-8 mb-4">Get the app</p>
-          <div className="flex flex-col gap-2">
-            <a href="#" className="inline-block border border-neutral-700 text-neutral-300 text-[12px] font-semibold px-4 py-2 hover:border-neutral-400 hover:text-white transition-colors">
-              📱 App Store
-            </a>
-            <a href="#" className="inline-block border border-neutral-700 text-neutral-300 text-[12px] font-semibold px-4 py-2 hover:border-neutral-400 hover:text-white transition-colors">
-              🤖 Google Play
-            </a>
-          </div>
         </div>
 
       </div>
