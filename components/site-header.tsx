@@ -244,7 +244,7 @@ export function SiteHeader() {
         style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[88px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[100px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
@@ -257,7 +257,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={150} height={150} priority className="h-[80px] w-[80px] rounded-2xl object-cover" />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover" style={{ boxShadow: "4px 4px 12px rgba(0,0,0,0.4), -2px -2px 8px rgba(255,255,255,0.08), inset 0 1px 1px rgba(255,255,255,0.15)" }} />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
