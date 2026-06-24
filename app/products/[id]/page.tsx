@@ -88,6 +88,7 @@ export default async function ProductDetailPage({
     brand: (p.brand as string | null) ?? null,
     unit: (p.unit as string | null) ?? null,
     vendor_name,
+    condition: (p.condition as string | null) ?? null,
     average_rating: (p.average_rating as number | null) ?? null,
     review_count: (p.review_count as number | null) ?? 0,
   };
