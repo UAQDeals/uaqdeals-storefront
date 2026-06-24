@@ -97,11 +97,16 @@ export function MarketplaceList({
                 href={`/marketplace/${vertical}/${r.id}`}
                 className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-md"
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-neutral-100">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
                   {img ? (
                     <img src={img} alt={r.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-4xl">{emoji}</div>
+                  )}
+                  {r.status === "sold" && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <span className="rounded-md bg-red-600 px-4 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg">Sold</span>
+                    </div>
                   )}
                 </div>
                 <div className="p-4">

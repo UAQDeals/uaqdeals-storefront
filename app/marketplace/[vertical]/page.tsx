@@ -55,7 +55,7 @@ export default async function MarketplacePage({
   const { data: listings } = await supabase
     .from(cfg.table)
     .select("*")
-    .eq("status", "active")
+    .in("status", ["active", "sold"])
     .eq("is_approved", true)
     .order("created_at", { ascending: false });
 

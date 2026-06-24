@@ -11,11 +11,20 @@ export function ContactButtons({
   vertical,
   listingId,
   listingTitle,
+  isSold = false,
 }: {
   vertical: string;
   listingId: string;
   listingTitle: string;
+  isSold?: boolean;
 }) {
+  if (isSold) {
+    return (
+      <div className="rounded-xl border-2 border-neutral-200 bg-neutral-50 py-4 text-center text-sm font-semibold text-neutral-500">
+        This item is no longer available
+      </div>
+    );
+  }
   const [modalOpen, setModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");

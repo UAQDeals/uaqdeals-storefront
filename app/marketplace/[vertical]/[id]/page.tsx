@@ -44,7 +44,7 @@ export default async function MarketplaceDetailPage({
     .from(cfg.table)
     .select("*")
     .eq("id", id)
-    .eq("status", "active")
+    .in("status", ["active", "sold"])
     .eq("is_approved", true)
     .maybeSingle();
 
@@ -82,6 +82,11 @@ export default async function MarketplaceDetailPage({
 
         {/* Details */}
         <div>
+          {r.status === "sold" && (
+            <div className="mb-3 rounded-lg bg-red-600 px-4 py-2 text-center text-sm font-extrabold uppercase tracking-wider text-white">
+              ⓘ This item has been sold
+            </div>
+          )}
           <h1 className="text-2xl font-extrabold text-neutral-900">{r.title}</h1>
           <p className="mt-1 text-2xl font-extrabold text-[#8E1B3A]">
             {r.price ? `AED ${Number(r.price).toLocaleString()}` : "Ask for price"}
@@ -108,7 +113,7 @@ export default async function MarketplaceDetailPage({
           )}
 
           <div className="mt-6">
-            <ContactButtons vertical={vertical} listingId={r.id} listingTitle={r.title} />
+            <ContactButtons vertical={vertical} listingId={r.id} listingTitle={r.title} isSold={r.status === "sold"} />
           </div>
         </div>
       </div>
