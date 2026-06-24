@@ -241,16 +241,38 @@ export function SiteHeader() {
   return (
     <>
       <style>{`
-        @keyframes uaqSway {
-          0%   { transform: rotate(-4deg) translateX(-2px); }
-          50%  { transform: rotate(4deg) translateX(2px); }
-          100% { transform: rotate(-4deg) translateX(-2px); }
+        @keyframes uaqFloat {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50%      { transform: translateY(-4px) scale(1.015); }
         }
-        .uaq-logo-sway {
-          animation: uaqSway 3s ease-in-out infinite;
-          transform-origin: center center;
+        @keyframes uaqGlint {
+          0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+          12%  { opacity: 0.55; }
+          24%  { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+          100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
         }
-        .uaq-logo-sway:hover {
+        .uaq-logo-wrap {
+          position: relative;
+          display: inline-block;
+          border-radius: 16px;
+          overflow: hidden;
+        }
+        .uaq-logo-anim {
+          animation: uaqFloat 4s ease-in-out infinite;
+          will-change: transform;
+        }
+        .uaq-logo-wrap::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 35%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+          animation: uaqGlint 5s ease-in-out infinite;
+          pointer-events: none;
+        }
+        .uaq-logo-wrap:hover .uaq-logo-anim {
           animation-play-state: paused;
         }
       `}</style>
@@ -258,7 +280,7 @@ export function SiteHeader() {
         style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[100px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[112px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
@@ -271,7 +293,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={180} height={180} priority className="h-[90px] w-[90px] rounded-2xl object-cover uaq-logo-sway" />
+            <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[100px] w-[100px] rounded-2xl object-cover uaq-logo-anim" /></div>
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
