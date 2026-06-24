@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
+import { FloatingContact } from "@/components/floating-contact";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
@@ -43,6 +44,7 @@ export default async function RootLayout({
             <SiteFooter />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />
+          <FloatingContact />
           <CartDrawerLoader />
         </NextIntlClientProvider>
       </body>
