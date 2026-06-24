@@ -241,14 +241,14 @@ export function SiteHeader() {
   return (
     <>
       <header className="sticky top-0 z-30"
-        style={{ background: "#8E1B3A", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
+        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[72px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[88px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors shrink-0"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors shrink-0 order-first"
             onClick={() => { setMobileOpen(true); setMobileGroup(null); }}
             aria-label="Open menu"
           >
@@ -257,7 +257,7 @@ export function SiteHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center me-4">
-            <Image src="/uaq-logo.png" alt="UAQ Deals" width={56} height={56} priority className="h-[56px] w-[56px] rounded-xl object-cover" />
+            <Image src="/uaq-logo.png" alt="UAQ Deals" width={150} height={150} priority className="h-[80px] w-[80px] rounded-2xl object-cover" />
           </Link>
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -354,7 +354,7 @@ export function SiteHeader() {
         {/* ── Row 2: Desktop Nav ── */}
         <div className="hidden md:block bg-white shadow-md">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
-            <nav className="flex items-center gap-0.5">
+            <nav className="flex items-center justify-center gap-0.5">
 
               {/* Category links */}
               <div className="relative" ref={shopRef}>
@@ -444,13 +444,13 @@ export function SiteHeader() {
       {/* ── Mobile drawer ── */}
       {mobileOpen && <div className="fixed inset-0 z-50 bg-black/50 md:hidden" onClick={closeMobile} aria-hidden />}
       <div className={`fixed top-0 z-50 h-full w-[85vw] max-w-sm bg-white flex flex-col transition-transform duration-300 ease-out md:hidden ${isRTL ? "right-0" : "left-0"} ${mobileOpen ? "translate-x-0" : isRTL ? "translate-x-full" : "-translate-x-full"}`}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100" style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
           {mobileGroup !== null ? (
             <button onClick={() => setMobileGroup(null)} className="flex items-center gap-2 text-[13.5px] font-semibold text-neutral-700">
               <ChevronRight className="w-4 h-4 rotate-180" />{label(SHOP_GROUPS[mobileGroup])}
             </button>
           ) : (
-            <span className="text-[15px] font-bold text-neutral-800">Menu</span>
+            <span className="text-[15px] font-bold text-white">Menu</span>
           )}
           <button onClick={closeMobile} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-600">
             <X className="w-5 h-5" />
@@ -484,9 +484,16 @@ export function SiteHeader() {
                   </button>
                 ))}
               </div>
+              <div className="px-3 pt-3 pb-1">
+                <Link href="/deals" onClick={closeMobile}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-[14px] font-extrabold text-white"
+                  style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
+                  🔥 Deals &amp; Offers
+                </Link>
+              </div>
               <div className="h-px bg-neutral-100 my-3 mx-5" />
               <div className="px-2">
-                {[{ label: "Shop", href: "/products" }, { label: t("deals"), href: "/deals" }, { label: t("services"), href: "/services" }, { label: t("account"), href: "/account" }, { label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }].map((item) => (
+                {[{ label: t("services"), href: "/services" }, { label: t("account"), href: "/account" }, { label: t("about"), href: "/about" }, { label: t("contact"), href: "/contact" }].map((item) => (
                   <Link key={item.href} href={item.href} onClick={closeMobile}
                     className="flex items-center px-3 py-3 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
                     {item.label}
