@@ -60,13 +60,22 @@ export default async function CategoriesPage() {
         <h2 className="text-2xl font-extrabold tracking-tight text-neutral-900 mb-1">Services</h2>
         <p className="text-sm text-neutral-500 mb-6">Book & enquire with local providers</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {(serviceCats ?? []).map((s) => (
-            <Link key={s.id} href={"/categories/" + s.slug}
-              className="group rounded-2xl border border-neutral-200 bg-white p-4 flex items-center gap-3 hover:border-[#8E1B3A] hover:shadow-sm transition">
-              <span className="text-2xl">{s.icon ?? "🔧"}</span>
-              <p className="text-sm font-semibold text-neutral-800">{s.name}</p>
-            </Link>
-          ))}
+          {(serviceCats ?? []).map((s) => {
+            const isImg = typeof s.icon === "string" && s.icon.startsWith("http");
+            return (
+              <Link key={s.id} href={"/categories/" + s.slug}
+                className="group rounded-2xl border border-neutral-200 bg-white p-3 flex items-center gap-3 hover:border-[#8E1B3A] hover:shadow-sm transition">
+                {isImg ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={s.icon as string} alt={s.name}
+                    className="w-11 h-11 rounded-xl object-cover flex-shrink-0" />
+                ) : (
+                  <span className="w-11 h-11 rounded-xl bg-neutral-100 flex items-center justify-center text-xl flex-shrink-0">🔧</span>
+                )}
+                <p className="text-sm font-semibold text-neutral-800 leading-tight">{s.name}</p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
