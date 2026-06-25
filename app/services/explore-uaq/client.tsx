@@ -57,7 +57,7 @@ function EnquiryModal({
     try {
       const { error } = await supabase.from("enquiries").insert({
         experience_id: experience.id,
-        experience_title: experience.title,
+        experience_title: "Explore UAQ: " + experience.title,
         name: name.trim(),
         phone: phone.trim(),
         email: email.trim() || null,
