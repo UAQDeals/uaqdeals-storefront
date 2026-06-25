@@ -28,6 +28,14 @@ const MARKETPLACE = ["automotive", "real_estate", "used_items", "fancy_numbers"]
 const DEDICATED: Record<string, string> = {
   hotel_booking: "/services/hotel-booking",
   flight_booking: "/services/flight-booking",
+  web_dev_design: "/services/tech-services",
+  mobile_app_dev: "/services/tech-services",
+  ecommerce_dev: "/services/tech-services",
+  ecommerce_management: "/services/tech-services",
+  accounting_software: "/services/tech-services",
+  custom_software: "/services/tech-services",
+  seo_content: "/services/tech-services",
+  social_media_mgmt: "/services/tech-services",
 };
 function serviceRoute(slug: string): string {
   if (MARKETPLACE.includes(slug)) return "/marketplace/" + slug;
