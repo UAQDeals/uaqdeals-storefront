@@ -14,19 +14,52 @@ export function ResetPasswordForm() {
   const [done, setDone] = useState(false);
   const [ready, setReady] = useState(false);
 
-  // Supabase puts the recovery token in the URL hash; the client picks it up
-  // and fires a PASSWORD_RECOVERY event, establishing a temporary session.
+  // Recovery links from admin generateLink arrive with a ?token_hash=...&type=recovery
+  // query param, which must be verified via verifyOtp. Older hash-fragment links
+  // fire PASSWORD_RECOVERY via onAuthStateChange. Handle both.
   useEffect(() => {
+    let cancelled = false;
+
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-        setReady(true);
+        if (!cancelled) setReady(true);
       }
     });
-    // Also check if a session already exists (link already processed)
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
-    });
-    return () => sub.subscription.unsubscribe();
+
+    async function init() {
+      // 1. Existing session?
+      const { data: sess } = await supabase.auth.getSession();
+      if (sess.session) { if (!cancelled) setReady(true); return; }
+
+      // 2. token_hash query param (admin-generated recovery link)
+      const params = new URLSearchParams(window.location.search);
+      const tokenHash = params.get("token_hash");
+      const type = params.get("type");
+      if (tokenHash && type === "recovery") {
+        const { error: vErr } = await supabase.auth.verifyOtp({
+          type: "recovery",
+          token_hash: tokenHash,
+        });
+        if (!cancelled) {
+          if (vErr) setError("This reset link is invalid or has expired. Please request a new one.");
+          else setReady(true);
+        }
+        return;
+      }
+
+      // 3. Hash-fragment style (#access_token=...) — supabase-js auto-detects on load,
+      //    onAuthStateChange will fire. Give it a moment; if nothing, show expired note.
+      setTimeout(() => {
+        if (!cancelled) {
+          supabase.auth.getSession().then(({ data }) => {
+            if (data.session) setReady(true);
+          });
+        }
+      }, 1500);
+    }
+
+    init();
+    return () => { cancelled = true; sub.subscription.unsubscribe(); };
   }, [supabase]);
 
   async function handleUpdate() {
