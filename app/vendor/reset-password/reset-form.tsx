@@ -52,7 +52,7 @@ export function ResetPasswordForm() {
     return (
       <div className="rounded-lg bg-green-50 px-4 py-4 text-sm text-green-800">
         <p className="font-semibold">Password updated</p>
-        <p className="mt-1 text-green-700">Redirecting you to sign in\u2026</p>
+        <p className="mt-1 text-green-700">Redirecting you to sign in…</p>
       </div>
     );
   }
@@ -60,8 +60,8 @@ export function ResetPasswordForm() {
   if (!ready) {
     return (
       <div className="space-y-3 text-center">
-        <p className="text-sm text-neutral-600">Verifying your reset link\u2026</p>
-        <p className="text-xs text-neutral-400">If this doesn\u2019t load, the link may have expired. Request a new one from the sign-in page.</p>
+        <p className="text-sm text-neutral-600">Verifying your reset link…</p>
+        <p className="text-xs text-neutral-400">If this doesn't load, the link may have expired. Request a new one from the sign-in page.</p>
         <a href="/vendor/login" className="inline-block text-xs font-semibold text-[#8E1B3A] underline">Back to sign in</a>
       </div>
     );
@@ -79,7 +79,7 @@ export function ResetPasswordForm() {
         <input className={inputCls} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleUpdate()} placeholder="Re-enter password" />
       </div>
       <button onClick={handleUpdate} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
-        {submitting ? "Updating\u2026" : "Update Password"}
+        {submitting ? "Updating…" : "Update Password"}
       </button>
     </div>
   );

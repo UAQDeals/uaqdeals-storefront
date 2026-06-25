@@ -116,12 +116,12 @@ export function VendorLoginForm() {
               <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleReset()} placeholder="you@business.com" />
             </div>
             <button onClick={handleReset} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
-              {submitting ? "Sending\u2026" : "Send Reset Link"}
+              {submitting ? "Sending…" : "Send Reset Link"}
             </button>
           </>
         )}
         <button type="button" onClick={() => { setResetMode(false); setError(null); setResetSent(false); }} className="w-full text-center text-xs font-semibold text-neutral-500 hover:text-[#8E1B3A]">
-          \u2190 Back to sign in
+          ← Back to sign in
         </button>
       </div>
     );
@@ -176,7 +176,7 @@ export function VendorLoginForm() {
       </div>
 
       <button onClick={handleLogin} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
-        {submitting ? "Signing in\u2026" : "Sign In"}
+        {submitting ? "Signing in…" : "Sign In"}
       </button>
       <p className="text-center text-xs text-neutral-500">
         New vendor? <a href="/vendor/signup" className="font-semibold text-[#8E1B3A] underline">Apply here</a>
