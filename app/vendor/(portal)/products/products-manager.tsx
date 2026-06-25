@@ -4,10 +4,175 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ChevronRight, Check, Search as SearchIcon, X } from "lucide-react";
 
 type Product = Record<string, any>;
-type Category = { id: string; name: string; is_approved: boolean | null };
+type Category = { id: string; name: string; is_approved: boolean | null; parent_id: string | null };
+
+
+// ── noon-style cascading category picker ─────────────────────────
+function buildPath(cats: Category[], leafId: string | null): Category[] {
+  if (!leafId) return [];
+  const byId = new Map(cats.map((c) => [c.id, c]));
+  const path: Category[] = [];
+  let cur = byId.get(leafId);
+  while (cur) {
+    path.unshift(cur);
+    cur = cur.parent_id ? byId.get(cur.parent_id) : undefined;
+  }
+  return path;
+}
+
+function CategoryPicker({
+  categories,
+  value,
+  onChange,
+  highlightId,
+}: {
+  categories: Category[];
+  value: string | null;
+  onChange: (id: string | null) => void;
+  highlightId?: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const [drillParent, setDrillParent] = useState<string | null>(null); // current level's parent
+  const [query, setQuery] = useState("");
+
+  const childrenOf = (pid: string | null) =>
+    categories.filter((c) => (c.parent_id ?? null) === pid).sort((a, b) => a.name.localeCompare(b.name));
+
+  const isLeaf = (id: string) => !categories.some((c) => c.parent_id === id);
+
+  const selectedPath = buildPath(categories, value);
+  const selectedLabel = selectedPath.length ? selectedPath.map((c) => c.name).join(" › ") : "Select a category";
+
+  // Search across all leaf categories
+  const searchResults = query.trim()
+    ? categories
+        .filter((c) => isLeaf(c.id) && c.name.toLowerCase().includes(query.trim().toLowerCase()))
+        .slice(0, 30)
+    : [];
+
+  const currentLevel = childrenOf(drillParent);
+  const drillPath = buildPath(categories, drillParent);
+
+  function pick(cat: Category) {
+    if (isLeaf(cat.id)) {
+      onChange(cat.id);
+      setOpen(false);
+      setQuery("");
+      setDrillParent(null);
+    } else {
+      setDrillParent(cat.id);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => { setOpen(true); setDrillParent(null); setQuery(""); }}
+        className="flex w-full items-center justify-between rounded-lg border border-neutral-300 px-3 py-2.5 text-left text-sm outline-none focus:border-[#8E1B3A]"
+      >
+        <span className={selectedPath.length ? "text-neutral-900" : "text-neutral-400"}>{selectedLabel}</span>
+        <ChevronRight className="h-4 w-4 text-neutral-400" />
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" onClick={() => setOpen(false)}>
+          <div className="absolute inset-0 bg-black/40" />
+          <div
+            className="relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
+              <p className="text-sm font-bold text-neutral-900">Select Category</p>
+              <button onClick={() => setOpen(false)} className="rounded-lg p-1 hover:bg-neutral-100">
+                <X className="h-4 w-4 text-neutral-500" />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="border-b border-neutral-100 p-3">
+              <div className="relative">
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search all categories..."
+                  className="w-full rounded-lg border border-neutral-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#8E1B3A]"
+                />
+              </div>
+            </div>
+
+            {/* Breadcrumb (drill mode) */}
+            {!query && drillPath.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1 border-b border-neutral-50 px-4 py-2 text-xs text-neutral-500">
+                <button onClick={() => setDrillParent(null)} className="font-semibold text-[#8E1B3A]">All</button>
+                {drillPath.map((c, i) => (
+                  <span key={c.id} className="flex items-center gap-1">
+                    <ChevronRight className="h-3 w-3" />
+                    {i === drillPath.length - 1
+                      ? <span className="font-semibold text-neutral-800">{c.name}</span>
+                      : <button onClick={() => setDrillParent(c.id)} className="hover:text-[#8E1B3A]">{c.name}</button>}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* List */}
+            <div className="flex-1 overflow-y-auto">
+              {query ? (
+                searchResults.length === 0 ? (
+                  <p className="px-4 py-6 text-center text-sm text-neutral-400">No matching categories</p>
+                ) : (
+                  searchResults.map((c) => {
+                    const path = buildPath(categories, c.id);
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => pick(c)}
+                        className="flex w-full items-center justify-between border-b border-neutral-50 px-4 py-3 text-left hover:bg-neutral-50"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-neutral-900">{c.name}</p>
+                          <p className="text-[11px] text-neutral-400">{path.slice(0, -1).map((x) => x.name).join(" › ")}</p>
+                        </div>
+                        {value === c.id && <Check className="h-4 w-4 text-[#8E1B3A]" />}
+                      </button>
+                    );
+                  })
+                )
+              ) : (
+                currentLevel.map((c) => {
+                  const leaf = isLeaf(c.id);
+                  const isHighlight = highlightId === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => pick(c)}
+                      className={"flex w-full items-center justify-between border-b border-neutral-50 px-4 py-3 text-left hover:bg-neutral-50 " + (isHighlight ? "bg-amber-50" : "")}
+                    >
+                      <span className="text-sm font-medium text-neutral-900">
+                        {c.name}
+                        {isHighlight && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">AI suggested</span>}
+                      </span>
+                      {leaf
+                        ? (value === c.id ? <Check className="h-4 w-4 text-[#8E1B3A]" /> : null)
+                        : <ChevronRight className="h-4 w-4 text-neutral-300" />}
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function VendorProductsManager({
   vendorId,
@@ -38,6 +203,7 @@ export function VendorProductsManager({
   const [selCatId, setSelCatId] = useState<string | null>(null);
   const [addingCat, setAddingCat] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
+  const [aiSuggestedCatId, setAiSuggestedCatId] = useState<string | null>(null);
   const [newCatName, setNewCatName] = useState("");
 
   const filtered = products.filter((p) =>
@@ -198,7 +364,24 @@ export function VendorProductsManager({
         name: (prev.name && prev.name.trim()) ? prev.name : title,
         description: desc ? (tags ? desc + "\n\nTags: " + tags : desc) : prev.description,
       }));
-      toast.success("Description generated! Review and edit before saving.");
+
+      // Try to match AI's suggested_category to a real leaf category
+      const suggested = (data.suggested_category ?? "").toString().trim().toLowerCase();
+      if (suggested) {
+        const isLeaf = (id: string) => !categories.some((c) => c.parent_id === id);
+        // exact leaf name match first, then contains
+        let match = categories.find((c) => isLeaf(c.id) && c.name.toLowerCase() === suggested);
+        if (!match) match = categories.find((c) => isLeaf(c.id) && (c.name.toLowerCase().includes(suggested) || suggested.includes(c.name.toLowerCase())));
+        if (match) {
+          setAiSuggestedCatId(match.id);
+          if (!selCatId) setSelCatId(match.id);
+          toast.success("Description generated! AI suggested a category — review and edit before saving.");
+        } else {
+          toast.success("Description generated! Review and edit before saving.");
+        }
+      } else {
+        toast.success("Description generated! Review and edit before saving.");
+      }
     } catch (e: any) {
       toast.error("AI error: " + (e.message ?? "Could not generate"));
     } finally {
@@ -405,13 +588,21 @@ export function VendorProductsManager({
               <div>
                 <label className="mb-1 block text-xs font-semibold text-neutral-600">Category</label>
                 {!addingCat ? (
-                  <select className={inputCls} value={selCatId ?? ""} onChange={(e) => { if (e.target.value === "__add__") { setAddingCat(true); } else setSelCatId(e.target.value || null); }}>
-                    <option value="">No category</option>
-                    <option value="__add__">+ Add new category</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}{c.is_approved === false ? " (pending)" : ""}</option>
-                    ))}
-                  </select>
+                  <div className="space-y-2">
+                    <CategoryPicker
+                      categories={categories}
+                      value={selCatId}
+                      onChange={(id) => { setSelCatId(id); setAiSuggestedCatId(null); }}
+                      highlightId={aiSuggestedCatId}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAddingCat(true)}
+                      className="text-[11px] font-semibold text-[#8E1B3A] hover:underline"
+                    >
+                      + Add a new category instead
+                    </button>
+                  </div>
                 ) : (
                   <div className="flex gap-2">
                     <input className={inputCls} autoFocus value={newCatName} onChange={(e) => setNewCatName(e.target.value)} placeholder="New category name" />

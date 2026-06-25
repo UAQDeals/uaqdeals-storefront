@@ -25,7 +25,7 @@ export default async function VendorProductsPage() {
   // Vendor is linked via vendor_type_id -> vendor_types.name, which maps by
   // name to an L1 row in `categories`. We then fetch that L1's full descendant
   // subtree so the vendor can pick any leaf category.
-  let categories: { id: string; name: string; is_approved: boolean | null }[] = [];
+  let categories: { id: string; name: string; is_approved: boolean | null; parent_id: string | null }[] = [];
 
   if (vendor?.vendor_type_id) {
     // 1. Get the vendor_type name
@@ -45,8 +45,11 @@ export default async function VendorProductsPage() {
         .maybeSingle();
 
       if (l1?.id) {
-        // 3. Walk the subtree breadth-first to collect all descendant ids
-        const allCats: { id: string; name: string; is_approved: boolean | null; parent_id: string }[] = [];
+        // 3. Walk the subtree breadth-first; collect EVERY node (with parent_id)
+        //    so the client can render a cascading drill-down picker.
+        const allCats: { id: string; name: string; is_approved: boolean | null; parent_id: string | null }[] = [
+          { id: l1.id, name: vt.name, is_approved: true, parent_id: null },
+        ];
         let frontier = [l1.id];
         for (let depth = 0; depth < 6 && frontier.length > 0; depth++) {
           const { data: children } = await supabase
@@ -60,11 +63,7 @@ export default async function VendorProductsPage() {
           allCats.push(...(children as typeof allCats));
           frontier = children.map((c) => c.id as string);
         }
-
-        // Only leaf categories (no further children) are selectable for products
-        const parentIds = new Set(allCats.map((c) => c.parent_id));
-        const leaves = allCats.filter((c) => !parentIds.has(c.id));
-        categories = leaves.map((c) => ({ id: c.id, name: c.name, is_approved: c.is_approved }));
+        categories = allCats.map((c) => ({ id: c.id, name: c.name, is_approved: c.is_approved, parent_id: c.parent_id }));
       }
     }
 
@@ -78,7 +77,7 @@ export default async function VendorProductsPage() {
       const existing = new Set(categories.map((c) => c.id));
       for (const c of customCats) {
         if (!existing.has(c.id as string)) {
-          categories.push({ id: c.id as string, name: c.name as string, is_approved: c.is_approved as boolean | null });
+          categories.push({ id: c.id as string, name: c.name as string, is_approved: c.is_approved as boolean | null, parent_id: null });
         }
       }
     }
