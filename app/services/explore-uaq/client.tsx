@@ -78,7 +78,7 @@ function EnquiryModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 space-y-4 max-h-[92dvh] overflow-y-auto">
+      <div className="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl p-5 space-y-4 max-h-[92dvh] overflow-y-auto">
         {/* Handle */}
         <div className="flex justify-center sm:hidden">
           <div className="w-10 h-1 bg-neutral-300 rounded-full" />
@@ -175,7 +175,7 @@ function ExperienceDetail({
   return (
     <div className="min-h-screen bg-neutral-50 pb-28">
       {/* Hero image */}
-      <div className="relative h-64 w-full bg-neutral-200">
+      <div className="relative h-64 md:h-96 w-full bg-neutral-200">
         {exp.image_url ? (
           <img src={exp.image_url} alt={exp.title} className="w-full h-full object-cover" />
         ) : (
@@ -191,7 +191,7 @@ function ExperienceDetail({
         </button>
       </div>
 
-      <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
+      <div className="mx-auto max-w-4xl px-4 py-6 space-y-5">
         {/* Category + duration */}
         <div className="flex flex-wrap gap-2 items-center">
           {exp.category && (
@@ -241,7 +241,7 @@ function ExperienceDetail({
       {/* Sticky bottom bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-100 px-4 py-3 z-10"
         style={{ boxShadow: "0 -4px 12px rgba(0,0,0,0.06)" }}>
-        <div className="mx-auto max-w-2xl flex items-center gap-4">
+        <div className="mx-auto max-w-4xl flex items-center gap-4">
           {price && (
             <div className="shrink-0">
               <p className="text-[11px] text-neutral-400">From</p>
@@ -334,9 +334,9 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* App bar */}
-      <div className="sticky top-0 z-10 overflow-hidden">
-        <div className="px-4 h-14 flex items-center gap-3"
-          style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)" }}>
+      <div className="sticky top-0 z-10 overflow-hidden"
+        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)" }}>
+        <div className="mx-auto max-w-7xl px-4 h-14 flex items-center gap-3">
           <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10">
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
@@ -346,7 +346,7 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
 
       <div className="py-4 space-y-4">
         {/* Category pills */}
-        <div className="px-4">
+        <div className="mx-auto max-w-7xl px-4">
           <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             {CATEGORIES.map(cat => {
               const active = cat === activeCategory;
@@ -370,7 +370,7 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
             <p className="text-[15px] text-neutral-500">No experiences found</p>
           </div>
         ) : (
-          <div className="px-4 grid grid-cols-2 gap-3">
+          <div className="mx-auto max-w-7xl px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
             {filtered.map(exp => (
               <ExperienceCard key={exp.id} exp={exp} onClick={() => setSelectedExp(exp)} />
             ))}
