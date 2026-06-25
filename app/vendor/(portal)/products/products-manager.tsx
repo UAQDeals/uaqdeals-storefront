@@ -82,7 +82,7 @@ function CategoryPicker({
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" onClick={() => setOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
           <div
-            className="relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl"
+            className="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl" style={{ maxHeight: "90dvh", height: "auto" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -98,7 +98,6 @@ function CategoryPicker({
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <input
-                  autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search all categories..."
@@ -123,7 +122,7 @@ function CategoryPicker({
             )}
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overscroll-contain" style={{ minHeight: "200px" }}>
               {query ? (
                 searchResults.length === 0 ? (
                   <p className="px-4 py-6 text-center text-sm text-neutral-400">No matching categories</p>
