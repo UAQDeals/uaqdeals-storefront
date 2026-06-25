@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
 
 type Product = Record<string, any>;
 type Category = { id: string; name: string; is_approved: boolean | null };
@@ -36,6 +37,7 @@ export function VendorProductsManager({
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [selCatId, setSelCatId] = useState<string | null>(null);
   const [addingCat, setAddingCat] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
   const [newCatName, setNewCatName] = useState("");
 
   const filtered = products.filter((p) =>
@@ -156,6 +158,54 @@ export function VendorProductsManager({
   }
 
   // ---- Bulk CSV ----
+  async function generateDescription() {
+    const hasNew = !!thumbFile;
+    const hasExisting = !!form.thumbnail_url;
+    if (!hasNew && !hasExisting) {
+      toast.error("Please add a product photo first");
+      return;
+    }
+    setAiBusy(true);
+    try {
+      const payload: Record<string, any> = {};
+      if (hasNew) {
+        const b64: string = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve((reader.result as string).split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(thumbFile as File);
+        });
+        payload.imageBase64 = b64;
+        payload.mediaType = (thumbFile as File).type || "image/jpeg";
+      } else {
+        payload.imageUrl = form.thumbnail_url;
+      }
+      const catName = categories.find((c) => c.id === selCatId)?.name;
+      if (catName) payload.categoryHint = catName;
+
+      const { data, error } = await supabase.functions.invoke("generate-product-description", { body: payload });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Generation failed");
+
+      const title = (data.title ?? "").toString();
+      const longDesc = (data.long_description ?? "").toString();
+      const shortDesc = (data.short_description ?? "").toString();
+      const tags = Array.isArray(data.tags) ? data.tags.join(", ") : "";
+      const desc = longDesc || shortDesc;
+
+      setForm((prev) => ({
+        ...prev,
+        name: (prev.name && prev.name.trim()) ? prev.name : title,
+        description: desc ? (tags ? desc + "\n\nTags: " + tags : desc) : prev.description,
+      }));
+      toast.success("Description generated! Review and edit before saving.");
+    } catch (e: any) {
+      toast.error("AI error: " + (e.message ?? "Could not generate"));
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
   const CSV_COLS = ["name","description","price","sale_price","cost_price","sku","barcode","stock_quantity","unit","brand","tags","image_urls","status"];
 
   function downloadCsv(filename: string, rows: string[][]) {
@@ -335,8 +385,20 @@ export function VendorProductsManager({
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Description</label>
-                <textarea className={inputCls} rows={2} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                <div className="mb-1 flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-neutral-600">Description</label>
+                  <button
+                    type="button"
+                    onClick={generateDescription}
+                    disabled={aiBusy}
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold text-white disabled:opacity-60"
+                    style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    {aiBusy ? "Generating..." : "Generate with AI"}
+                  </button>
+                </div>
+                <textarea className={inputCls} rows={5} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder='Describe your product, or upload a photo and tap "Generate with AI"' />
               </div>
 
               {/* Category */}
