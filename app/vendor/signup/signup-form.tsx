@@ -85,6 +85,15 @@ export function VendorSignupForm() {
       });
       if (insErr) throw insErr;
 
+      // Fire-and-forget welcome email (never block signup on email failure)
+      try {
+        await supabase.functions.invoke("vendor-emails", {
+          body: { type: "welcome", email: email.trim(), name: businessName.trim() },
+        });
+      } catch (mailErr) {
+        console.error("welcome email failed:", mailErr);
+      }
+
       router.push("/vendor/pending");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Something went wrong";
