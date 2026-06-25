@@ -55,3 +55,47 @@ export function VendorPortalNav({ vendorName }: { vendorName: string }) {
     </aside>
   );
 }
+
+
+// Horizontal pill nav — visible on mobile (sidebar is hidden there)
+export function VendorPillNav() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    router.push("/vendor/login");
+  }
+
+  return (
+    <div className="sm:hidden mb-5 -mx-4 px-4">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+        {NAV.map((item) => {
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={
+                "whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-bold transition-all " +
+                (active
+                  ? "text-white shadow-sm"
+                  : "bg-neutral-100 text-neutral-600")
+              }
+              style={active ? { background: "linear-gradient(135deg, #8E1B3A, #C72931)" } : undefined}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+        <button
+          onClick={signOut}
+          className="whitespace-nowrap rounded-full border border-neutral-200 px-4 py-2 text-[13px] font-bold text-neutral-500"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+}

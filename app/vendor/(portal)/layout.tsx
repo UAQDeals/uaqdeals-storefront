@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { VendorPortalNav } from "./portal-nav";
+import { VendorPortalNav, VendorPillNav } from "./portal-nav";
 
 export default async function VendorPortalLayout({
   children,
@@ -25,7 +25,10 @@ export default async function VendorPortalLayout({
   return (
     <div className="mx-auto flex max-w-7xl gap-6 px-4 pt-20 pb-40">
       <VendorPortalNav vendorName={vendor.name} />
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="min-w-0 flex-1">
+        <VendorPillNav />
+        {children}
+      </main>
     </div>
   );
 }
