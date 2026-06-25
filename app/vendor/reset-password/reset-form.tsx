@@ -27,6 +27,15 @@ export function ResetPasswordForm() {
     });
 
     async function init() {
+      // 0. Check the URL hash for an error (expired/invalid link)
+      const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+      const hashParams = new URLSearchParams(hash);
+      if (hashParams.get("error")) {
+        const desc = hashParams.get("error_description") || "This reset link is invalid or has expired.";
+        if (!cancelled) setError(decodeURIComponent(desc.replace(/\+/g, " ")));
+        return;
+      }
+
       // 1. Existing session?
       const { data: sess } = await supabase.auth.getSession();
       if (sess.session) { if (!cancelled) setReady(true); return; }
