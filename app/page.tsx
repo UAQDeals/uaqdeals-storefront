@@ -1,12 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
-import { showProducts as emirateShowProducts } from "@/lib/emirate";
+import { getEmirate, showProducts as emirateShowProducts } from "@/lib/emirate";
 import { getTranslations, getLocale } from "next-intl/server";
-import { HomeBanners, type BannerCard } from "@/components/home-banners";
+import { type BannerCard } from "@/components/home-banners";
+import { HomeHero } from "@/components/home-hero";
+import { CategoryExplorer } from "@/components/category-explorer";
 import { QuickAccessStrip } from "@/components/quick-access-strip";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
 import { EditorialBand } from "@/components/editorial-band";
 import { FeaturedProducts, type ProductCard } from "@/components/featured-products";
+import { CoinbackSpotlight } from "@/components/coinback-spotlight";
 import { StoriesGrid } from "@/components/stories-grid";
+import { VendorCta } from "@/components/vendor-cta";
 import { AppDownloadCta } from "@/components/app-download-cta";
 import { TrustBand } from "@/components/trust-band";
 import { ServiceHero } from "@/components/service-hero";
@@ -66,6 +70,7 @@ export default async function HomePage() {
   const supabase = await createClient();
   const t = await getTranslations();
   const locale = await getLocale();
+  const emirate = await getEmirate();
   const nowIso = new Date().toISOString();
 
   const [
@@ -138,23 +143,30 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 3. Banner carousel (kept for admin-managed promos) */}
-      <HomeBanners banners={banners} />
+      {/* 1. Hero — gradient, search, chips, banner carousel */}
+      <HomeHero banners={banners} emirate={emirate} />
 
-      {/* 4. Quick access: Fish · Pharmacy · Food */}
+      {/* 2. Category explorer */}
+      <CategoryExplorer />
+
+      {/* 3. Quick access: Fish · Pharmacy · Food */}
       <QuickAccessStrip />
 
-      {/* 5. Flash deals horizontal scroll — products only */}
-      {showProducts && (
-        <DealsStrip
-          deals={deals}
-          title={t("dealsStrip.title")}
-          subtitle={t("dealsStrip.subtitle")}
-          seeAll={t("common.seeAll")}
-        />
-      )}
+      {/* 4. Flash deals */}
+      <DealsStrip
+        deals={deals}
+        title={t("dealsStrip.title")}
+        subtitle={t("dealsStrip.subtitle")}
+        seeAll={t("common.seeAll")}
+      />
 
-      {/* 6. Editorial band — Listings dark */}
+      {/* 5. Featured products */}
+      <FeaturedProducts products={products} />
+
+      {/* 6. Coinback loyalty spotlight */}
+      <CoinbackSpotlight />
+
+      {/* 7. Editorial band — Listings dark */}
       <EditorialBand
         eyebrow="Featured listings"
         title={"Real estate, cars & more —\nall in UAQ."}
@@ -165,9 +177,6 @@ export default async function HomePage() {
         dark={true}
         flip={false}
       />
-
-      {/* 7. Featured products horizontal scroll — products only */}
-      {showProducts && <FeaturedProducts products={products} />}
 
       {/* 8. Editorial band — Services light */}
       <EditorialBand
@@ -184,9 +193,13 @@ export default async function HomePage() {
       {/* 9. Stories / Explore UAQ grid */}
       <StoriesGrid />
 
+      {/* 10. Vendor CTA */}
+      <VendorCta />
+
+      {/* 11. Trust band */}
       <TrustBand />
 
-      {/* 10. App download CTA */}
+      {/* 12. App download CTA */}
       <AppDownloadCta />
     </>
   );
