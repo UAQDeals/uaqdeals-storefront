@@ -283,6 +283,16 @@ export function AccountView({
         )}
       </section>
 
+      {/* ── My Tickets quick link ──────────────────────────────────────────── */}
+      <Link href="/tickets" className="section-tickets-link flex items-center gap-3 border border-neutral-200 bg-white p-5 hover:border-[color:var(--brand-maroon)] transition-colors">
+        <span className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ background: "#FDE8EC" }}>🎟️</span>
+        <div className="flex-1">
+          <p className="text-[14px] font-bold text-neutral-900">My Tickets</p>
+          <p className="text-[12px] text-neutral-500">View your zoo & event bookings and QR codes</p>
+        </div>
+        <span className="text-neutral-400 text-lg">›</span>
+      </Link>
+
       {/* ── Recent orders ──────────────────────────────────────────────────── */}
       <section className="border border-neutral-200 bg-white p-5">
         <div className="flex items-center justify-between mb-3">
