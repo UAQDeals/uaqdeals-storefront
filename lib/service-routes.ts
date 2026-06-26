@@ -1,6 +1,8 @@
 // Single source of truth: vendor-type slugs that have a dedicated /services/ page.
 // Any slug here should route to /services/... NOT /categories/...
 export const DEDICATED: Record<string, string> = {
+  business_setup:       "/services/cart/business_setup",
+  typing_center:        "/services/cart/typing_center",
   hotel_booking:        "/services/hotel-booking",
   flight_booking:       "/services/flight-booking",
   explore_uaq:          "/services/explore-uaq",
