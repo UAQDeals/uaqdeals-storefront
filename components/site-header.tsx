@@ -19,7 +19,7 @@ function EmirateChip() {
   if (!emirate) return null;
   return (
     <Link href="/select-emirate"
-      className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-white hover:bg-white/10 transition-colors max-w-[180px]"
+      className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-neutral-700 hover:bg-neutral-100 transition-colors max-w-[180px]"
       title="Change location">
       <MapPin className="w-4 h-4 shrink-0" />
       <span className="truncate">{emirate}</span>
@@ -294,15 +294,15 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
           animation-play-state: paused;
         }
       `}</style>
-      <header className="sticky top-0 z-30"
-        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)", boxShadow: "0 4px 24px rgba(0,0,0,0.25)" }}>
+      <header className="sticky top-0 z-30 bg-white border-b border-neutral-200"
+        style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
         <div className="mx-auto flex h-[112px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors shrink-0 order-first"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0 order-first"
             onClick={() => { setMobileOpen(true); setMobileGroup(null); }}
             aria-label="Open menu"
           >
@@ -324,11 +324,11 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Search products, deals, services…"
-                className="flex-1 h-11 bg-white/10 border border-white/50 border-r-0 rounded-l-full px-5 text-[14px] font-semibold text-white placeholder:text-white/70 focus:outline-none focus:bg-white/20"
+                className="flex-1 h-11 bg-neutral-100 border border-neutral-200 border-r-0 rounded-l-full px-5 text-[14px] font-semibold text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-neutral-50"
               />
               <button
                 type="submit"
-                className="h-11 px-5 bg-white/20 border border-white/50 border-l-0 rounded-r-full text-white hover:bg-white/30 transition-colors shrink-0 flex items-center justify-center"
+                className="h-11 px-5 bg-[color:var(--brand-maroon)] border border-[color:var(--brand-maroon)] border-l-0 rounded-r-full text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -389,25 +389,25 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
           {/* Actions */}
           <div className="flex items-center gap-1 shrink-0">
             {/* Mobile search icon */}
-            <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
+            <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors">
               <Search className="w-5 h-5" />
             </Link>
             <EmirateChip />
-            <div className="text-white [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/10"><LanguageSwitcher /></div>
+            <div className="text-neutral-700 [&_button]:text-neutral-700 [&_button]:border-neutral-300 [&_button:hover]:bg-neutral-100"><LanguageSwitcher /></div>
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
-            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-white hover:bg-white/10 transition-colors">
+            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-neutral-700 hover:bg-neutral-100 transition-colors">
               <User className="w-4 h-4" />
               {t("account")}
             </Link>
-            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
+            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors">
               <User className="w-5 h-5" />
             </Link>
-            <div className="text-white [&_svg]:text-white [&_*]:text-white"><CartIcon /></div>
+            <div className="text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
           </div>
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
-        <div className="hidden md:block bg-white shadow-md">
+        <div className="hidden md:block bg-white border-t border-neutral-100">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <nav className="flex items-center gap-0.5 w-full">
 
