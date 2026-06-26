@@ -83,8 +83,15 @@ function TicketModal({
 }) {
   const supabase = createClient();
   const sorted = [...(ticketOptions ?? [])].sort((a, b) => a.display_order - b.display_order);
-  const [selectedTicket, setSelectedTicket] = useState<TicketOption | null>(sorted[0] ?? null);
-  const [quantity, setQuantity] = useState(1);
+  // Per-ticket-type counts, keyed by option id. All start at 0 (Airbnb style).
+  const [typeCounts, setTypeCounts] = useState<Record<string, number>>(
+    () => Object.fromEntries(sorted.map((t) => [t.id, 0]))
+  );
+  const [quantity, setQuantity] = useState(1); // events (flat price)
+
+  function setCount(id: string, next: number) {
+    setTypeCounts((prev) => ({ ...prev, [id]: Math.max(0, next) }));
+  }
   const [visitDate, setVisitDate] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -100,10 +107,23 @@ function TicketModal({
   }
 
   const today = new Date().toISOString().split("T")[0];
-  const unitPrice = type === "attraction" ? (selectedTicket?.price ?? 0) : (eventPrice ?? 0);
-  const totalPrice = unitPrice * quantity;
+
+  const totalQty = type === "attraction"
+    ? Object.values(typeCounts).reduce((a, b) => a + b, 0)
+    : quantity;
+
+  const totalPrice = type === "attraction"
+    ? sorted.reduce((sum, t) => sum + (typeCounts[t.id] ?? 0) * t.price, 0)
+    : (eventPrice ?? 0) * quantity;
+
+  const unitPrice = totalQty > 0 ? totalPrice / totalQty : 0;
+
+  const ticketSummary = type === "attraction"
+    ? sorted.filter(t => (typeCounts[t.id] ?? 0) > 0).map(t => `${typeCounts[t.id]}x ${t.ticket_type}`).join(", ")
+    : (eventPriceLabel ?? "Standard");
 
   async function submit() {
+    if (type === "attraction" && totalQty === 0) { toast.error("Please add at least one ticket"); return; }
     if (type === "attraction" && !visitDate) { toast.error("Please select a visit date"); return; }
     if (!name.trim() || !phone.trim()) { toast.error("Please enter your name and phone"); return; }
 
@@ -118,8 +138,8 @@ function TicketModal({
         booking_type: type,
         attraction_id: attractionId ?? null,
         event_id: eventId ?? null,
-        ticket_type: selectedTicket?.ticket_type ?? null,
-        quantity,
+        ticket_type: ticketSummary || null,
+        quantity: totalQty,
         unit_price: unitPrice,
         total_price: totalPrice,
         visit_date: visitDate || null,
@@ -197,53 +217,64 @@ function TicketModal({
             </button>
           </div>
 
-          {/* Ticket type selector (attractions) */}
-          {type === "attraction" && sorted.length > 0 && (
+          {/* Per-type counters (attractions) */}
+          {type === "attraction" && sorted.length > 0 ? (
             <div className="space-y-2">
-              <p className="text-[13px] font-bold text-neutral-800">Ticket Type</p>
+              <div className="flex items-center justify-between">
+                <p className="text-[13px] font-bold text-neutral-800">Tickets</p>
+                {totalQty > 0 && (
+                  <span className="text-[12px] font-bold" style={{ color: "#8E1B3A" }}>{totalQty} selected</span>
+                )}
+              </div>
               {sorted.map(t => {
-                const active = selectedTicket?.id === t.id;
+                const count = typeCounts[t.id] ?? 0;
+                const active = count > 0;
                 return (
-                  <button key={t.id} onClick={() => setSelectedTicket(t)}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-colors"
+                  <div key={t.id}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl border transition-colors"
                     style={active ? { borderColor: "#8E1B3A", borderWidth: 1.5, background: "#FDF2F4" } : { borderColor: "#E5E7EB" }}>
-                    <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                      style={{ borderColor: active ? "#8E1B3A" : "#D1D5DB" }}>
-                      {active && <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#8E1B3A" }} />}
-                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-bold text-neutral-900">{t.ticket_type}</p>
-                      {(t.description || t.max_persons) && (
-                        <p className="text-[11px] text-neutral-500">
-                          {t.description}{t.max_persons ? ` (up to ${t.max_persons} persons)` : ""}
-                        </p>
-                      )}
+                      <p className="text-[11px] text-neutral-500">
+                        AED {t.price}
+                        {t.max_persons ? ` · up to ${t.max_persons} persons` : ""}
+                        {t.description ? ` · ${t.description}` : ""}
+                      </p>
                     </div>
-                    <p className="text-[14px] font-extrabold shrink-0" style={{ color: "#8E1B3A" }}>
-                      AED {t.price}
-                    </p>
-                  </button>
+                    <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden shrink-0">
+                      <button onClick={() => setCount(t.id, count - 1)}
+                        className="w-8 h-8 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
+                        disabled={count <= 0}>
+                        <Minus className="w-3.5 h-3.5" style={{ color: "#8E1B3A" }} />
+                      </button>
+                      <span className="w-8 text-center text-[15px] font-extrabold">{count}</span>
+                      <button onClick={() => setCount(t.id, count + 1)}
+                        className="w-8 h-8 flex items-center justify-center bg-neutral-50">
+                        <Plus className="w-3.5 h-3.5" style={{ color: "#8E1B3A" }} />
+                      </button>
+                    </div>
+                  </div>
                 );
               })}
             </div>
-          )}
-
-          {/* Quantity */}
-          <div className="flex items-center justify-between">
-            <p className="text-[13px] font-bold text-neutral-800">Quantity</p>
-            <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden">
-              <button onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                className="w-9 h-9 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
-                disabled={quantity <= 1}>
-                <Minus className="w-3.5 h-3.5 text-neutral-600" />
-              </button>
-              <span className="w-9 text-center text-[15px] font-extrabold">{quantity}</span>
-              <button onClick={() => setQuantity(q => q + 1)}
-                className="w-9 h-9 flex items-center justify-center bg-neutral-50">
-                <Plus className="w-3.5 h-3.5 text-neutral-600" />
-              </button>
+          ) : (
+            /* Events — single guest counter */
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-bold text-neutral-800">Guests</p>
+              <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden">
+                <button onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="w-9 h-9 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
+                  disabled={quantity <= 1}>
+                  <Minus className="w-3.5 h-3.5 text-neutral-600" />
+                </button>
+                <span className="w-9 text-center text-[15px] font-extrabold">{quantity}</span>
+                <button onClick={() => setQuantity(q => q + 1)}
+                  className="w-9 h-9 flex items-center justify-center bg-neutral-50">
+                  <Plus className="w-3.5 h-3.5 text-neutral-600" />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Visit date (attractions only) */}
           {type === "attraction" && (
@@ -273,10 +304,10 @@ function TicketModal({
           </div>
 
           {/* Total */}
-          {unitPrice > 0 && (
+          {totalPrice > 0 && (
             <div className="flex items-center justify-between rounded-xl px-4 py-3"
               style={{ background: "#FDE8EC" }}>
-              <p className="text-[13px] text-neutral-600">Total ({quantity}×)</p>
+              <p className="text-[13px] text-neutral-600">Total ({totalQty}×)</p>
               <p className="text-[16px] font-extrabold" style={{ color: "#8E1B3A" }}>
                 AED {totalPrice.toFixed(2)}
               </p>
