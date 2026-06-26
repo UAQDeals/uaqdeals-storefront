@@ -314,6 +314,9 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
             <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[100px] w-[100px] rounded-2xl object-cover uaq-logo-anim" /></div>
           </Link>
 
+          {/* Mobile spacer — pushes language + profile to the far right */}
+          <div className="flex-1 md:hidden" />
+
           {/* Search bar — always visible on desktop, hidden on mobile */}
           <div ref={searchRef} className="hidden md:flex w-[480px] relative ms-auto">
             <form onSubmit={handleSearchSubmit} className="flex w-full">
@@ -388,10 +391,6 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
 
           {/* Actions */}
           <div className="flex items-center gap-1 shrink-0">
-            {/* Mobile search icon */}
-            <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors">
-              <Search className="w-5 h-5" />
-            </Link>
             <EmirateChip />
             <div className="text-neutral-700 [&_button]:text-neutral-700 [&_button]:border-neutral-300 [&_button:hover]:bg-neutral-100"><LanguageSwitcher /></div>
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
@@ -402,7 +401,7 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
             <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors">
               <User className="w-5 h-5" />
             </Link>
-            <div className="text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
+            <div className="hidden md:block text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
           </div>
         </div>
 
