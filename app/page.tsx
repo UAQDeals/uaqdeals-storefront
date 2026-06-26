@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { showProducts as emirateShowProducts } from "@/lib/emirate";
 import { getTranslations, getLocale } from "next-intl/server";
 import { HomeBanners, type BannerCard } from "@/components/home-banners";
 import { QuickAccessStrip } from "@/components/quick-access-strip";
@@ -19,6 +20,7 @@ export default async function HomePage() {
   const t = await getTranslations();
   const locale = await getLocale();
   const nowIso = new Date().toISOString();
+  const showProducts = await emirateShowProducts();
 
   const [
     { data: dealsRaw },
@@ -96,13 +98,15 @@ export default async function HomePage() {
       {/* 4. Quick access: Fish · Pharmacy · Food */}
       <QuickAccessStrip />
 
-      {/* 5. Flash deals horizontal scroll */}
-      <DealsStrip
-        deals={deals}
-        title={t("dealsStrip.title")}
-        subtitle={t("dealsStrip.subtitle")}
-        seeAll={t("common.seeAll")}
-      />
+      {/* 5. Flash deals horizontal scroll — products only */}
+      {showProducts && (
+        <DealsStrip
+          deals={deals}
+          title={t("dealsStrip.title")}
+          subtitle={t("dealsStrip.subtitle")}
+          seeAll={t("common.seeAll")}
+        />
+      )}
 
       {/* 6. Editorial band — Listings dark */}
       <EditorialBand
@@ -116,8 +120,8 @@ export default async function HomePage() {
         flip={false}
       />
 
-      {/* 7. Featured products horizontal scroll */}
-      <FeaturedProducts products={products} />
+      {/* 7. Featured products horizontal scroll — products only */}
+      {showProducts && <FeaturedProducts products={products} />}
 
       {/* 8. Editorial band — Services light */}
       <EditorialBand

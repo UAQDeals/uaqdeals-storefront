@@ -4,11 +4,29 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, ChevronDown, ChevronRight, Menu, X, Search } from "lucide-react";
+import { User, ChevronDown, ChevronRight, Menu, X, Search, MapPin } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { CartIcon } from "@/components/cart-icon";
 import { LanguageSwitcher } from "@/components/language-switcher";
+
+function EmirateChip() {
+  const [emirate, setEmirate] = useState<string | null>(null);
+  useEffect(() => {
+    const m = document.cookie.match(/(?:^|; )emirate=([^;]+)/);
+    setEmirate(m ? decodeURIComponent(m[1]) : null);
+  }, []);
+  if (!emirate) return null;
+  return (
+    <Link href="/select-emirate"
+      className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-white hover:bg-white/10 transition-colors max-w-[180px]"
+      title="Change location">
+      <MapPin className="w-4 h-4 shrink-0" />
+      <span className="truncate">{emirate}</span>
+      <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-70" />
+    </Link>
+  );
+}
 
 const SHOP_GROUPS = [
   {
@@ -374,6 +392,7 @@ export function SiteHeader() {
             <Link href="/search" aria-label="Search" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-colors">
               <Search className="w-5 h-5" />
             </Link>
+            <EmirateChip />
             <div className="text-white [&_button]:text-white [&_button]:border-white/30 [&_button:hover]:bg-white/10"><LanguageSwitcher /></div>
             <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
             <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-white hover:bg-white/10 transition-colors">
