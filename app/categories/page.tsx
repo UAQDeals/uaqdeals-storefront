@@ -70,6 +70,7 @@ const SERVICE_SECTIONS: {
       { slug: "construction_painting", name: "Construction & Painting", emoji: "🏗️", accent: "#EA580C" },
       { slug: "cleaning_service", name: "Cleaning",     emoji: "🧹", accent: "#0891B2" },
       { slug: "tailor_shop",    name: "Tailor Shop",    emoji: "🧵", accent: "#DB2777" },
+      { slug: "barber_shop",    name: "Barber Shop",    emoji: "💈", accent: "#9333EA" },
     ],
   },
   {
