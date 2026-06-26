@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: { default: "UAQ Deals", template: "%s — UAQ Deals" },
   description:
     "Umm Al Quwain's hyperlocal super-app. Shop deals, groceries, services, listings — all in one place.",
-  metadataBase: new URL("https://shop.uaqdeals.ae"),
+  metadataBase: new URL("https://uaqdeals.ae"),
   icons: { icon: "/favicon.ico", apple: "/uaq_logo.png" },
 };
 
