@@ -37,6 +37,7 @@ const SECTIONS = [
       { slug: "construction_painting",  en: "Construction & Painting",ar: "بناء ودهان",          emoji: "🏗️", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop&auto=format" },
       { slug: "cleaning_service",       en: "Cleaning Services",      ar: "خدمات تنظيف",        emoji: "🧹", img: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&h=400&fit=crop&auto=format" },
       { slug: "tailor_shop",            en: "Tailor Shop",            ar: "محل خياطة",           emoji: "🧵", img: "https://images.unsplash.com/photo-1605289355680-75fb41239154?w=600&h=400&fit=crop&auto=format" },
+      { slug: "barber_shop",            en: "Barber Shop",            ar: "حلاق", emoji: "💈", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop&auto=format" },
     ],
   },
   {
