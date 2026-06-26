@@ -24,6 +24,20 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const supabase = await createClient();
   if (!(await showProducts())) return <ProductsUnavailable />;
 
+  // Restrict to Product-flagged vendor types (exclude services).
+  // services live in the same products table, so filter by the vendor's kind:
+  // products.vendor_id -> vendors.vendor_type_id -> vendor_types.vendor_kind
+  const { data: prodTypes } = await supabase
+    .from("vendor_types")
+    .select("id")
+    .or("vendor_kind.is.null,vendor_kind.eq.product");
+  const prodVendorTypeIds = (prodTypes ?? []).map((v) => v.id);
+  const { data: prodVendors } = await supabase
+    .from("vendors")
+    .select("id")
+    .in("vendor_type_id", prodVendorTypeIds);
+  const prodVendorIds = (prodVendors ?? []).map((v) => v.id);
+
   // Categories that have active products — deduplicated by name
   const { data: catRaw } = await supabase
     .from("categories")
@@ -40,7 +54,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   let query = supabase
     .from("products")
     .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id")
-    .eq("status", "active");
+    .eq("status", "active")
+    .in("vendor_id", prodVendorIds);
 
   if (q)         query = query.ilike("name", `%${q}%`);
   if (catId)     query = query.eq("category_id", catId);
