@@ -35,7 +35,7 @@ const HELP_LINKS = [
   { en: "Privacy Policy",       ar: "سياسة الخصوصية",  href: "/privacy" },
 ];
 
-export async function SiteFooter() {
+export async function SiteFooter({ showProducts = true }: { showProducts?: boolean }) {
   const t = await getTranslations("common");
   const year = new Date().getFullYear();
 
@@ -43,7 +43,7 @@ export async function SiteFooter() {
     <footer className="bg-neutral-900 text-neutral-400 pb-20 md:pb-0">
 
       {/* Main columns */}
-      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
+      <div className={`mx-auto max-w-[1320px] px-5 md:px-8 py-12 grid grid-cols-2 gap-8 md:gap-10 ${showProducts ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
 
         {/* Brand col */}
         <div className="col-span-2 md:col-span-1">
@@ -56,6 +56,7 @@ export async function SiteFooter() {
         </div>
 
         {/* Shop col */}
+        {showProducts && (
         <div>
           <p className="text-[11px] font-bold tracking-[2px] uppercase text-neutral-500 mb-4">Shop</p>
           <ul className="space-y-2.5">
@@ -77,6 +78,7 @@ export async function SiteFooter() {
             Sell on UAQDeals →
           </Link>
         </div>
+        )}
 
         {/* Services col */}
         <div>

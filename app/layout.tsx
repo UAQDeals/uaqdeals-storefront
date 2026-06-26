@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { showProducts as emirateShowProducts } from "@/lib/emirate";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -34,15 +35,16 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const isRTL = locale === "ar";
+  const showProd = await emirateShowProducts();
 
   return (
     <html lang={locale} dir={isRTL ? "rtl" : "ltr"}>
       <body className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex min-h-[100dvh] flex-col">
-            <SiteHeader />
+            <SiteHeader showProducts={showProd} />
             <main className="flex-1">{children}</main>
-            <SiteFooter />
+            <SiteFooter showProducts={showProd} />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />
           <FloatingContact />

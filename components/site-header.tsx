@@ -117,7 +117,7 @@ const SUGGESTIONS_DEFAULT = [
 
 type Suggestion = { type: "product" | "deal" | "category"; label: string; href: string };
 
-export function SiteHeader() {
+export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) {
   const locale = useLocale();
   const isRTL = locale === "ar";
   const t = useTranslations("common");
@@ -471,6 +471,7 @@ export function SiteHeader() {
               </div>
 
               <div className="flex items-center justify-center flex-1 gap-0.5">
+                {showProducts && (<>
                 {[
                   { label: "Electronics",    id: "a1000000-0000-0000-0000-000000000001" },
                   { label: "Grocery",        id: "a1000000-0000-0000-0000-000000000002" },
@@ -488,6 +489,7 @@ export function SiteHeader() {
                   </Link>
                 ))}
                 <div className="w-px h-4 bg-neutral-200 mx-1" />
+                </>)}
                 <Link href="/services"
                   className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
                   {t("services")}
@@ -499,11 +501,13 @@ export function SiteHeader() {
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
               </div>
+              {showProducts && (
               <Link href="/deals"
                 className="ml-auto px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
                 style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.5)" }}>
                 🔥 Deals
               </Link>
+              )}
 
 
             </nav>
@@ -542,6 +546,7 @@ export function SiteHeader() {
         <div className="flex-1 overflow-y-auto">
           {mobileGroup === null ? (
             <div className="py-2">
+              {showProducts && (<>
               {/* Deals button */}
               <div className="px-3 pt-3 pb-2">
                 <Link href="/deals" onClick={closeMobile}
@@ -574,6 +579,7 @@ export function SiteHeader() {
                 ))}
               </div>
               <div className="h-px bg-neutral-100 my-2 mx-5" />
+              </>)}
               {/* Other links */}
               <div className="px-2">
                 <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">More</p>

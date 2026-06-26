@@ -9,6 +9,8 @@ import { FeaturedProducts, type ProductCard } from "@/components/featured-produc
 import { StoriesGrid } from "@/components/stories-grid";
 import { AppDownloadCta } from "@/components/app-download-cta";
 import { TrustBand } from "@/components/trust-band";
+import { ServiceHero } from "@/components/service-hero";
+import { ServiceQuickAccess } from "@/components/service-quick-access";
 
 export const revalidate = 60;
 
@@ -16,11 +18,55 @@ export const revalidate = 60;
 type Row = any;
 
 export default async function HomePage() {
+  const showProducts = await emirateShowProducts();
+
+  // ── Services-only emirates: a distinct services home.
+  //    No product banners, no deals, no featured products. ──
+  if (!showProducts) {
+    return (
+      <>
+        <ServiceHero />
+        <ServiceQuickAccess />
+
+        {/* Services editorial */}
+        <EditorialBand
+          eyebrow="Book in seconds"
+          title={"Trusted services,\nright at your doorstep."}
+          body="Cleaning, pest control, home repairs, mobile fix, tailoring, business setup and more — browse verified service providers across the UAE."
+          ctaLabel="Browse services"
+          ctaHref="/services"
+          emoji="🔧"
+          dark={false}
+          flip={true}
+        />
+
+        {/* Listings / marketplace editorial */}
+        <EditorialBand
+          eyebrow="Featured listings"
+          title={"Real estate, cars & more —\nfind it locally."}
+          body="Browse verified listings for apartments, villas, used cars, fancy numbers and pre-owned items from trusted local sellers."
+          ctaLabel="Browse listings"
+          ctaHref="/marketplace/real_estate"
+          emoji="🏠"
+          dark={true}
+          flip={false}
+        />
+
+        {/* Stories / Explore UAQ */}
+        <StoriesGrid />
+
+        <TrustBand />
+
+        <AppDownloadCta />
+      </>
+    );
+  }
+
+  // ── Full emirates (UAQ + Al Hamriyah): products + services home ──
   const supabase = await createClient();
   const t = await getTranslations();
   const locale = await getLocale();
   const nowIso = new Date().toISOString();
-  const showProducts = await emirateShowProducts();
 
   const [
     { data: dealsRaw },
