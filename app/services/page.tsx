@@ -11,7 +11,7 @@ const SECTIONS = [
       { slug: "real_estate",  en: "Real Estate",   ar: "عقارات",       emoji: "🏠", img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop&auto=format" },
       { slug: "automotive",   en: "Automotive",    ar: "سيارات",       emoji: "🚗", img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=400&fit=crop&auto=format" },
       { slug: "fancy_numbers",en: "Fancy Numbers", ar: "أرقام مميزة",  emoji: "💎", img: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=400&fit=crop&auto=format" },
-      { slug: "used_items",   en: "Used Items",    ar: "مستعمل",       emoji: "📦", img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format" },
+      { slug: "used_items",   en: "Used Electronics",    ar: "مستعمل",       emoji: "📦", img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format" },
     ],
   },
   {

@@ -47,7 +47,7 @@ const SERVICE_SECTIONS: {
       { slug: "real_estate",   name: "Real Estate",   emoji: "🏠", accent: "#7C3AED" },
       { slug: "automotive",    name: "Automotive",    emoji: "🚗", accent: "#2563EB" },
       { slug: "fancy_numbers", name: "Fancy Numbers", emoji: "💎", accent: "#CA8A04" },
-      { slug: "used_items",    name: "Used Items",    emoji: "📦", accent: "#0891B2" },
+      { slug: "used_items",    name: "Used Electronics",    emoji: "📦", accent: "#0891B2" },
     ],
   },
   {

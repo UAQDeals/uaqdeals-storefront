@@ -77,7 +77,7 @@ const SHOP_GROUPS = [
     items: [
       { en: "Real Estate", ar: "عقارات", slug: "real_estate" },
       { en: "Automotive", ar: "سيارات", slug: "automotive" },
-      { en: "Used Items", ar: "مستعمل", slug: "used_items" },
+      { en: "Used Electronics", ar: "مستعمل", slug: "used_items" },
       { en: "Fancy Numbers", ar: "أرقام مميزة", slug: "fancy_numbers" },
       { en: "Job Portal", ar: "بوابة وظائف", slug: "job_portal" },
     ],

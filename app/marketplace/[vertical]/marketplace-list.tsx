@@ -34,8 +34,20 @@ export function MarketplaceList({
 }) {
   const [selectedCat, setSelectedCat] = useState<string>(categories[0] ?? "");
 
+  // Real estate stores its category in `listing_type` ("For Sale"/"For Rent"),
+  // while the tabs read "Property for Sale"/"Property for Rent". Map it.
+  function catOf(l: Listing): string {
+    if (vertical === "real_estate") {
+      const lt = (l.listing_type ?? "").toLowerCase();
+      if (lt.includes("rent")) return "Property for Rent";
+      if (lt.includes("sale")) return "Property for Sale";
+      return l.category ?? "";
+    }
+    return l.category ?? "";
+  }
+
   const filtered = useMemo(
-    () => listings.filter((l) => (l.category ?? "") === selectedCat),
+    () => listings.filter((l) => catOf(l) === selectedCat),
     [listings, selectedCat]
   );
 
