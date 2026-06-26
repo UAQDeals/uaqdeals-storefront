@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { dedicatedFor } from "@/lib/service-routes";
 import Link from "next/link";
 import { ChevronRight, Store } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -33,6 +34,11 @@ export default async function CategoryDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // If this slug has a dedicated /services/ page, forward there.
+  const dedicated = dedicatedFor(slug);
+  if (dedicated) redirect(dedicated);
+
   const supabase = await createClient();
 
   const { data: vt } = await supabase

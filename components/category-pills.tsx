@@ -9,7 +9,7 @@ const PILLS = [
   { label: "Home & Services", emoji: "🏠", href: "/services" },
   { label: "Retail",          emoji: "🛍️", href: "/categories/electronics" },
   { label: "Listings",        emoji: "🏗️", href: "/categories/real_estate" },
-  { label: "Travel",          emoji: "✈️", href: "/categories/flight_booking" },
+  { label: "Travel",          emoji: "✈️", href: "/services/flight-booking" },
   { label: "Business",        emoji: "💼", href: "/categories/typing_center" },
 ];
 
@@ -19,7 +19,7 @@ const PILLS_AR = [
   { label: "منزل وخدمات",    emoji: "🏠", href: "/services" },
   { label: "تجزئة",          emoji: "🛍️", href: "/categories/electronics" },
   { label: "الإعلانات",      emoji: "🏗️", href: "/categories/real_estate" },
-  { label: "سفر",            emoji: "✈️", href: "/categories/flight_booking" },
+  { label: "سفر",            emoji: "✈️", href: "/services/flight-booking" },
   { label: "أعمال",          emoji: "💼", href: "/categories/typing_center" },
 ];
 

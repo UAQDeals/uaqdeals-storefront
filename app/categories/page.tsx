@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { DEDICATED } from "@/lib/service-routes";
 import Link from "next/link";
 
 export const metadata = { title: "Categories — UAQ Deals" };
@@ -27,21 +28,7 @@ const CAT_COLORS: Record<string, { from: string; to: string; bg: string }> = {
 const DEFAULT_COLOR = { from: "#8E1B3A", to: "#C72931", bg: "#FDF2F4" };
 
 const MARKETPLACE = ["automotive", "real_estate", "used_items", "fancy_numbers"];
-const DEDICATED: Record<string, string> = {
-  hotel_booking:        "/services/hotel-booking",
-  flight_booking:       "/services/flight-booking",
-  explore_uaq:          "/services/explore-uaq",
-  zoo_events:           "/services/zoo-events",
-  job_portal:           "/services/job-portal",
-  web_dev_design:       "/services/tech-services",
-  mobile_app_dev:       "/services/tech-services",
-  ecommerce_dev:        "/services/tech-services",
-  ecommerce_management: "/services/tech-services",
-  accounting_software:  "/services/tech-services",
-  custom_software:      "/services/tech-services",
-  seo_content:          "/services/tech-services",
-  social_media_mgmt:    "/services/tech-services",
-};
+// DEDICATED map now imported from lib/service-routes
 function serviceRoute(slug: string): string {
   if (MARKETPLACE.includes(slug)) return "/marketplace/" + slug;
   if (DEDICATED[slug]) return DEDICATED[slug];

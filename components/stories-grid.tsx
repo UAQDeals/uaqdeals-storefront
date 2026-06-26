@@ -7,28 +7,28 @@ const STORIES = [
     bg: "#e8ddd4",
     label: { en: "Explore UAQ's hidden gems", ar: "استكشف أم القيوين" },
     sub:   { en: "Tours & local experiences",  ar: "جولات محلية" },
-    href: "/categories/explore_uaq",
+    href: "/services/explore-uaq",
   },
   {
     emoji: "🦁",
     bg: "#d4e8d4",
     label: { en: "Zoo & Events this weekend", ar: "حديقة الحيوان والفعاليات" },
     sub:   { en: "Family fun in UAQ",          ar: "متعة عائلية" },
-    href: "/categories/zoo_events",
+    href: "/services/zoo-events",
   },
   {
     emoji: "✈️",
     bg: "#d4dfe8",
     label: { en: "Fly anywhere from UAQ",      ar: "احجز رحلتك" },
     sub:   { en: "Book flights in one tap",     ar: "حجز رحلات سريع" },
-    href: "/categories/flight_booking",
+    href: "/services/flight-booking",
   },
   {
     emoji: "🏨",
     bg: "#e8d4e0",
     label: { en: "Stay in UAQ",                ar: "أقم في أم القيوين" },
     sub:   { en: "Hotels & short stays",        ar: "فنادق وإقامة قصيرة" },
-    href: "/categories/hotel_booking",
+    href: "/services/hotel-booking",
   },
 ];
 

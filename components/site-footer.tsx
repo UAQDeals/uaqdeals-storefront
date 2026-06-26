@@ -22,9 +22,9 @@ const SERVICES_LINKS = [
   { en: "Mobile Repair",        ar: "إصلاح جوالات",    href: "/categories/mobile_repair" },
   { en: "Typing Center",        ar: "مركز تايبنج",     href: "/categories/typing_center" },
   { en: "Business Setup",       ar: "تأسيس شركات",     href: "/categories/business_setup" },
-  { en: "Explore UAQ",          ar: "استكشف أم القيوين",href: "/categories/explore_uaq" },
-  { en: "Hotel Booking",        ar: "حجز فنادق",       href: "/categories/hotel_booking" },
-  { en: "Flight Booking",       ar: "حجز رحلات",       href: "/categories/flight_booking" },
+  { en: "Explore UAQ",          ar: "استكشف أم القيوين",href: "/services/explore-uaq" },
+  { en: "Hotel Booking",        ar: "حجز فنادق",       href: "/services/hotel-booking" },
+  { en: "Flight Booking",       ar: "حجز رحلات",       href: "/services/flight-booking" },
 ];
 
 const HELP_LINKS = [
