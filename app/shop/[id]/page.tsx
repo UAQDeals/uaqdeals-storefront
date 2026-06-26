@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ShopDrillClient } from "./drill-client";
-import { CategoryHero } from "@/components/category-hero";
+import { MobileCategoryNoon } from "./mobile-category-noon";
+import { CategoryHero, subtitleFor } from "@/components/category-hero";
 import { ShopCategoryDesktop } from "./shop-category-desktop";
 import type { ProductCard } from "@/components/featured-products";
 
@@ -42,7 +42,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   // ── Desktop (Noon-style): products across this category's whole subtree, plus
   //    a representative product image per subcategory. Products attach via
   //    category_id; the tree is walked via parent_id. ──
-  const { data: allCats } = await supabase.from("categories").select("id, parent_id");
+  const { data: allCats } = await supabase.from("categories").select("id, name, parent_id, sort_order");
   const childrenMap = new Map<string, string[]>();
   for (const c of allCats ?? []) {
     if (!c.parent_id) continue;
@@ -95,15 +95,52 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     railImages[child.id] = pics.length ? pics[Math.floor(Math.random() * pics.length)] : null;
   }
 
+  // ── Mobile (Noon-style): department rail (all top-level categories) + each
+  //    subcategory as an accordion of its sub-subcategories (image per tile). ──
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sortCat = (a: any, b: any) =>
+    ((a.sort_order ?? 0) as number) - ((b.sort_order ?? 0) as number) ||
+    String(a.name).localeCompare(String(b.name));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const topCategories = ((allCats ?? []) as any[])
+    .filter((c) => !c.parent_id)
+    .sort(sortCat)
+    .map((c) => ({ id: c.id as string, name: c.name as string }));
+  const activeTopId = breadcrumb[0]?.id ?? id;
+  const sections = (children ?? []).map((child) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const grand = ((allCats ?? []) as any[])
+      .filter((c) => c.parent_id === child.id)
+      .sort(sortCat)
+      .map((g) => {
+        const desc = descendantsOf(g.id as string);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const pics = (thumbRaw ?? [])
+          .filter((p: any) => desc.has(p.category_id) && p.thumbnail_url)
+          .map((p: any) => p.thumbnail_url as string);
+        return {
+          id: g.id as string,
+          name: g.name as string,
+          image: pics.length ? pics[Math.floor(Math.random() * pics.length)] : null,
+        };
+      });
+    return { id: child.id as string, name: child.name as string, children: grand };
+  });
+
   return (
     <>
-      <CategoryHero title={cat.name} />
-      {/* Mobile: drill navigator */}
+      {/* Hero: desktop only — mobile uses the in-column banner */}
+      <div className="hidden md:block">
+        <CategoryHero title={cat.name} />
+      </div>
+      {/* Mobile: Noon department rail + subcategory accordions */}
       <div className="md:hidden">
-        <ShopDrillClient
+        <MobileCategoryNoon
+          topCategories={topCategories}
+          activeTopId={activeTopId}
           category={cat}
-          children={children}
-          breadcrumb={breadcrumb}
+          subtitle={subtitleFor(cat.name)}
+          sections={sections}
         />
       </div>
       {/* Desktop: flat subcategory landing */}
