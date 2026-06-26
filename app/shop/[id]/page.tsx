@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ShopDrillClient } from "./drill-client";
 import { CategoryHero } from "@/components/category-hero";
-import { ShopCategoryGrid } from "./category-grid";
+import { ShopCategoryDesktop } from "./shop-category-desktop";
+import type { ProductCard } from "@/components/featured-products";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,62 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   }
 
 
+  // ── Desktop (Noon-style): products across this category's whole subtree, plus
+  //    a representative product image per subcategory. Products attach via
+  //    category_id; the tree is walked via parent_id. ──
+  const { data: allCats } = await supabase.from("categories").select("id, parent_id");
+  const childrenMap = new Map<string, string[]>();
+  for (const c of allCats ?? []) {
+    if (!c.parent_id) continue;
+    const arr = childrenMap.get(c.parent_id) ?? [];
+    arr.push(c.id);
+    childrenMap.set(c.parent_id, arr);
+  }
+  const descendantsOf = (root: string): Set<string> => {
+    const out = new Set<string>([root]);
+    const stack = [root];
+    while (stack.length) {
+      const cur = stack.pop() as string;
+      for (const ch of childrenMap.get(cur) ?? []) {
+        if (!out.has(ch)) { out.add(ch); stack.push(ch); }
+      }
+    }
+    return out;
+  };
+  const subtreeIds = Array.from(descendantsOf(id));
+
+  const { data: gridRaw } = await supabase
+    .from("products")
+    .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id")
+    .in("category_id", subtreeIds)
+    .eq("status", "active")
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(24);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const gridProducts: ProductCard[] = (gridRaw ?? []).map((p: any) => ({
+    id: p.id, name: p.name, price: p.price, sale_price: p.sale_price,
+    thumbnail_url: p.thumbnail_url, images: p.images ?? null, variants: p.variants ?? null,
+    requires_prescription: p.requires_prescription ?? false,
+    stock_quantity: p.stock_quantity ?? null, track_stock: p.track_stock ?? false,
+    condition: p.condition ?? null,
+  }));
+
+  const { data: thumbRaw } = await supabase
+    .from("products")
+    .select("category_id, thumbnail_url")
+    .in("category_id", subtreeIds)
+    .eq("status", "active")
+    .not("thumbnail_url", "is", null)
+    .limit(500);
+  const railImages: Record<string, string | null> = {};
+  for (const child of children ?? []) {
+    const desc = descendantsOf(child.id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pics = (thumbRaw ?? []).filter((p: any) => desc.has(p.category_id) && p.thumbnail_url).map((p: any) => p.thumbnail_url as string);
+    railImages[child.id] = pics.length ? pics[Math.floor(Math.random() * pics.length)] : null;
+  }
+
   return (
     <>
       <CategoryHero title={cat.name} />
@@ -51,10 +108,12 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
       </div>
       {/* Desktop: flat subcategory landing */}
       <div className="hidden md:block">
-        <ShopCategoryGrid
+        <ShopCategoryDesktop
           category={cat}
           children={children}
           breadcrumb={breadcrumb}
+          products={gridProducts}
+          railImages={railImages}
         />
       </div>
     </>
