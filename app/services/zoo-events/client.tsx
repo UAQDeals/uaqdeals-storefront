@@ -146,7 +146,7 @@ function TicketModal({
         customer_name: name.trim(),
         customer_phone: phone.trim(),
         e_ticket_code: code,
-        status: "confirmed",
+        status: "pending",
       });
       if (error) throw error;
       setETicket(code);
@@ -165,7 +165,7 @@ function TicketModal({
         <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 space-y-5">
           <div className="flex flex-col items-center text-center gap-2">
             <CheckCircle className="w-14 h-14" style={{ color: "#16A34A" }} />
-            <h3 className="text-[20px] font-extrabold text-neutral-900">Booking Confirmed!</h3>
+            <h3 className="text-[20px] font-extrabold text-neutral-900">Booking Received!</h3>
             <p className="text-[13px] text-neutral-500">{title}</p>
           </div>
           <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-3"
@@ -178,7 +178,7 @@ function TicketModal({
               <p className="text-[22px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>{eTicket}</p>
             </div>
           </div>
-          <p className="text-[12px] text-neutral-400 text-center">Show this code at the entrance. Find it anytime in My Tickets.</p>
+          <p className="text-[12px] text-neutral-400 text-center">Your booking is pending confirmation. You'll get an email once it's confirmed.</p>
           <div className="flex gap-3">
             <button onClick={() => { navigator.clipboard.writeText(eTicket); toast.success("Code copied!"); }}
               className="flex-1 h-11 rounded-xl border border-neutral-300 flex items-center justify-center gap-2 text-[13px] font-semibold text-neutral-700">
