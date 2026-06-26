@@ -66,10 +66,20 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
   const [selectedSidebar, setSelectedSidebar] = useState<Cat | null>(children[0] ?? null);
   const [rightItems, setRightItems] = useState<Cat[]>([]);
   const [loadingRight, setLoadingRight] = useState(false);
+  // Desktop shows a flat grid instead; gate this mobile drill's data + redirect
+  // so it stays inert (no /products redirect) while hidden on desktop (md+).
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setEnabled(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   // Load right panel when sidebar selection changes
   useEffect(() => {
-    if (!selectedSidebar) return;
+    if (!enabled || !selectedSidebar) return;
     setLoadingRight(true);
     supabase
       .from("categories")
@@ -87,7 +97,7 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
         }
         setLoadingRight(false);
       });
-  }, [selectedSidebar?.id]);
+  }, [selectedSidebar?.id, enabled]);
 
   return (
     <div>

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ShopDrillClient } from "./drill-client";
 import { CategoryHero } from "@/components/category-hero";
+import { ShopCategoryGrid } from "./category-grid";
 
 export const dynamic = "force-dynamic";
 
@@ -40,11 +41,22 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   return (
     <>
       <CategoryHero title={cat.name} />
-      <ShopDrillClient
-        category={cat}
-        children={children}
-        breadcrumb={breadcrumb}
-      />
+      {/* Mobile: drill navigator */}
+      <div className="md:hidden">
+        <ShopDrillClient
+          category={cat}
+          children={children}
+          breadcrumb={breadcrumb}
+        />
+      </div>
+      {/* Desktop: flat subcategory landing */}
+      <div className="hidden md:block">
+        <ShopCategoryGrid
+          category={cat}
+          children={children}
+          breadcrumb={breadcrumb}
+        />
+      </div>
     </>
   );
 }
