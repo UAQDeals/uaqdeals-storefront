@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ShopClient } from "./shop-client";
+import { showProducts } from "@/lib/emirate";
+import { ProductsUnavailable } from "@/components/products-unavailable";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Shop — UAQ Deals" };
@@ -20,6 +22,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const sort      = sp(params.sort) || "newest";
 
   const supabase = await createClient();
+  if (!(await showProducts())) return <ProductsUnavailable />;
 
   // Categories that have active products — deduplicated by name
   const { data: catRaw } = await supabase

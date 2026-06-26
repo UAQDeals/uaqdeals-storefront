@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { DEDICATED } from "@/lib/service-routes";
 import Link from "next/link";
+import { showProducts } from "@/lib/emirate";
 
 export const metadata = { title: "Categories — UAQ Deals" };
 export const revalidate = 300;
@@ -101,6 +102,7 @@ const SERVICE_SECTIONS: {
 
 export default async function CategoriesPage() {
   const supabase = await createClient();
+  const showProd = await showProducts();
   const { data: productCats } = await supabase
     .from("categories").select("id, name").filter("parent_id", "is", null)
     .eq("is_active", true).order("sort_order").order("name");
@@ -120,31 +122,33 @@ export default async function CategoriesPage() {
       <div className="mx-auto max-w-6xl px-4 -mt-5 pb-16 space-y-10">
 
         {/* ── Product Categories ── */}
-        <section className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-5">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-1 h-6 rounded-full" style={{ background: "linear-gradient(to bottom, #8E1B3A, #F24732)" }} />
-            <div>
-              <h2 className="text-[17px] font-extrabold text-neutral-900">Shop by Category</h2>
-              <p className="text-[12px] text-neutral-500">Browse our full product range</p>
+        {showProd && (
+          <section className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-5">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-1 h-6 rounded-full" style={{ background: "linear-gradient(to bottom, #8E1B3A, #F24732)" }} />
+              <div>
+                <h2 className="text-[17px] font-extrabold text-neutral-900">Shop by Category</h2>
+                <p className="text-[12px] text-neutral-500">Browse our full product range</p>
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-            {(productCats ?? []).map((c) => {
-              const col = CAT_COLORS[c.name] ?? DEFAULT_COLOR;
-              return (
-                <Link key={c.id} href={"/shop/" + c.id}
-                  className="group flex flex-col items-center gap-2 p-3 rounded-2xl border border-neutral-100 hover:border-neutral-200 hover:shadow-md transition-all duration-200"
-                  style={{ background: col.bg }}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-[22px] shadow-sm"
-                    style={{ background: `linear-gradient(135deg, ${col.from}, ${col.to})` }}>
-                    {EMOJI[c.name] ?? "📦"}
-                  </div>
-                  <p className="text-[11px] font-bold text-center text-neutral-800 leading-tight line-clamp-2">{c.name}</p>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+              {(productCats ?? []).map((c) => {
+                const col = CAT_COLORS[c.name] ?? DEFAULT_COLOR;
+                return (
+                  <Link key={c.id} href={"/shop/" + c.id}
+                    className="group flex flex-col items-center gap-2 p-3 rounded-2xl border border-neutral-100 hover:border-neutral-200 hover:shadow-md transition-all duration-200"
+                    style={{ background: col.bg }}>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-[22px] shadow-sm"
+                      style={{ background: `linear-gradient(135deg, ${col.from}, ${col.to})` }}>
+                      {EMOJI[c.name] ?? "📦"}
+                    </div>
+                    <p className="text-[11px] font-bold text-center text-neutral-800 leading-tight line-clamp-2">{c.name}</p>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* ── Service Sections ── */}
         {SERVICE_SECTIONS.map((sec) => (

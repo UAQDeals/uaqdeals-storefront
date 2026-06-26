@@ -4,6 +4,8 @@ import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { ProductDetail } from "@/components/product-detail";
+import { showProducts } from "@/lib/emirate";
+import { ProductsUnavailable } from "@/components/products-unavailable";
 
 export const revalidate = 60;
 
@@ -36,6 +38,7 @@ export default async function ProductDetailPage({
   const { id } = await params;
   const supabase = await createClient();
   const tc = await getTranslations("common");
+  if (!(await showProducts())) return <ProductsUnavailable />;
 
   const [{ data: p }, { data: reviewsRaw }] = await Promise.all([
     supabase

@@ -3,6 +3,8 @@ import { Tag } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { aed } from "@/lib/format";
+import { showProducts } from "@/lib/emirate";
+import { ProductsUnavailable } from "@/components/products-unavailable";
 
 export async function generateMetadata() {
   const t = await getTranslations("deals");
@@ -15,6 +17,7 @@ type Row = any;
 
 export default async function DealsPage() {
   const supabase = await createClient();
+  if (!(await showProducts())) return <ProductsUnavailable />;
   const t = await getTranslations("deals");
   const tc = await getTranslations("common");
   const nowIso = new Date().toISOString();
