@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import QRCode from "qrcode";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type TicketOption = {
@@ -89,6 +90,14 @@ function TicketModal({
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [eTicket, setETicket] = useState<string | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
+  // Generate QR whenever an e-ticket is issued
+  if (eTicket && !qrDataUrl) {
+    QRCode.toDataURL(eTicket, { width: 240, margin: 1, color: { dark: "#8E1B3A", light: "#FFFFFF" } })
+      .then(setQrDataUrl)
+      .catch(() => {});
+  }
 
   const today = new Date().toISOString().split("T")[0];
   const unitPrice = type === "attraction" ? (selectedTicket?.price ?? 0) : (eventPrice ?? 0);
@@ -139,10 +148,15 @@ function TicketModal({
             <h3 className="text-[20px] font-extrabold text-neutral-900">Booking Confirmed!</h3>
             <p className="text-[13px] text-neutral-500">{title}</p>
           </div>
-          <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-1"
+          <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-3"
             style={{ borderColor: "#8E1B3A", background: "#FDF2F4" }}>
-            <p className="text-[11px] font-bold tracking-widest text-neutral-400">E-TICKET CODE</p>
-            <p className="text-[22px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>{eTicket}</p>
+            {qrDataUrl && (
+              <img src={qrDataUrl} alt="Ticket QR Code" className="mx-auto rounded-lg" style={{ width: 180, height: 180 }} />
+            )}
+            <div className="space-y-1">
+              <p className="text-[11px] font-bold tracking-widest text-neutral-400">E-TICKET CODE</p>
+              <p className="text-[22px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>{eTicket}</p>
+            </div>
           </div>
           <p className="text-[12px] text-neutral-400 text-center">Show this code at the entrance. Find it anytime in My Tickets.</p>
           <div className="flex gap-3">
