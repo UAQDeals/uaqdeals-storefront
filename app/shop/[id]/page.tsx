@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ShopDrillClient } from "./drill-client";
+import { CategoryHero } from "@/components/category-hero";
 
 export const dynamic = "force-dynamic";
 
@@ -37,10 +38,13 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
 
 
   return (
-    <ShopDrillClient
-      category={cat}
-      children={children}
-      breadcrumb={breadcrumb}
-    />
+    <>
+      <CategoryHero title={cat.name} />
+      <ShopDrillClient
+        category={cat}
+        children={children}
+        breadcrumb={breadcrumb}
+      />
+    </>
   );
 }

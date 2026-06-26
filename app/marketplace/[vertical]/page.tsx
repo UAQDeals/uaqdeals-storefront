@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MarketplaceList } from "./marketplace-list";
+import { CategoryHero } from "@/components/category-hero";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -102,12 +103,15 @@ export default async function MarketplacePage({
     .order("created_at", { ascending: false });
 
   return (
-    <MarketplaceList
-      vertical={vertical}
-      title={cfg.title}
-      emoji={cfg.emoji}
-      categories={cfg.categories}
-      listings={listings ?? []}
-    />
+    <>
+      <CategoryHero title={cfg.title} />
+      <MarketplaceList
+        vertical={vertical}
+        title={cfg.title}
+        emoji={cfg.emoji}
+        categories={cfg.categories}
+        listings={listings ?? []}
+      />
+    </>
   );
 }

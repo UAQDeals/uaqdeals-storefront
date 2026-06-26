@@ -21,7 +21,6 @@ function detailFor(vertical: string, r: Listing): string {
 
 export function MarketplaceList({
   vertical,
-  title,
   emoji,
   categories,
   listings,
@@ -60,10 +59,9 @@ export function MarketplaceList({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      {/* hero-stripped */}
       <div className="mb-6 flex items-center gap-3">
-        <span className="text-3xl">{emoji}</span>
         <div className="flex-1">
-          <h1 className="text-2xl font-extrabold text-neutral-900">{title}</h1>
           <p className="text-sm text-neutral-500">
             {filtered.length} listing{filtered.length === 1 ? "" : "s"} in {selectedCat}
           </p>
