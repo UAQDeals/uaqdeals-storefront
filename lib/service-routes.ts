@@ -6,6 +6,7 @@ export const DEDICATED: Record<string, string> = {
   explore_uaq:          "/services/explore-uaq",
   zoo_events:           "/services/zoo-events",
   job_portal:           "/services/job-portal",
+  mobile_repair:        "/services/mobile-repair",
   web_dev_design:       "/services/tech-services",
   mobile_app_dev:       "/services/tech-services",
   ecommerce_dev:        "/services/tech-services",
