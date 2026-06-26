@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { dedicatedFor } from "@/lib/service-routes";
 import { getTranslations } from "next-intl/server";
 
 // ── Section data mirroring Flutter services_screen.dart ──────────────────────
@@ -69,13 +70,10 @@ const SECTIONS = [
 
 // ── Slug → web route mapping (mirrors app _route) ────────────────────────────
 const MARKETPLACE = ["automotive", "real_estate", "used_items", "fancy_numbers"];
-const DEDICATED: Record<string, string> = {
-  hotel_booking: "/services/hotel-booking",
-  flight_booking: "/services/flight-booking",
-};
 function routeForSlug(slug: string): string {
   if (MARKETPLACE.includes(slug)) return `/marketplace/${slug}`;
-  if (DEDICATED[slug]) return DEDICATED[slug];
+  const dedicated = dedicatedFor(slug);
+  if (dedicated) return dedicated;
   return `/categories/${slug}`;
 }
 
