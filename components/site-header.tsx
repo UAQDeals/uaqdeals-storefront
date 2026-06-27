@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User, ChevronDown, ChevronRight, Menu, X, Search, MapPin } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -12,10 +12,11 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 
 function EmirateChip() {
   const [emirate, setEmirate] = useState<string | null>(null);
+  const pathname = usePathname();
   useEffect(() => {
     const m = document.cookie.match(/(?:^|; )emirate=([^;]+)/);
     setEmirate(m ? decodeURIComponent(m[1]) : null);
-  }, []);
+  }, [pathname]);
   if (!emirate) return null;
   return (
     <Link href="/select-emirate"
@@ -145,10 +146,11 @@ function DealsMark({ size = 16 }: { size?: number }) {
 
 function MobileEmirateChip() {
   const [emirate, setEmirate] = useState<string | null>(null);
+  const pathname = usePathname();
   useEffect(() => {
     const m = document.cookie.match(/(?:^|; )emirate=([^;]+)/);
     setEmirate(m ? decodeURIComponent(m[1]) : null);
-  }, []);
+  }, [pathname]);
   if (!emirate) return null;
   return (
     <Link
