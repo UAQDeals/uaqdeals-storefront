@@ -57,7 +57,7 @@ export function MobileCategoryNoon({
   const toggle = (id: string) => setOpen((o) => ({ ...o, [id]: !o[id] }));
 
   return (
-    <div className="flex h-[calc(100dvh-152px)]">
+    <div className="flex h-[calc(100dvh-112px)]">
       {/* Department rail */}
       <aside className="w-[116px] shrink-0 overflow-y-auto border-e border-neutral-200 bg-neutral-50 pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {topCategories.map((d) => {

@@ -143,7 +143,7 @@ function DealsMark({ size = 16 }: { size?: number }) {
   );
 }
 
-function MobileDeliverBar() {
+function MobileEmirateChip() {
   const [emirate, setEmirate] = useState<string | null>(null);
   useEffect(() => {
     const m = document.cookie.match(/(?:^|; )emirate=([^;]+)/);
@@ -153,13 +153,12 @@ function MobileDeliverBar() {
   return (
     <Link
       href="/select-emirate"
-      className="md:hidden flex h-10 items-center gap-1.5 px-5 border-t border-neutral-100 bg-neutral-50 text-[12.5px]"
+      className="md:hidden flex min-w-0 max-w-[150px] items-center gap-1 px-2 py-1.5 rounded-lg text-[12px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors"
       title="Change location"
     >
       <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
-      <span className="text-neutral-500">Delivering to</span>
-      <span className="font-bold text-neutral-800 truncate">{emirate}</span>
-      <ChevronDown className="w-3.5 h-3.5 shrink-0 ms-auto text-neutral-400" />
+      <span className="truncate">{emirate}</span>
+      <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-70" />
     </Link>
   );
 }
@@ -361,7 +360,8 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
             <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[100px] w-[100px] rounded-2xl object-cover uaq-logo-anim" /></div>
           </Link>
 
-          {/* Mobile spacer — pushes language + profile to the far right */}
+          {/* Mobile: emirate selector, then spacer pushes language + profile right */}
+          <MobileEmirateChip />
           <div className="flex-1 md:hidden" />
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -453,9 +453,6 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
-        {/* Mobile: deliver-to bar (emirate selector) */}
-        <MobileDeliverBar />
-
         <div className="hidden md:block bg-white border-t border-neutral-100">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <nav className="flex items-center gap-0.5 w-full">
