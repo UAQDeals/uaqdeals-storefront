@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useCart } from "@/lib/cart";
+import { DeliveryMapPicker } from "@/components/delivery-map-picker";
 import { aed } from "@/lib/format";
 
 const FREE_OVER = 200;
@@ -41,6 +42,9 @@ export function CheckoutForm({
   const [phone, setPhone] = useState(initialProfile.phone_number ?? "");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("Umm Al Quwain");
+  const [mapLat, setMapLat] = useState<number | null>(null);
+  const [mapLng, setMapLng] = useState<number | null>(null);
+  const [mapConfirmed, setMapConfirmed] = useState(false);
   const [notes, setNotes] = useState("");
 
   const [couponInput, setCouponInput] = useState("");

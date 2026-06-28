@@ -23,6 +23,7 @@ export function PrescriptionUploadModal({
   const supabase = createClient();
 
   async function submit() {
+    if (!userId) { toast.error("Please sign in to upload a prescription"); return; }
     if (!file) { toast.error("Please select a prescription file"); return; }
     setUploading(true);
     try {

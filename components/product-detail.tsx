@@ -214,12 +214,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           )}
         </div>
 
-        {rxOpen && userId && (
+        {rxOpen && (
         <PrescriptionUploadModal
           productId={p.id}
           vendorId={(p as any).vendor_id ?? null}
           productName={p.name}
-          userId={userId}
+          userId={userId ?? ''}
           onSuccess={() => setRxUploaded(true)}
           onClose={() => setRxOpen(false)}
         />
