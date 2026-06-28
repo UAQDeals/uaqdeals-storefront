@@ -127,80 +127,37 @@ export function CheckoutForm({
     const supabase = createClient();
 
     try {
-      await supabase
-        .from("profiles")
-        .update({ full_name: fullName.trim(), phone_number: phone.trim() })
-        .eq("id", userId);
-
-      const firstProductId = items[0].product_id;
-      const { data: firstProduct } = await supabase
-        .from("products")
-        .select("vendor_id")
-        .eq("id", firstProductId)
-        .maybeSingle();
-      const vendorId = firstProduct?.vendor_id ?? null;
-
-      const { data: order, error: orderErr } = await supabase
-        .from("orders")
-        .insert({
-          customer_id: userId,
-          vendor_id: vendorId,
-          status: "pending",
-          payment_method: "cod",
-          payment_status: "pending",
-          subtotal: sub,
-          delivery_fee: shipping,
-          coupon_discount: couponDiscount,
-          coin_discount: coinDiscount,
-          total: total,
-          coins_earned: coinsEarned,
-          coins_redeemed: coinsToRedeem,
-          delivery_address: `${address.trim()}, ${city.trim()}`,
-          delivery_notes: notes.trim() || null,
-        })
-        .select()
-        .single();
-      if (orderErr || !order) throw orderErr ?? new Error("Failed to create order");
-
-      const orderId = order.id as string;
-
-      const productIds = Array.from(new Set(items.map((i) => i.product_id)));
-      const { data: prodRows } = await supabase
-        .from("products")
-        .select("id, vendor_id")
-        .in("id", productIds);
-      const vendorByProduct = new Map<string, string | null>(
-        (prodRows ?? []).map((p) => [p.id as string, p.vendor_id as string | null])
-      );
-
-      const rows = items.map((i) => ({
-        order_id: orderId,
+      const payload = items.map((i) => ({
         product_id: i.product_id,
-        vendor_id: vendorByProduct.get(i.product_id) ?? vendorId,
-        name: i.name,
-        quantity: i.qty,
-        unit_price: i.price,
-        total_price: i.price * i.qty,
-        notes: i.variant,
+        qty: i.qty,
+        variant: i.variant ?? null,
       }));
-      const { error: itemsErr } = await supabase.from("order_items").insert(rows);
-      if (itemsErr) throw itemsErr;
 
-      if (coinsToRedeem > 0) {
-        await supabase.rpc("add_coins", {
-          p_customer_id: userId,
-          p_coins: -coinsToRedeem,
-          p_type: "redeem",
-          p_order_id: orderId,
-          p_description: "Redeemed at checkout",
-        });
+      const { data: orderId, error } = await supabase.rpc("place_order", {
+        p_items: payload,
+        p_use_coins: useCoins,
+        p_coupon_code: coupon?.code ?? null,
+        p_full_name: fullName.trim(),
+        p_phone: phone.trim(),
+        p_address: `${address.trim()}, ${city.trim()}`,
+        p_notes: notes.trim() || null,
+      });
+
+      if (error || !orderId) {
+        const code = error?.message ?? "";
+        const msg =
+          code.includes("INSUFFICIENT_STOCK") ? t("outOfStock") :
+          code.includes("PRODUCT_INACTIVE")   ? t("itemUnavailable") :
+          code.includes("EMPTY_CART")         ? t("fillRequired") :
+          t("orderFailed");
+        throw new Error(msg);
       }
 
       clear();
       toast.success(t("orderPlaced"));
       window.location.assign(`/orders/${orderId}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("fillRequired"));
+      toast.error(e instanceof Error ? e.message : t("orderFailed"));
       setPlacing(false);
     }
   }

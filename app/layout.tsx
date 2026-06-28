@@ -19,6 +19,21 @@ export const metadata: Metadata = {
     "Umm Al Quwain's hyperlocal super-app. Shop deals, groceries, services, listings — all in one place.",
   metadataBase: new URL("https://uaqdeals.ae"),
   icons: { icon: "/favicon.ico", apple: "/uaq_logo.png" },
+  openGraph: {
+    type: "website",
+    siteName: "UAQ Deals",
+    title: "UAQ Deals",
+    description:
+      "Umm Al Quwain's hyperlocal super-app. Shop deals, groceries, services, listings — all in one place.",
+    url: "https://uaqdeals.ae",
+    locale: "en_AE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "UAQ Deals",
+    description:
+      "Umm Al Quwain's hyperlocal super-app. Shop deals, groceries, services, listings — all in one place.",
+  },
 };
 
 export const viewport: Viewport = {
