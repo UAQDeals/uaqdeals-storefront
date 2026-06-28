@@ -523,6 +523,8 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
                 {[
                   { label: "Electronics",    id: "a1000000-0000-0000-0000-000000000001" },
                   { label: "Grocery",        id: "a1000000-0000-0000-0000-000000000002" },
+                  { label: "Pharmacy",       id: "9376492e-efbf-42fe-9b75-2f97ae84bfc2" },
+                  { label: "Pharmacy",       id: "9376492e-efbf-42fe-9b75-2f97ae84bfc2" },
                   { label: "Beauty",         id: "a1000000-0000-0000-0000-000000000003" },
                   { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004" },
                   { label: "Fashion",        id: "a1000000-0000-0000-0000-000000000005" },
@@ -610,6 +612,7 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
                 {[
                   { label: "Electronics", id: "a1000000-0000-0000-0000-000000000001", emoji: "📱" },
                   { label: "Grocery", id: "a1000000-0000-0000-0000-000000000002", emoji: "🛒" },
+                  { label: "Pharmacy", id: "9376492e-efbf-42fe-9b75-2f97ae84bfc2", emoji: "💊" },
                   { label: "Beauty & Fragrance", id: "a1000000-0000-0000-0000-000000000003", emoji: "💄" },
                   { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004", emoji: "🏠" },
                   { label: "Fashion", id: "a1000000-0000-0000-0000-000000000005", emoji: "👗" },
