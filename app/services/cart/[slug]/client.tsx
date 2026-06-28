@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ChevronLeft, ChevronRight, ArrowLeft, ShoppingCart, CheckCircle, FileText,
+  ChevronLeft, ChevronRight, ArrowLeft, CheckCircle, FileText, MessageCircle,
 } from "lucide-react";
-import { useCart } from "@/lib/cart";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 type Field = { key: string; label: string; type: "text" | "textarea" | "tel" | "email"; required?: boolean };
 type Service = {
@@ -24,7 +25,8 @@ export function ServiceCartClient({
   slug: string; meta: Meta; services: Service[];
 }) {
   const router = useRouter();
-  const add = useCart((s) => s.add);
+  const supabase = createClient();
+  const [submitting, setSubmitting] = useState(false);
 
   const [step, setStep] = useState<"list" | "form" | "added">("list");
   const [selected, setSelected] = useState<Service | null>(null);
@@ -36,39 +38,62 @@ export function ServiceCartClient({
     setStep("form");
   }
 
-  function addToCart() {
+  async function submitEnquiry() {
     if (!selected) return;
     // validate required fields
     for (const f of meta.fields) {
       if (f.required && !values[f.key]?.trim()) {
-        // simple inline validation: scroll to focus not needed, just alert via title
         const el = document.getElementById("field_" + f.key);
         el?.focus();
+        toast.error("Please fill in: " + f.label);
         return;
       }
     }
 
-    // Build a human-readable summary of the collected info → stored in `variant`
+    // Build a human-readable summary of the collected info → enquiry message
     const summary = meta.fields
       .filter((f) => values[f.key]?.trim())
       .map((f) => `${f.label}: ${values[f.key].trim()}`)
-      .join(" • ");
+      .join(" | ");
 
-    // Unique line id per customized service (so two different submissions don't merge)
-    const lineId = `svc_${slug}_${selected.id}_${Date.now()}`;
+    setSubmitting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    add({
-      id: lineId,
-      product_id: selected.id,
-      name: `${meta.title}: ${selected.title}`,
-      price: Number(selected.price ?? 0),
-      original_price: null,
-      image: selected.image_url,
-      variant: summary || null,
-      vendor_name: meta.title,
-    }, 1);
+      // Detect name/phone fields generically (keys differ per service slug)
+      const nameField = meta.fields.find(
+        (f) => /name/i.test(f.key) || /name/i.test(f.label)
+      );
+      const phoneField = meta.fields.find(
+        (f) => f.type === "tel" || /phone|mobile|contact/i.test(f.key)
+      );
+      const enquiryName =
+        (nameField && values[nameField.key]?.trim()) ||
+        (user?.user_metadata?.full_name as string | undefined) ||
+        "";
+      const enquiryPhone =
+        (phoneField && values[phoneField.key]?.trim()) ||
+        (user?.user_metadata?.phone as string | undefined) ||
+        (user?.phone ?? "") ||
+        "";
 
-    setStep("added");
+      const message = `${meta.title}: ${selected.title}${summary ? ` | ${summary}` : ""}`;
+      const { error } = await supabase.from("service_enquiries").insert({
+        user_id: user?.id ?? null,
+        service_id: slug,
+        service_title: `${meta.title}: ${selected.title}`,
+        name: enquiryName,
+        phone: enquiryPhone,
+        message,
+        status: "open",
+      });
+      if (error) throw error;
+      setStep("added");
+    } catch (e: any) {
+      toast.error("Error: " + (e.message ?? "Could not submit request"));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const inputCls = "w-full h-12 rounded-xl border border-neutral-300 px-4 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50";
@@ -172,12 +197,12 @@ export function ServiceCartClient({
             </div>
           ))}
 
-          <button onClick={addToCart}
-            className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2"
+          <button onClick={submitEnquiry} disabled={submitting}
+            className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            <ShoppingCart className="w-4 h-4" /> Add to Cart
+            <MessageCircle className="w-4 h-4" /> {submitting ? "Submitting..." : "Request Service"}
           </button>
-          <p className="text-center text-[12px] text-neutral-400">You can review and pay at checkout.</p>
+          <p className="text-center text-[12px] text-neutral-400">Our team will contact you to confirm details.</p>
         </div>
       )}
 
@@ -187,18 +212,18 @@ export function ServiceCartClient({
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
             <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
           </div>
-          <h2 className="text-[22px] font-extrabold text-neutral-900">Added to Cart!</h2>
+          <h2 className="text-[22px] font-extrabold text-neutral-900">Request Submitted!</h2>
           <p className="text-neutral-500 text-[14px] mt-2">
-            {meta.title}: {selected.title} is in your cart with your details.
+            We've received your request for {meta.title}: {selected.title}. Our team will contact you shortly to confirm.
           </p>
           <div className="mt-8 flex flex-col gap-3">
-            <button onClick={() => router.push("/cart")}
+            <button onClick={() => router.push("/services")}
               className="rounded-xl px-6 py-3 text-white font-bold text-[14px]"
               style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-              Go to Cart &amp; Checkout
+              Browse More Services
             </button>
             <button onClick={() => setStep("list")} className="text-[13px] font-semibold text-neutral-500">
-              Add another service
+              Request another service
             </button>
           </div>
         </div>
