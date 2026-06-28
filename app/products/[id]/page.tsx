@@ -88,6 +88,7 @@ export default async function ProductDetailPage({
     stock_quantity: p.stock_quantity as number | null,
     track_stock: Boolean(p.track_stock),
     requires_prescription: Boolean(p.requires_prescription),
+    vendor_id: (p.vendor_id as string | null) ?? null,
     brand: (p.brand as string | null) ?? null,
     unit: (p.unit as string | null) ?? null,
     vendor_name,

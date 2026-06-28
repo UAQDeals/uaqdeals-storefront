@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, Smartphone, ShoppingCart, Tag, Store, Star, ChevronDown } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Smartphone, ShoppingCart, Tag, Store, Star, ChevronDown , FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { PrescriptionUploadModal } from "@/components/prescription-upload-modal";
 
 type Product = {
   id: string; name: string; description: string | null;
@@ -15,7 +16,7 @@ type Product = {
   thumbnail_url: string | null; images: string[];
   variants: Array<{ name: string; options: string[] }>;
   stock_quantity: number | null; track_stock: boolean;
-  requires_prescription: boolean; brand: string | null;
+  requires_prescription: boolean; vendor_id: string | null; brand: string | null;
   unit: string | null; vendor_name: string | null; condition?: string | null;
   average_rating: number | null; review_count: number;
 };
@@ -46,6 +47,14 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   });
   const [qty, setQty] = useState(1);
   const { add } = useCart();
+  const [rxUploaded, setRxUploaded] = useState(false);
+  const [rxOpen, setRxOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      createClient().auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    });
+  }, []);
 
   // Reviews state
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
@@ -90,7 +99,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const oos = p.track_stock && (p.stock_quantity == null || p.stock_quantity <= 0);
   const lowStock = p.track_stock && p.stock_quantity != null && p.stock_quantity > 0 && p.stock_quantity <= 5;
   const isRx = p.requires_prescription;
-  const canAdd = !oos && !isRx;
+  const canAdd = !oos && (!isRx || rxUploaded);
 
   const variantSummary = Object.entries(picked).map(([k, v]) => `${k}: ${v}`).join(", ");
   const lineId = p.id + (variantSummary ? "::" + variantSummary.replace(/\s+/g, "_") : "");
@@ -190,19 +199,33 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
             <button onClick={handleAdd} className="bg-brand-gradient inline-flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">
               <ShoppingCart className="h-4 w-4" /> {t("addToCart")} · {aed(unitPrice * qty)}
             </button>
-          ) : isRx ? (
+          ) : isRx && !rxUploaded ? (
             <div className="flex flex-1 flex-col items-stretch gap-1">
-              <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">
-                <Smartphone className="h-4 w-4" /> {t("availableInApp")}
+              <button
+                onClick={() => setRxOpen(true)}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+              >
+                <FileText className="h-4 w-4" /> Upload Prescription to Add
               </button>
-              <p className="text-center text-xs text-neutral-500">{t("rxNote")}</p>
+              <p className="text-center text-xs text-neutral-500">A valid prescription is required for this item.</p>
             </div>
           ) : (
             <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">{tc("outOfStock")}</button>
           )}
         </div>
 
-        {p.description && (
+        {rxOpen && userId && (
+        <PrescriptionUploadModal
+          productId={p.id}
+          vendorId={(p as any).vendor_id ?? null}
+          productName={p.name}
+          userId={userId}
+          onSuccess={() => setRxUploaded(true)}
+          onClose={() => setRxOpen(false)}
+        />
+      )}
+
+      {p.description && (
           <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-neutral-700">{p.description}</p>
