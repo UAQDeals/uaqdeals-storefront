@@ -42,7 +42,7 @@ export async function FeaturedProducts({
               <h2 className="text-[22px] font-extrabold tracking-tight text-neutral-900">{t("title")}</h2>
             </div>
             <Link
-              href="/categories"
+              href="/featured"
               className="text-[12px] font-bold text-neutral-900 underline underline-offset-2 hover:text-[color:var(--brand-maroon)] transition-colors"
             >
               {tc("seeAll")} →
