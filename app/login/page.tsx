@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { PhoneOtpForm } from "@/components/phone-otp-form";
 
 export const metadata = { title: "Sign in" };
 
@@ -39,9 +40,24 @@ export default async function LoginPage({
         </p>
       )}
 
-      <div className="mt-8 w-full space-y-3">
-        <GoogleSignInButton next={next ?? "/account"} />
+      <div className="mt-8 w-full space-y-4">
+        {/* Primary: phone OTP */}
+        <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <p className="mb-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            Sign in with phone
+          </p>
+          <PhoneOtpForm next={next ?? "/account"} />
+        </div>
 
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-neutral-200" />
+          <span className="text-xs text-neutral-400">or</span>
+          <div className="h-px flex-1 bg-neutral-200" />
+        </div>
+
+        {/* Secondary: Google */}
+        <GoogleSignInButton next={next ?? "/account"} />
       </div>
 
       <p className="mt-8 max-w-xs text-xs text-neutral-500">
