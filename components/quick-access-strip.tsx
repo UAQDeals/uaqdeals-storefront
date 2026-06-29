@@ -40,7 +40,7 @@ export function QuickAccessStrip() {
             href={tile.href}
             {...(tile.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             className="group relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 md:p-6 transition-all hover:scale-[1.02] hover:shadow-lg"
-            style={{ background: tile.bg, minHeight: 130 }}
+            style={{ background: tile.bg, aspectRatio: "1/1" }}
           >
             <span className="pointer-events-none absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10" aria-hidden />
             <div className="flex items-start justify-between">
@@ -54,9 +54,7 @@ export function QuickAccessStrip() {
             <div className="mt-4">
               <p className="text-[15px] font-extrabold text-white leading-tight tracking-tight">{tile.title}</p>
               <p className="mt-1 text-[11.5px] text-white/70">{tile.subtitle}</p>
-              <p className="mt-3 text-[11px] font-bold text-white/90 underline underline-offset-2">
-                {tile.external ? "Open app →" : "Shop now →"}
-              </p>
+  
             </div>
           </Link>
         ))}

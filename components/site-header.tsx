@@ -155,7 +155,7 @@ function MobileEmirateChip() {
   return (
     <Link
       href="/select-emirate"
-      className="md:hidden flex min-w-0 max-w-[150px] items-center gap-1 px-2 py-1.5 rounded-lg text-[12px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors"
+      className="md:hidden flex items-center gap-1 px-3 py-1.5 rounded-full border border-neutral-200 text-[12px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
       title="Change location"
     >
       <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
@@ -363,7 +363,6 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
           </Link>
 
           {/* Mobile: emirate selector, then spacer pushes language + profile right */}
-          <MobileEmirateChip />
           <div className="flex-1 md:hidden" />
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
@@ -452,6 +451,24 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
             </Link>
             <div className="hidden md:block text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
           </div>
+        </div>
+
+        {/* ── Mobile Row 2: Emirate + Search ── */}
+        <div className="md:hidden border-t border-neutral-100 px-4 py-2 flex items-center gap-2">
+          <MobileEmirateChip />
+          <form className="flex-1 flex" onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search products, deals…"
+              className="flex-1 h-9 bg-neutral-100 rounded-l-full px-4 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none border border-neutral-200 border-r-0"
+            />
+            <button type="submit"
+              className="h-9 px-3 bg-[color:var(--brand-maroon)] rounded-r-full text-white flex items-center justify-center border border-[color:var(--brand-maroon)] border-l-0">
+              <Search className="w-3.5 h-3.5" />
+            </button>
+          </form>
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}

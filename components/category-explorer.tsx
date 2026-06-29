@@ -41,7 +41,7 @@ export function CategoryExplorer() {
             <Link
               key={g.href}
               href={g.href}
-              className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-neutral-100 bg-white p-3.5 transition-all hover:-translate-y-0.5 hover:border-[#8E1B3A]/25 hover:shadow-lg md:p-4"
+              className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-neutral-100 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#8E1B3A]/25 hover:shadow-lg md:p-4 min-h-[72px]"
             >
               <span
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110"
@@ -50,7 +50,7 @@ export function CategoryExplorer() {
                 {g.emoji}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13.5px] font-extrabold leading-tight text-neutral-900 transition-colors group-hover:text-[color:var(--brand-maroon)]">
+                <p className="text-[13px] font-extrabold leading-tight text-neutral-900 transition-colors group-hover:text-[color:var(--brand-maroon)] break-words hyphens-auto">
                   {g.label}
                 </p>
                 <p className="mt-0.5 truncate text-[11px] text-neutral-500">{g.sub}</p>

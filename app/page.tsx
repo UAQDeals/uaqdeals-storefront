@@ -8,6 +8,8 @@ import { QuickAccessStrip } from "@/components/quick-access-strip";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
 import { EditorialBand } from "@/components/editorial-band";
 import { FeaturedProducts, type ProductCard } from "@/components/featured-products";
+import { ProductCarousel, type CarouselProduct } from "@/components/product-carousel";
+import { MidBanner, type BannerItem } from "@/components/mid-banner";
 import { CoinbackSpotlight } from "@/components/coinback-spotlight";
 import { StoriesGrid } from "@/components/stories-grid";
 import { VendorCta } from "@/components/vendor-cta";
@@ -73,16 +75,35 @@ export default async function HomePage() {
   const emirate = await getEmirate();
   const nowIso = new Date().toISOString();
 
+  // Category IDs for product carousels
+  const CAT_ELECTRONICS  = "a1000000-0000-0000-0000-000000000001";
+  const CAT_GROCERY      = "a1000000-0000-0000-0000-000000000002";
+  const CAT_BEAUTY       = "a1000000-0000-0000-0000-000000000003";
+  const CAT_HOME_KITCHEN = "a1000000-0000-0000-0000-000000000004";
+  const CAT_FASHION      = "a1000000-0000-0000-0000-000000000005";
+
+  function carouselSelect() {
+    return supabase.from("products")
+      .select("id, name, price, sale_price, thumbnail_url, images")
+      .eq("status", "active")
+      .order("is_featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(16);
+  }
+
   const [
     { data: dealsRaw },
     { data: productsRaw },
     { data: bannersRaw },
+    { data: electronicsRaw },
+    { data: groceryRaw },
+    { data: fashionRaw },
+    { data: beautyRaw },
+    { data: homeRaw },
   ] = await Promise.all([
     supabase
       .from("deals")
-      .select(
-        "id, title, deal_price, original_price, discount_pct, deal_image_url, products(thumbnail_url)"
-      )
+      .select("id, title, deal_price, original_price, discount_pct, deal_image_url, products(thumbnail_url)")
       .eq("status", "active")
       .or(`ends_at.is.null,ends_at.gt.${nowIso}`)
       .order("is_featured", { ascending: false })
@@ -91,11 +112,9 @@ export default async function HomePage() {
 
     supabase
       .from("products")
-      .select(
-        "id, name, price, sale_price, thumbnail_url, images, is_featured, variants, requires_prescription, stock_quantity, track_stock, condition"
-      )
+      .select("id, name, price, sale_price, thumbnail_url, images, is_featured, variants, requires_prescription, stock_quantity, track_stock, condition")
       .eq("status", "active")
-      .order("is_featured", { ascending: false })
+      .eq("is_featured", true)
       .order("created_at", { ascending: false })
       .limit(12),
 
@@ -106,7 +125,13 @@ export default async function HomePage() {
       .or(`ends_at.is.null,ends_at.gt.${nowIso}`)
       .order("sort_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false })
-      .limit(6),
+      .limit(40),
+
+    carouselSelect().eq("category_id", CAT_ELECTRONICS),
+    carouselSelect().eq("category_id", CAT_GROCERY),
+    carouselSelect().eq("category_id", CAT_FASHION),
+    carouselSelect().eq("category_id", CAT_BEAUTY),
+    carouselSelect().eq("category_id", CAT_HOME_KITCHEN),
   ]);
 
   const deals: DealCard[] = (dealsRaw ?? []).map((d: Row) => ({
@@ -133,26 +158,39 @@ export default async function HomePage() {
     condition: p.condition ?? null,
   }));
 
-  const banners: BannerCard[] = (bannersRaw ?? []).map((b: Row) => ({
-    id: b.id,
-    title: b.title,
-    image_url: b.image_url,
-    link_type: b.link_type,
-    link_value: b.link_value,
+  // Split banners by position (sort_order ranges)
+  const allBanners = bannersRaw ?? [];
+  const banners: BannerCard[] = allBanners.filter((b: Row) => !b.sort_order || b.sort_order <= 10).map((b: Row) => ({
+    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
   }));
+  const bannersPos2: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 11 && b.sort_order <= 20).map((b: Row) => ({
+    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+  }));
+  const bannersPos3: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 21 && b.sort_order <= 30).map((b: Row) => ({
+    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+  }));
+  const bannersPos4: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 31 && b.sort_order <= 40).map((b: Row) => ({
+    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+  }));
+
+  function toCarousel(raw: Row[] | null): CarouselProduct[] {
+    return (raw ?? []).map((p: Row) => ({
+      id: p.id, name: p.name, price: p.price, sale_price: p.sale_price,
+      thumbnail_url: p.thumbnail_url, images: p.images ?? null,
+    }));
+  }
+  const electronicsProducts = toCarousel(electronicsRaw);
+  const groceryProducts     = toCarousel(groceryRaw);
+  const fashionProducts     = toCarousel(fashionRaw);
+  const beautyProducts      = toCarousel(beautyRaw);
+  const homeProducts        = toCarousel(homeRaw);
 
   return (
     <>
-      {/* 1. Hero — gradient, search, chips, banner carousel */}
+      {/* 1. Hero — banner carousel position 1 */}
       <HomeHero banners={banners} emirate={emirate} />
 
-      {/* 2. Category explorer */}
-      <CategoryExplorer />
-
-      {/* 3. Quick access: Fish · Pharmacy · Food */}
-      <QuickAccessStrip />
-
-      {/* 4. Flash deals */}
+      {/* 2. Deals carousel — under hero */}
       <DealsStrip
         deals={deals}
         title={t("dealsStrip.title")}
@@ -160,25 +198,93 @@ export default async function HomePage() {
         seeAll={t("common.seeAll")}
       />
 
-      {/* 5. Featured products */}
-      <FeaturedProducts products={products} />
+      {/* 3. Category pills */}
+      {/* <CategoryPills locale={locale} /> */}
 
-      {/* 6. Coinback loyalty spotlight */}
+      {/* 4. Quick access strip */}
+      <QuickAccessStrip />
+
+      {/* 5. Category explorer — services only */}
+      <CategoryExplorer />
+
+      {/* 6. Electronics carousel */}
+      <ProductCarousel
+        title="Electronics"
+        eyebrow="Latest tech"
+        emoji="📱"
+        products={electronicsProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000001"}
+        viewMoreLabel="View all Electronics"
+      />
+
+      {/* 7. Mid banner position 2 */}
+      <MidBanner banners={bannersPos2} />
+
+      {/* 8. Grocery carousel */}
+      <ProductCarousel
+        title="Grocery"
+        eyebrow="Fresh & local"
+        emoji="🛒"
+        products={groceryProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000002"}
+        viewMoreLabel="View all Grocery"
+      />
+
+      {/* 9. Coinback loyalty spotlight */}
       <CoinbackSpotlight />
 
-      {/* 7. Editorial band — Listings dark */}
+      {/* 10. Featured products */}
+      <FeaturedProducts products={products} />
+
+      {/* 11. Mid banner position 3 */}
+      <MidBanner banners={bannersPos3} />
+
+      {/* 12. Fashion carousel */}
+      <ProductCarousel
+        title="Fashion"
+        eyebrow="Style & trends"
+        emoji="👗"
+        products={fashionProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000005"}
+        viewMoreLabel="View all Fashion"
+      />
+
+      {/* 13. Beauty & Fragrance carousel */}
+      <ProductCarousel
+        title="Beauty & Fragrance"
+        eyebrow="Look & feel great"
+        emoji="💎"
+        products={beautyProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000003"}
+        viewMoreLabel="View all Beauty"
+      />
+
+      {/* 14. Mid banner position 4 */}
+      <MidBanner banners={bannersPos4} />
+
+      {/* 15. Home & Kitchen carousel */}
+      <ProductCarousel
+        title="Home & Kitchen"
+        eyebrow="For your home"
+        emoji="🏠"
+        products={homeProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000004"}
+        viewMoreLabel="View all Home & Kitchen"
+      />
+
+      {/* 16. Featured listings — Real Estate */}
       <EditorialBand
         eyebrow="Featured listings"
-        title={"Real estate, cars & more —\nall in UAQ."}
-        body="Browse verified listings for apartments, villas, used cars, fancy numbers and pre-owned items — all from trusted local sellers."
-        ctaLabel="Browse listings"
-        ctaHref="/categories/real_estate"
+        title={"Real estate —\nfind your home in UAQ."}
+        body="Browse verified listings for apartments, villas and plots from trusted local sellers."
+        ctaLabel="Browse Real Estate"
+        ctaHref="/marketplace/real_estate"
         emoji="🏠"
         dark={true}
         flip={false}
       />
 
-      {/* 8. Editorial band — Services light */}
+      {/* 17. Services editorial */}
       <EditorialBand
         eyebrow="Book in seconds"
         title={"Trusted services,\nright at your doorstep."}
@@ -190,16 +296,16 @@ export default async function HomePage() {
         flip={true}
       />
 
-      {/* 9. Stories / Explore UAQ grid */}
+      {/* 18. Explore UAQ stories */}
       <StoriesGrid />
 
-      {/* 10. Vendor CTA */}
+      {/* 19. Vendor CTA */}
       <VendorCta />
 
-      {/* 11. Trust band */}
+      {/* 20. Trust band */}
       <TrustBand />
 
-      {/* 12. App download CTA */}
+      {/* 21. App download CTA */}
       <AppDownloadCta />
     </>
   );
