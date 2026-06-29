@@ -183,14 +183,56 @@ export function CheckoutForm({
               <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" className="input" placeholder="+9715XXXXXXXX" />
             </Field>
           </div>
-          <div className="mt-3">
-            <Field label={t("address")}>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} className="input" placeholder={t("addressPlaceholder")} />
-            </Field>
+          {/* ── Delivery Location (required) ─────────────────────────────── */}
+          <div className="mt-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-maroon)] text-xs font-bold text-white">3</span>
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">Delivery Location</h2>
+              {!mapConfirmed && (
+                <span className="ms-auto rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold text-amber-700">Required</span>
+              )}
+              {mapConfirmed && (
+                <span className="ms-auto rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold text-green-700">✓ Set</span>
+              )}
+            </div>
+            <div className={"rounded-2xl border-2 p-4 transition-colors " + (mapConfirmed ? "border-green-400 bg-green-50/50" : "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]")}>
+              {mapConfirmed ? (
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-lg shrink-0">📍</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-neutral-900 truncate">{address}</p>
+                      <p className="text-xs text-neutral-500">{city}</p>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => setMapConfirmed(false)}
+                    className="shrink-0 rounded-full border border-[color:var(--brand-maroon)] px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors">
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="mb-3 text-xs text-neutral-600">
+                    📌 Pin your exact delivery location on the map so our driver can find you easily.
+                  </p>
+                  <DeliveryMapPicker
+                    initialLat={mapLat ?? undefined}
+                    initialLng={mapLng ?? undefined}
+                    onConfirm={(addr, c, la, ln) => {
+                      setAddress(addr);
+                      setCity(c);
+                      setMapLat(la);
+                      setMapLng(ln);
+                      setMapConfirmed(true);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t("areaCity")}>
-              <input value={city} onChange={(e) => setCity(e.target.value)} className="input" />
+              <input value={city} readOnly className="input bg-neutral-50 text-neutral-500 cursor-default" />
             </Field>
             <Field label={t("notes")}>
               <input value={notes} onChange={(e) => setNotes(e.target.value)} className="input" placeholder={t("notesPlaceholder")} />
@@ -284,7 +326,12 @@ export function CheckoutForm({
         </div>
         <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
 
-        <button onClick={placeOrder} disabled={placing} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+        {!mapConfirmed && (
+          <p className="mt-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 text-center font-medium">
+            📍 Please set your delivery location above to continue
+          </p>
+        )}
+        <button onClick={placeOrder} disabled={placing || !mapConfirmed} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
           {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · {aed(total)}</>}
         </button>
         <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
