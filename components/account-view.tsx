@@ -301,7 +301,7 @@ export function AccountView({
         </div>
         <Link href="/account/priority-card"
           className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center hover:border-[color:var(--brand-maroon)] transition-colors">
-          <span className="text-xl block mb-1">{"\U0001f947"}</span>
+          <span className="text-xl block mb-1">{"🥇"}</span>
           <p className="text-sm font-extrabold text-neutral-900">Priority</p>
           <p className="text-[11px] text-neutral-500 mt-0.5">Cards</p>
         </Link>
@@ -317,7 +317,7 @@ export function AccountView({
           <div className="grid grid-cols-2 gap-3">
             <Link href="/orders"
               className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FDE8EC" }}>{"\U0001f4e6"}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FDE8EC" }}>{"📦"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">{t("myOrders")}</p>
                 <p className="text-[11px] text-neutral-500">{recentOrders.length} order{recentOrders.length !== 1 ? "s" : ""}</p>
@@ -325,7 +325,7 @@ export function AccountView({
             </Link>
             <Link href="/account/priority-card"
               className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FEF9C3" }}>{"\U0001f947"}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FEF9C3" }}>{"🥇"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">Priority Cards</p>
                 <p className="text-[11px] text-neutral-500">Perks &amp; free delivery</p>
@@ -333,7 +333,7 @@ export function AccountView({
             </Link>
             <Link href="/tickets"
               className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#EDE9FE" }}>{"\U0001f39f\ufe0f"}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#EDE9FE" }}>{"🎟️"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">My Tickets</p>
                 <p className="text-[11px] text-neutral-500">Zoo &amp; event bookings</p>
