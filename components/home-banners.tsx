@@ -100,7 +100,7 @@ export function HomeBanners({ banners }: { banners: BannerCard[] }) {
                 <img
                   src={b.image_url}
                   alt={b.title ?? "Banner"}
-                  className="aspect-[16/6] w-full object-cover md:aspect-[16/6] aspect-[4/3]"
+                  className="aspect-[4/3] w-full object-cover md:aspect-[16/7]"
                 />
               </picture>
               {b.title && (
