@@ -130,7 +130,7 @@ export default async function HomePage() {
 
     supabase
       .from("banners")
-      .select("id, title, image_url, link_type, link_value, sort_order")
+      .select("id, title, image_url, mobile_image_url, link_type, link_value, sort_order")
       .eq("is_active", true)
       .or(`ends_at.is.null,ends_at.gt.${nowIso}`)
       .order("sort_order", { ascending: true, nullsFirst: false })
@@ -176,16 +176,16 @@ export default async function HomePage() {
   // Split banners by position (sort_order ranges)
   const allBanners = bannersRaw ?? [];
   const banners: BannerCard[] = allBanners.filter((b: Row) => !b.sort_order || b.sort_order <= 10).map((b: Row) => ({
-    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+    id: b.id, title: b.title, image_url: b.image_url, mobile_image_url: b.mobile_image_url ?? null, link_type: b.link_type, link_value: b.link_value,
   }));
   const bannersPos2: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 11 && b.sort_order <= 20).map((b: Row) => ({
-    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+    id: b.id, title: b.title, image_url: b.image_url, mobile_image_url: b.mobile_image_url ?? null, link_type: b.link_type, link_value: b.link_value,
   }));
   const bannersPos3: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 21 && b.sort_order <= 30).map((b: Row) => ({
-    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+    id: b.id, title: b.title, image_url: b.image_url, mobile_image_url: b.mobile_image_url ?? null, link_type: b.link_type, link_value: b.link_value,
   }));
   const bannersPos4: BannerItem[] = allBanners.filter((b: Row) => b.sort_order >= 31 && b.sort_order <= 40).map((b: Row) => ({
-    id: b.id, title: b.title, image_url: b.image_url, link_type: b.link_type, link_value: b.link_value,
+    id: b.id, title: b.title, image_url: b.image_url, mobile_image_url: b.mobile_image_url ?? null, link_type: b.link_type, link_value: b.link_value,
   }));
 
   function toCarousel(raw: Row[] | null): CarouselProduct[] {

@@ -9,6 +9,7 @@ export type BannerCard = {
   id: string;
   title: string | null;
   image_url: string;
+  mobile_image_url: string | null;
   link_type: string | null;
   link_value: string | null;
 };
@@ -91,12 +92,17 @@ export function HomeBanners({ banners }: { banners: BannerCard[] }) {
         >
           {slides.map((b) => (
             <Link key={b.id} href={bannerHref(b)} className="relative block w-full shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={b.image_url}
-                alt={b.title ?? "Banner"}
-                className="aspect-[16/6] w-full object-cover"
-              />
+              <picture>
+                {b.mobile_image_url && (
+                  <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />
+                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={b.image_url}
+                  alt={b.title ?? "Banner"}
+                  className="aspect-[16/6] w-full object-cover md:aspect-[16/6] aspect-[4/3]"
+                />
+              </picture>
               {b.title && (
                 <span className="absolute bottom-3 start-3 rounded-md bg-black/55 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
                   {b.title}
