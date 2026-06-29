@@ -7,7 +7,7 @@ const PILLS = [
   { label: "Food & Grocery", emoji: "🍽️", href: "/categories/restaurant" },
   { label: "Health & Beauty", emoji: "💊", href: "/categories/pharmacy" },
   { label: "Home & Services", emoji: "🏠", href: "/services" },
-  { label: "Retail",          emoji: "🛍️", href: "/shop/a1000000-0000-0000-0000-000000000001" },
+  { label: "Retail",          emoji: "🛍️", href: "/shop/electronics" },
   { label: "Listings",        emoji: "🏗️", href: "/marketplace/real_estate" },
   { label: "Travel",          emoji: "✈️", href: "/services/explore-uaq" },
   { label: "Business",        emoji: "💼", href: "/services/typing-center" },

@@ -7,10 +7,10 @@ import { Search, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import type { BannerCard } from "@/components/home-banners";
 
 const CHIPS = [
-  { label: "Grocery", href: "/shop/a1000000-0000-0000-0000-000000000002" },
+  { label: "Grocery", href: "/shop/grocery" },
   { label: "Restaurants", href: "/categories/restaurant" },
   { label: "Pharmacy", href: "/categories/pharmacy" },
-  { label: "Electronics", href: "/shop/a1000000-0000-0000-0000-000000000001" },
+  { label: "Electronics", href: "/shop/electronics" },
   { label: "Services", href: "/services" },
   { label: "Real Estate", href: "/marketplace/real_estate" },
 ];

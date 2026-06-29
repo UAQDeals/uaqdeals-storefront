@@ -10,7 +10,9 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("categories").select("name").eq("id", id).maybeSingle();
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const { data } = await supabase.from("categories").select("name")
+    .eq(isUuid ? "id" : "slug", id).maybeSingle();
   return { title: data?.name ? data.name + " — UAQ Deals" : "Shop — UAQ Deals" };
 }
 
@@ -18,13 +20,26 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: cat }, { data: children }] = await Promise.all([
-    supabase.from("categories").select("id, name, parent_id").eq("id", id).maybeSingle(),
-    supabase.from("categories").select("id, name").eq("parent_id", id)
-      .eq("is_active", true).order("sort_order").order("name"),
-  ]);
+  // Accept either UUID or slug
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const catQuery = isUuid
+    ? supabase.from("categories").select("id, name, parent_id, slug").eq("id", id).maybeSingle()
+    : supabase.from("categories").select("id, name, parent_id, slug").eq("slug", id).maybeSingle();
+
+  const [{ data: catRaw }] = await Promise.all([catQuery]);
+  const cat = catRaw;
 
   if (!cat) notFound();
+
+  // Redirect slug URLs to canonical slug (avoid UUID in URL)
+  // If accessed via UUID, redirect to slug URL for SEO
+  if (isUuid && cat.slug && cat.slug !== id) {
+    redirect("/shop/" + cat.slug);
+  }
+
+  const { data: children } = await supabase
+    .from("categories").select("id, name, slug").eq("parent_id", cat.id)
+    .eq("is_active", true).order("sort_order").order("name");
   if (!children || children.length === 0) redirect("/products?cat=" + id);
 
   // Build breadcrumb
@@ -32,7 +47,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   let current = cat;
   while (current.parent_id) {
     const { data: parent } = await supabase.from("categories")
-      .select("id, name, parent_id").eq("id", current.parent_id).maybeSingle();
+      .select("id, name, parent_id, slug").eq("id", current.parent_id).maybeSingle();
     if (!parent) break;
     breadcrumb.unshift({ id: parent.id, name: parent.name });
     current = parent;

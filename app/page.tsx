@@ -233,7 +233,7 @@ export default async function HomePage() {
         eyebrow="Latest tech"
         emoji="📱"
         products={electronicsProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000001"}
+        viewMoreHref={"/shop/electronics"}
         viewMoreLabel="View all Electronics"
       />
 
@@ -246,7 +246,7 @@ export default async function HomePage() {
         eyebrow="Fresh & local"
         emoji="🛒"
         products={groceryProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000002"}
+        viewMoreHref={"/shop/grocery"}
         viewMoreLabel="View all Grocery"
       />
 
@@ -265,7 +265,7 @@ export default async function HomePage() {
         eyebrow="Style & trends"
         emoji="👗"
         products={fashionProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000005"}
+        viewMoreHref={"/shop/fashion"}
         viewMoreLabel="View all Fashion"
       />
 
@@ -275,7 +275,7 @@ export default async function HomePage() {
         eyebrow="Look & feel great"
         emoji="💎"
         products={beautyProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000003"}
+        viewMoreHref={"/shop/beauty-fragrance"}
         viewMoreLabel="View all Beauty"
       />
 
@@ -288,7 +288,7 @@ export default async function HomePage() {
         eyebrow="For your home"
         emoji="🏠"
         products={homeProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000004"}
+        viewMoreHref={"/shop/home-kitchen"}
         viewMoreLabel="View all Home & Kitchen"
       />
 
@@ -326,7 +326,7 @@ export default async function HomePage() {
         eyebrow="For little ones"
         emoji="👶"
         products={babyProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000006"}
+        viewMoreHref={"/shop/baby"}
         viewMoreLabel="View all Baby"
       />
       <ProductCarousel
@@ -334,7 +334,7 @@ export default async function HomePage() {
         eyebrow="Fun for all ages"
         emoji="🧸"
         products={toysProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000007"}
+        viewMoreHref={"/shop/toys"}
         viewMoreLabel="View all Toys"
       />
       <ProductCarousel
@@ -342,7 +342,7 @@ export default async function HomePage() {
         eyebrow="Stay healthy"
         emoji="💪"
         products={healthProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000009"}
+        viewMoreHref={"/shop/health-nutrition"}
         viewMoreLabel="View all Health"
       />
       <ProductCarousel
@@ -350,7 +350,7 @@ export default async function HomePage() {
         eyebrow="Work & study"
         emoji="✏️"
         products={stationeryProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000010"}
+        viewMoreHref={"/shop/stationery"}
         viewMoreLabel="View all Stationery"
       />
       <ProductCarousel
@@ -358,7 +358,7 @@ export default async function HomePage() {
         eyebrow="Read & learn"
         emoji="📚"
         products={booksProducts}
-        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000011"}
+        viewMoreHref={"/shop/books"}
         viewMoreLabel="View all Books"
       />
 
