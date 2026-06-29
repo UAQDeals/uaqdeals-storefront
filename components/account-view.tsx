@@ -283,6 +283,16 @@ export function AccountView({
         )}
       </section>
 
+      {/* ── Priority Card ─────────────────────────────────────────────────────── */}
+      <Link href="/account/priority-card" className="flex items-center gap-3 border border-neutral-200 bg-white p-5 hover:border-[color:var(--brand-maroon)] transition-colors">
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 text-white text-lg">🥇</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-neutral-900">Priority Cards</p>
+          <p className="text-xs text-neutral-500">Unlock free delivery, discounts &amp; coinback</p>
+        </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-neutral-400" />
+      </Link>
+
       {/* ── My Tickets quick link ──────────────────────────────────────────── */}
       <Link href="/tickets" className="section-tickets-link flex items-center gap-3 border border-neutral-200 bg-white p-5 hover:border-[color:var(--brand-maroon)] transition-colors">
         <span className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ background: "#FDE8EC" }}>🎟️</span>
