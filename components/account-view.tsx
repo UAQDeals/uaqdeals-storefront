@@ -502,18 +502,16 @@ export function AccountView({
 
           {/* Coin wallet */}
           <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
-                <Coins className="h-5 w-5 text-amber-500" />
-              </div>
-              <div className="flex-1 min-w-0">
+            <div className="mb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">
+                  <Coins className="h-4 w-4 text-amber-500" />
+                </div>
                 <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t("coinWallet")}</p>
-                <p className="text-2xl font-extrabold text-neutral-900 leading-none mt-0.5">{coinBalance.toLocaleString()}</p>
+                <p className="ms-auto text-sm font-bold text-[color:var(--brand-maroon)]">{aed(Number(coinAed))}</p>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-sm font-bold text-[color:var(--brand-maroon)]">{aed(Number(coinAed))}</p>
-                <p className="text-[10px] text-neutral-400">{t("coinHelp")}</p>
-              </div>
+              <p className="text-3xl font-extrabold text-neutral-900 leading-none">{coinBalance.toLocaleString()}</p>
+              <p className="text-[11px] text-neutral-500 mt-1">{t("coinHelp")}</p>
             </div>
             {transactions.length > 0 && (
               <div className="border-t border-[color:var(--brand-border)] pt-3">
