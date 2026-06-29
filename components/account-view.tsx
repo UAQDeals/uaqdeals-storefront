@@ -213,392 +213,401 @@ export function AccountView({
     support_replies:{ label: t("supportReplies"),desc: t("supportRepliesDesc") },
   };
 
-  const displayName = profile.full_name || profile.email || "—";
+  const displayName = profile.full_name || profile.email || "\u2014";
   const initial     = (displayName?.[0] ?? "U").toUpperCase();
   const isGoogle    = profile.auth_method === "google";
+  const coinAed     = (coinBalance * 0.1).toFixed(2);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4 px-4 py-10">
+    <div className="mx-auto max-w-4xl px-4 py-8 space-y-5">
 
-      {/* ── Profile header ─────────────────────────────────────────────────── */}
-      <section className="flex items-center gap-4 border border-neutral-200 bg-white p-5">
-        {profile.avatar_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={profile.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover ring-1 ring-neutral-200" />
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-2xl font-bold text-white">{initial}</div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="text-xl font-extrabold tracking-tight">{displayName.split(" ")[0]}</p>
-          <p className="truncate text-sm text-neutral-500">{profile.email}</p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-2">
-            {isGoogle && (
-              <span className="inline-flex items-center gap-1 bg-neutral-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neutral-600">
-                <ShieldCheck className="h-3 w-3" /> Google
-              </span>
-            )}
-            {profile.member_since && (
-              <span className="text-[11px] text-neutral-400">
-                Member since {new Date(profile.member_since).toLocaleDateString("en-AE", { month: "short", year: "numeric" })}
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Coin wallet ────────────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400 mb-3">{t("coinWallet")}</p>
+      {/* ── Hero header ─────────────────────────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-2xl p-6 text-white shadow-lg"
+        style={{ background: "linear-gradient(135deg, #8E1B3A 0%, #C72931 60%, #F24732 100%)" }}>
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center bg-neutral-900 text-white shrink-0">
-            <Coins className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-3xl font-extrabold tracking-tight text-neutral-900">{coinBalance.toLocaleString()}</p>
-            <p className="text-sm text-neutral-500">{aed(coinBalance / 100)} value · {t("coinHelp")}</p>
-          </div>
-        </div>
-
-        {transactions.length > 0 && (
-          <div className="mt-4 border-t border-neutral-100 pt-3 space-y-0">
-            <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400 mb-2">{t("recentActivity")}</p>
-            {transactions.slice(0, 5).map((tx) => {
-              const positive = tx.coins > 0;
-              return (
-                <div key={tx.id} className="flex items-center gap-3 py-2.5 border-b border-neutral-50 last:border-0">
-                  <span className={"inline-flex h-7 w-7 items-center justify-center text-[11px] font-bold " + (positive ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700")}>
-                    {positive ? "+" : "−"}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] line-clamp-1">{tx.description ?? tx.type.replace(/_/g, " ")}</p>
-                    <p className="text-[11px] text-neutral-400">{fmtDate(tx.created_at)}</p>
-                  </div>
-                  <span className={"text-[13px] font-bold " + (positive ? "text-green-700" : "text-amber-700")}>
-                    {positive ? "+" : ""}{tx.coins.toLocaleString()}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ── Priority Card ─────────────────────────────────────────────────────── */}
-      <Link href="/account/priority-card" className="flex items-center gap-3 border border-neutral-200 bg-white p-5 hover:border-[color:var(--brand-maroon)] transition-colors">
-        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 text-white text-lg">🥇</span>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-neutral-900">Priority Cards</p>
-          <p className="text-xs text-neutral-500">Unlock free delivery, discounts &amp; coinback</p>
-        </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-neutral-400" />
-      </Link>
-
-      {/* ── My Tickets quick link ──────────────────────────────────────────── */}
-      <Link href="/tickets" className="section-tickets-link flex items-center gap-3 border border-neutral-200 bg-white p-5 hover:border-[color:var(--brand-maroon)] transition-colors">
-        <span className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ background: "#FDE8EC" }}>🎟️</span>
-        <div className="flex-1">
-          <p className="text-[14px] font-bold text-neutral-900">My Tickets</p>
-          <p className="text-[12px] text-neutral-500">View your zoo & event bookings and QR codes</p>
-        </div>
-        <span className="text-neutral-400 text-lg">›</span>
-      </Link>
-
-      {/* ── Recent orders ──────────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("myOrders")}</p>
-          <Link href="/orders" className="text-[12px] font-bold text-neutral-900 underline underline-offset-2 hover:text-[color:var(--brand-maroon)]">
-            {tc("seeAll")} →
-          </Link>
-        </div>
-        {recentOrders.length === 0 ? (
-          <div className="py-6 text-center">
-            <Package className="h-8 w-8 text-neutral-200 mx-auto mb-2" />
-            <p className="text-[13px] text-neutral-500">{t("noOrders")}</p>
-            <Link href="/categories" className="mt-3 inline-block bg-neutral-900 text-white text-[12px] font-bold px-5 py-2 hover:bg-neutral-700 transition-colors">
-              Start shopping
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {recentOrders.map((o) => {
-              const status = o.status ?? "pending";
-              return (
-                <Link key={o.id} href={`/orders/${o.id}`}
-                  className="flex items-center gap-3 border border-neutral-100 p-3 hover:border-neutral-300 transition-colors">
-                  <div className="h-12 w-12 shrink-0 overflow-hidden bg-neutral-100">
-                    {o.thumb ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={o.thumb} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-neutral-300">
-                        <Package className="h-5 w-5" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-[13px] font-bold">{o.order_number ?? o.id.slice(0, 8).toUpperCase()}</p>
-                      <span className={"px-2 py-0.5 text-[10px] font-bold " + (STATUS_COLORS[status] ?? "bg-neutral-100 text-neutral-500")}>
-                        {fmtStatus(status)}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">{o.preview}</p>
-                    <p className="text-[11px] text-neutral-400">{fmtDate(o.created_at)}</p>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <span className="text-[14px] font-extrabold text-neutral-900">{aed(o.total)}</span>
-                    <ChevronRight className="h-4 w-4 text-neutral-300" />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ── Saved addresses ────────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">Saved Addresses</p>
-          {!addingAddr && (
-            <button onClick={() => setAddingAddr(true)}
-              className="flex items-center gap-1 text-[12px] font-bold text-neutral-900 hover:text-[color:var(--brand-maroon)] transition-colors">
-              <Plus className="h-3.5 w-3.5" /> Add new
-            </button>
+          {profile.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={profile.avatar_url} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
+          ) : (
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/20 text-2xl font-extrabold">
+              {initial}
+            </div>
           )}
-        </div>
-
-        {addresses.length === 0 && !addingAddr && (
-          <div className="py-6 text-center">
-            <MapPin className="h-8 w-8 text-neutral-200 mx-auto mb-2" />
-            <p className="text-[13px] text-neutral-500">No saved addresses yet</p>
-          </div>
-        )}
-
-        <div className="space-y-2">
-          {addresses.map((addr) => (
-            <div key={addr.id}
-              className={"flex items-start gap-3 border p-3 " + (addr.is_default ? "border-neutral-900" : "border-neutral-100")}>
-              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center bg-neutral-100">
-                {addr.label?.toLowerCase().includes("work") || addr.label?.toLowerCase().includes("office")
-                  ? <Briefcase className="h-4 w-4 text-neutral-600" />
-                  : <Home className="h-4 w-4 text-neutral-600" />}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-[13px] font-bold">{addr.label ?? "Address"}</p>
-                  {addr.is_default && (
-                    <span className="bg-neutral-900 text-white text-[9px] font-bold px-2 py-0.5 tracking-wide">DEFAULT</span>
-                  )}
-                </div>
-                <p className="text-[12px] text-neutral-600 mt-0.5">{addr.full_address}</p>
-                {addr.emirate && <p className="text-[11px] text-neutral-400">{addr.emirate}{addr.landmark ? ` · ${addr.landmark}` : ""}</p>}
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {!addr.is_default && (
-                  <button onClick={() => setDefault(addr.id)}
-                    className="text-[11px] font-semibold text-neutral-500 hover:text-neutral-900">
-                    Set default
-                  </button>
-                )}
-                <button onClick={() => deleteAddress(addr.id)}
-                  className="text-neutral-300 hover:text-red-500 transition-colors">
-                  <Trash2 className="h-4 w-4" />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-extrabold tracking-tight truncate">{displayName}</h1>
+              {!editing && (
+                <button onClick={() => setEditing(true)}
+                  className="rounded-full bg-white/20 p-1.5 hover:bg-white/30 transition shrink-0">
+                  <Pencil className="h-3 w-3" />
                 </button>
-              </div>
+              )}
             </div>
-          ))}
-        </div>
-
-        {/* Add address form */}
-        {addingAddr && (
-          <div className="mt-3 border border-neutral-200 p-4 space-y-3">
-            <p className="text-[11px] font-bold tracking-widest uppercase text-neutral-400">New Address</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Label</label>
-                <input value={addrLabel} onChange={(e) => setAddrLabel(e.target.value)}
-                  placeholder="Home / Work / Other"
-                  className="w-full h-10 border border-neutral-200 px-3 text-[13px] focus:outline-none focus:border-neutral-900" />
-              </div>
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Emirate</label>
-                <select value={addrEmirate} onChange={(e) => setAddrEmirate(e.target.value)}
-                  className="w-full h-10 border border-neutral-200 px-3 text-[13px] bg-white focus:outline-none focus:border-neutral-900">
-                  {["UAQ", "Dubai", "Abu Dhabi", "Sharjah", "Ajman", "RAK", "Fujairah"].map((e) => (
-                    <option key={e} value={e}>{e}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Full Address</label>
-              <input value={addrFull} onChange={(e) => setAddrFull(e.target.value)}
-                placeholder="Building, street, area…"
-                className="w-full h-10 border border-neutral-200 px-3 text-[13px] focus:outline-none focus:border-neutral-900" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Landmark (optional)</label>
-              <input value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)}
-                placeholder="Near mosque, next to school…"
-                className="w-full h-10 border border-neutral-200 px-3 text-[13px] focus:outline-none focus:border-neutral-900" />
-            </div>
-            <div className="flex gap-2 pt-1">
-              <button onClick={saveAddress} disabled={addrSaving}
-                className="bg-neutral-900 text-white text-[13px] font-bold px-5 py-2.5 hover:bg-neutral-700 transition-colors disabled:opacity-50">
-                {addrSaving ? "Saving…" : "Save address"}
-              </button>
-              <button onClick={() => setAddingAddr(false)}
-                className="border border-neutral-200 text-[13px] font-semibold px-5 py-2.5 hover:bg-neutral-50 transition-colors">
-                Cancel
-              </button>
+            {profile.phone_number && <p className="text-sm text-white/80 mt-0.5">{profile.phone_number}</p>}
+            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+              {isGoogle && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                  <ShieldCheck className="h-3 w-3" /> Google
+                </span>
+              )}
+              {profile.member_since && (
+                <span className="text-[11px] text-white/70">
+                  Member since {new Date(profile.member_since).toLocaleDateString("en-AE", { month: "short", year: "numeric" })}
+                </span>
+              )}
             </div>
           </div>
-        )}
-      </section>
-
-      {/* ── Available coupons ──────────────────────────────────────────────── */}
-      {coupons.length > 0 && (
-        <section className="border border-neutral-200 bg-white p-5">
-          <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400 mb-3">Available Coupons</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {coupons.map((c) => {
-              const discount = c.free_shipping
-                ? "Free shipping"
-                : c.type === "percentage" || c.type === "percent"
-                ? `${c.amount}% off`
-                : `AED ${c.amount} off`;
-              return (
-                <div key={c.id}
-                  className="flex items-center gap-3 border border-dashed border-neutral-300 p-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-neutral-900">
-                    <Tag className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-extrabold tracking-wide">{c.code}</p>
-                    <p className="text-[11.5px] text-neutral-500">{discount}{c.min_spend ? ` · min AED ${c.min_spend}` : ""}</p>
-                    {c.expires_at && (
-                      <p className="text-[10.5px] text-neutral-400">Expires {fmtDate(c.expires_at)}</p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => { navigator.clipboard.writeText(c.code); toast.success(`${c.code} copied!`); }}
-                    className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-neutral-500 hover:text-neutral-900 transition-colors">
-                    <Copy className="h-3.5 w-3.5" /> Copy
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* ── Personal details ───────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("personalDetails")}</p>
-          {!editing && (
-            <button onClick={() => setEditing(true)}
-              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-900 hover:text-[color:var(--brand-maroon)] transition-colors">
-              <Pencil className="h-3.5 w-3.5" /> {tc("edit")}
-            </button>
-          )}
         </div>
 
-        {editing ? (
-          <div className="space-y-3">
+        {editing && (
+          <div className="mt-4 space-y-2">
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">{t("fullName")}</label>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1">{t("fullName")}</p>
               <input value={name} onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 border border-neutral-200 px-3 text-[13px] focus:outline-none focus:border-neutral-900" />
+                className="w-full rounded-lg bg-white/20 px-3 py-2 text-sm text-white placeholder-white/50 outline-none"
+                placeholder="Your name" />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">{t("mobile")}</label>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1">{t("mobile")}</p>
               <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel"
                 placeholder="+9715XXXXXXXX"
-                className="w-full h-10 border border-neutral-200 px-3 text-[13px] focus:outline-none focus:border-neutral-900" />
+                className="w-full rounded-lg bg-white/20 px-3 py-2 text-sm text-white placeholder-white/50 outline-none" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={saveProfile} disabled={saving}
-                className="bg-neutral-900 text-white text-[13px] font-bold px-5 py-2.5 hover:bg-neutral-700 disabled:opacity-50 transition-colors flex items-center gap-2">
-                <Check className="h-4 w-4" /> {saving ? tc("saving") : tc("save")}
+                className="flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-bold text-[color:var(--brand-maroon)] hover:bg-white/90 disabled:opacity-60">
+                <Check className="h-3.5 w-3.5" /> {saving ? tc("saving") : tc("save")}
               </button>
               <button onClick={() => { setName(profile.full_name ?? ""); setPhone(profile.phone_number ?? ""); setEditing(false); }}
-                disabled={saving}
-                className="border border-neutral-200 text-[13px] font-semibold px-5 py-2.5 hover:bg-neutral-50 transition-colors flex items-center gap-2">
-                <X className="h-4 w-4" /> {tc("cancel")}
+                className="flex items-center gap-1.5 rounded-full bg-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/30">
+                <X className="h-3.5 w-3.5" /> {tc("cancel")}
               </button>
             </div>
           </div>
-        ) : (
-          <dl className="grid grid-cols-2 gap-3 text-sm">
-            <KV label={t("fullName")}  value={profile.full_name} />
-            <KV label={t("mobile")}    value={profile.phone_number} />
-            <KV label={t("email")}     value={profile.email} />
-            <KV label={t("emirate")}   value={profile.emirate ?? "UAQ"} />
-          </dl>
         )}
-      </section>
+      </div>
 
-      {/* ── Notifications ──────────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("notifications")}</p>
-          <Bell className="h-4 w-4 text-neutral-300" />
+      {/* ── Stats strip ─────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center">
+          <Coins className="h-5 w-5 mx-auto mb-1 text-amber-500" />
+          <p className="text-xl font-extrabold text-neutral-900">{coinBalance.toLocaleString()}</p>
+          <p className="text-[11px] text-neutral-500 mt-0.5">UAQ Coins</p>
         </div>
-        <ul className="divide-y divide-neutral-50">
-          {PREF_KEYS.map((key) => {
-            const on   = !!prefs[key];
-            const meta = prefLabel[key];
-            return (
-              <li key={key} className="flex items-center justify-between gap-4 py-3">
-                <div className="min-w-0">
-                  <p className="text-[13.5px] font-medium">{meta.label}</p>
-                  <p className="text-[11.5px] text-neutral-400">{meta.desc}</p>
-                </div>
-                <button onClick={() => togglePref(key)} disabled={prefsSaving} role="switch" aria-checked={on}
-                  className={"relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition " + (on ? "bg-neutral-900" : "bg-neutral-200")}>
-                  <span className={"inline-block h-4 w-4 transform rounded-full bg-white shadow transition " + (on ? "translate-x-6" : "translate-x-1")} />
+        <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center">
+          <Package className="h-5 w-5 mx-auto mb-1 text-[color:var(--brand-maroon)]" />
+          <p className="text-xl font-extrabold text-neutral-900">{recentOrders.length}</p>
+          <p className="text-[11px] text-neutral-500 mt-0.5">Orders</p>
+        </div>
+        <Link href="/account/priority-card"
+          className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center hover:border-[color:var(--brand-maroon)] transition-colors">
+          <span className="text-xl block mb-1">{"\U0001f947"}</span>
+          <p className="text-sm font-extrabold text-neutral-900">Priority</p>
+          <p className="text-[11px] text-neutral-500 mt-0.5">Cards</p>
+        </Link>
+      </div>
+
+      {/* ── Two-column grid ─────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
+
+        {/* Left column */}
+        <div className="space-y-5">
+
+          {/* Quick actions 2x2 */}
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/orders"
+              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FDE8EC" }}>{"\U0001f4e6"}</span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-neutral-900">{t("myOrders")}</p>
+                <p className="text-[11px] text-neutral-500">{recentOrders.length} order{recentOrders.length !== 1 ? "s" : ""}</p>
+              </div>
+            </Link>
+            <Link href="/account/priority-card"
+              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FEF9C3" }}>{"\U0001f947"}</span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-neutral-900">Priority Cards</p>
+                <p className="text-[11px] text-neutral-500">Perks &amp; free delivery</p>
+              </div>
+            </Link>
+            <Link href="/tickets"
+              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#EDE9FE" }}>{"\U0001f39f\ufe0f"}</span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-neutral-900">My Tickets</p>
+                <p className="text-[11px] text-neutral-500">Zoo &amp; event bookings</p>
+              </div>
+            </Link>
+            <button onClick={signOut}
+              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-red-300 hover:shadow-sm transition-all text-left w-full">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50">
+                <LogOut className="h-4 w-4 text-red-500" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-neutral-900">{tc("signOut")}</p>
+                <p className="text-[11px] text-neutral-500">See you soon</p>
+              </div>
+            </button>
+          </div>
+
+          {/* Recent orders */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-bold text-neutral-900">{t("myOrders")}</p>
+              <Link href="/orders" className="text-xs font-semibold text-[color:var(--brand-maroon)] hover:underline">
+                {tc("seeAll")} &rarr;
+              </Link>
+            </div>
+            {recentOrders.length === 0 ? (
+              <div className="py-8 text-center">
+                <Package className="h-10 w-10 text-neutral-200 mx-auto mb-3" />
+                <p className="text-sm text-neutral-500">{t("noOrders")}</p>
+                <Link href="/categories"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-5 py-2 text-sm font-bold text-white hover:opacity-90">
+                  Start shopping
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentOrders.map((o) => {
+                  const status = o.status ?? "pending";
+                  return (
+                    <Link key={o.id} href={`/orders/${o.id}`}
+                      className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-border)] p-3 hover:border-[color:var(--brand-maroon)] transition-colors">
+                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                        {o.thumb ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={o.thumb} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                            <Package className="h-4 w-4" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-xs font-bold">{o.order_number ?? o.id.slice(0, 8).toUpperCase()}</p>
+                          <span className={"rounded-full px-2 py-0.5 text-[10px] font-bold " + (STATUS_COLORS[status] ?? "bg-neutral-100 text-neutral-500")}>
+                            {fmtStatus(status)}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">{o.preview}</p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-sm font-extrabold text-[color:var(--brand-maroon)]">{aed(o.total)}</p>
+                        <p className="text-[10px] text-neutral-400">{fmtDate(o.created_at)}</p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Saved addresses */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-bold text-neutral-900">Saved Addresses</p>
+              {!addingAddr && (
+                <button onClick={() => setAddingAddr(true)}
+                  className="flex items-center gap-1 text-xs font-semibold text-[color:var(--brand-maroon)] hover:underline">
+                  <Plus className="h-3.5 w-3.5" /> Add new
                 </button>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+              )}
+            </div>
+            {addresses.length === 0 && !addingAddr && (
+              <div className="py-6 text-center">
+                <MapPin className="h-8 w-8 text-neutral-200 mx-auto mb-2" />
+                <p className="text-sm text-neutral-500">No saved addresses yet</p>
+              </div>
+            )}
+            <div className="space-y-2">
+              {addresses.map((addr) => (
+                <div key={addr.id}
+                  className={"flex items-start gap-3 rounded-xl border p-3 " + (addr.is_default ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]" : "border-[color:var(--brand-border)]")}>
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100">
+                    {addr.label?.toLowerCase().includes("work") || addr.label?.toLowerCase().includes("office")
+                      ? <Briefcase className="h-4 w-4 text-neutral-600" />
+                      : <Home className="h-4 w-4 text-neutral-600" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-bold">{addr.label ?? "Address"}</p>
+                      {addr.is_default && (
+                        <span className="rounded-full bg-[color:var(--brand-maroon)] text-white text-[9px] font-bold px-2 py-0.5">DEFAULT</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-neutral-600 mt-0.5">{addr.full_address}</p>
+                    {addr.emirate && <p className="text-[11px] text-neutral-400">{addr.emirate}{addr.landmark ? ` \u00b7 ${addr.landmark}` : ""}</p>}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {!addr.is_default && (
+                      <button onClick={() => setDefault(addr.id)}
+                        className="text-[11px] font-semibold text-neutral-400 hover:text-[color:var(--brand-maroon)]">
+                        Set default
+                      </button>
+                    )}
+                    <button onClick={() => deleteAddress(addr.id)} className="text-neutral-300 hover:text-red-500 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {addingAddr && (
+              <div className="mt-3 rounded-xl border border-[color:var(--brand-border)] p-4 space-y-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">New Address</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Label</label>
+                    <input value={addrLabel} onChange={(e) => setAddrLabel(e.target.value)} placeholder="Home / Work"
+                      className="input w-full" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Emirate</label>
+                    <select value={addrEmirate} onChange={(e) => setAddrEmirate(e.target.value)} className="input w-full bg-white">
+                      {["UAQ","Dubai","Abu Dhabi","Sharjah","Ajman","RAK","Fujairah"].map((e) => (
+                        <option key={e} value={e}>{e}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Full Address</label>
+                  <input value={addrFull} onChange={(e) => setAddrFull(e.target.value)} placeholder="Building, street, area\u2026" className="input w-full" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Landmark (optional)</label>
+                  <input value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} placeholder="Near mosque\u2026" className="input w-full" />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={saveAddress} disabled={addrSaving}
+                    className="rounded-full bg-[color:var(--brand-maroon)] text-white px-5 py-2 text-sm font-bold hover:opacity-90 disabled:opacity-50">
+                    {addrSaving ? "Saving\u2026" : "Save address"}
+                  </button>
+                  <button onClick={() => setAddingAddr(false)}
+                    className="rounded-full border border-[color:var(--brand-border)] px-5 py-2 text-sm font-semibold hover:bg-neutral-50">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-      {/* ── Get the app ────────────────────────────────────────────────────── */}
-      <section className="border border-neutral-200 bg-white p-5">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-neutral-900">
-            <Smartphone className="h-5 w-5 text-white" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[13.5px] font-bold">{t("getApp")}</p>
-            <p className="text-[12px] text-neutral-500">{t("getAppDesc")}</p>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            <a href="#" className="border border-neutral-200 text-[11px] font-bold px-3 py-1.5 hover:bg-neutral-50">iOS</a>
-            <a href="#" className="border border-neutral-200 text-[11px] font-bold px-3 py-1.5 hover:bg-neutral-50">Android</a>
-          </div>
         </div>
-      </section>
 
-      {/* ── Sign out ───────────────────────────────────────────────────────── */}
-      <button onClick={signOut}
-        className="flex w-full items-center justify-center gap-2 border border-neutral-200 bg-white px-4 py-3.5 text-[13.5px] font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors">
-        <LogOut className="h-4 w-4" /> {tc("signOut")}
-      </button>
+        {/* Right column */}
+        <div className="space-y-5">
 
+          {/* Coin wallet */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                <Coins className="h-5 w-5 text-amber-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t("coinWallet")}</p>
+                <p className="text-2xl font-extrabold text-neutral-900 leading-none mt-0.5">{coinBalance.toLocaleString()}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-sm font-bold text-[color:var(--brand-maroon)]">{aed(Number(coinAed))}</p>
+                <p className="text-[10px] text-neutral-400">{t("coinHelp")}</p>
+              </div>
+            </div>
+            {transactions.length > 0 && (
+              <div className="border-t border-[color:var(--brand-border)] pt-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{t("recentActivity")}</p>
+                {transactions.slice(0, 5).map((tx) => {
+                  const positive = tx.coins > 0;
+                  return (
+                    <div key={tx.id} className="flex items-center gap-2.5 py-2 border-b border-neutral-50 last:border-0">
+                      <span className={"flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold " + (positive ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700")}>
+                        {positive ? "+" : "\u2212"}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs line-clamp-1">{tx.description ?? tx.type.replace(/_/g, " ")}</p>
+                        <p className="text-[10px] text-neutral-400">{fmtDate(tx.created_at)}</p>
+                      </div>
+                      <span className={"text-xs font-bold shrink-0 " + (positive ? "text-green-700" : "text-amber-700")}>
+                        {positive ? "+" : ""}{tx.coins.toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Coupons */}
+          {coupons.length > 0 && (
+            <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">Available Coupons</p>
+              <div className="space-y-2">
+                {coupons.map((c) => {
+                  const discount = c.free_shipping ? "Free shipping"
+                    : c.type === "percentage" || c.type === "percent" ? `${c.amount}% off`
+                    : `AED ${c.amount} off`;
+                  return (
+                    <div key={c.id} className="flex items-center gap-3 rounded-xl border border-dashed border-[color:var(--brand-maroon)]/30 bg-[color:var(--brand-cream)] p-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color:var(--brand-maroon)]">
+                        <Tag className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-extrabold tracking-wide text-[color:var(--brand-maroon)]">{c.code}</p>
+                        <p className="text-[11px] text-neutral-500">{discount}{c.min_spend ? ` \u00b7 min AED ${c.min_spend}` : ""}</p>
+                        {c.expires_at && <p className="text-[10px] text-neutral-400">Expires {fmtDate(c.expires_at)}</p>}
+                      </div>
+                      <button onClick={() => { navigator.clipboard.writeText(c.code); toast.success(`${c.code} copied!`); }}
+                        className="shrink-0 rounded-full border border-[color:var(--brand-maroon)]/30 px-2.5 py-1 text-[10px] font-bold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors flex items-center gap-1">
+                        <Copy className="h-3 w-3" /> Copy
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Personal details */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">{t("personalDetails")}</p>
+            <dl className="divide-y divide-neutral-50">
+              <KV label={t("fullName")}  value={profile.full_name} />
+              <KV label={t("mobile")}    value={profile.phone_number} />
+              <KV label={t("email")}     value={profile.email} />
+              <KV label={t("emirate")}   value={profile.emirate ?? "UAQ"} />
+            </dl>
+          </div>
+
+          {/* Get the app */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900">
+                <Smartphone className="h-5 w-5 text-white" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold">{t("getApp")}</p>
+                <p className="text-xs text-neutral-500">{t("getAppDesc")}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <a href="#" className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2 text-center text-xs font-bold hover:bg-neutral-50 transition-colors">iOS</a>
+              <a href="#" className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2 text-center text-xs font-bold hover:bg-neutral-50 transition-colors">Android</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }
 
 function KV({ label, value }: { label: string; value: string | null }) {
   return (
-    <div>
-      <dt className="text-[10.5px] font-bold uppercase tracking-wider text-neutral-400">{label}</dt>
-      <dd className="mt-0.5 text-[13.5px] text-neutral-800">{value || "—"}</dd>
+    <div className="flex items-start justify-between gap-2 py-2 border-b border-neutral-50 last:border-0">
+      <dt className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 shrink-0">{label}</dt>
+      <dd className="text-[13px] text-neutral-800 text-right">{value || "\u2014"}</dd>
     </div>
   );
 }
