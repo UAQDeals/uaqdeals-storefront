@@ -136,6 +136,27 @@ export function PriorityCardClient({
                 )}
               </ul>
 
+              {/* Card image */}
+              {plan.image_url && (
+                <img src={plan.image_url} alt={plan.name}
+                  className="mb-3 h-24 w-full rounded-xl object-cover" />
+              )}
+
+              {/* Rules */}
+              {Array.isArray(plan.rules) && plan.rules.filter((r: string) => r.trim()).length > 0 && (
+                <div className="mb-3 rounded-xl bg-neutral-50 p-3">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-500">Terms</p>
+                  <ul className="space-y-1 text-xs text-neutral-600">
+                    {plan.rules.filter((r: string) => r.trim()).map((rule: string, i: number) => (
+                      <li key={i} className="flex items-start gap-1.5">
+                        <span className="mt-0.5 shrink-0 text-[color:var(--brand-maroon)]">•</span>
+                        <span>{rule.trim()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <button
                 onClick={() => handleBuy(plan)}
                 disabled={isActive || pending}
