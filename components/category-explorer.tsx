@@ -2,13 +2,13 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const GROUPS = [
-  { emoji: "🍽️", label: "Food & Grocery",      sub: "Restaurants · Grocery · Fish",  href: "/categories/grocery" },
+  { emoji: "🍽️", label: "Food & Grocery",      sub: "Restaurants · Grocery · Fish",  href: "/categories/restaurant" },
   { emoji: "💊", label: "Health & Beauty",     sub: "Pharmacy · Clinics · Salons",   href: "/categories/pharmacy" },
   { emoji: "🏠", label: "Home & Services",     sub: "Cleaning · Repairs · Tailor",   href: "/categories/home_services" },
-  { emoji: "📱", label: "Electronics",         sub: "Phones · Gaming · Gadgets",     href: "/categories/electronics" },
+  { emoji: "📱", label: "Electronics",         sub: "Phones · Gaming · Gadgets",     href: "/shop/a1000000-0000-0000-0000-000000000001" },
   { emoji: "🏗️", label: "Listings",            sub: "Real estate · Cars · Used",     href: "/marketplace/real_estate" },
   { emoji: "✈️", label: "Travel & Experiences", sub: "Explore · Hotels · Flights",    href: "/services/explore-uaq" },
-  { emoji: "💼", label: "Business & Pro",       sub: "Typing · Setup · Software",     href: "/categories/business_setup" },
+  { emoji: "💼", label: "Business & Pro",       sub: "Typing · Setup · Software",     href: "/services/typing-center" },
   { emoji: "🧭", label: "Browse all",          sub: "38 categories across UAQ",      href: "/categories" },
 ];
 

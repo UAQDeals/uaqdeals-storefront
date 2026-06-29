@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 
-const TILES = [
+type Tile = { href: string; emoji: string; bg: string; badge: string | null; title: string; subtitle: string; external?: boolean };
+
+const TILES: Tile[] = [
   {
-    href: "/shop/c2020000-0000-0000-0000-000000000001",
+    href: "/categories/fish_market",
     emoji: "🐟",
     bg: "linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)",
     badge: null,
@@ -19,15 +21,14 @@ const TILES = [
     subtitle: "Medicines & health essentials",
   },
   {
-    href: "https://uaqdeals.ae/food",
+    href: "/categories/restaurant",
     emoji: "🍔",
     bg: "linear-gradient(135deg, #92400e 0%, #d97706 100%)",
     badge: null,
     title: "Order Food",
-    subtitle: "Open in UAQ Deals app",
-    external: true,
+    subtitle: "Restaurants in Umm Al Quwain",
   },
-] satisfies { href: string; emoji: string; bg: string; badge: string | null; title: string; subtitle: string; external?: boolean }[];
+];
 
 export function QuickAccessStrip() {
   return (

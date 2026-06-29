@@ -7,10 +7,10 @@ const PILLS = [
   { label: "Food & Grocery", emoji: "🍽️", href: "/categories/restaurant" },
   { label: "Health & Beauty", emoji: "💊", href: "/categories/pharmacy" },
   { label: "Home & Services", emoji: "🏠", href: "/services" },
-  { label: "Retail",          emoji: "🛍️", href: "/categories/electronics" },
-  { label: "Listings",        emoji: "🏗️", href: "/categories/real_estate" },
-  { label: "Travel",          emoji: "✈️", href: "/services/flight-booking" },
-  { label: "Business",        emoji: "💼", href: "/categories/typing_center" },
+  { label: "Retail",          emoji: "🛍️", href: "/shop/a1000000-0000-0000-0000-000000000001" },
+  { label: "Listings",        emoji: "🏗️", href: "/marketplace/real_estate" },
+  { label: "Travel",          emoji: "✈️", href: "/services/explore-uaq" },
+  { label: "Business",        emoji: "💼", href: "/services/typing-center" },
 ];
 
 const PILLS_AR = [
@@ -18,9 +18,9 @@ const PILLS_AR = [
   { label: "صحة وجمال",      emoji: "💊", href: "/categories/pharmacy" },
   { label: "منزل وخدمات",    emoji: "🏠", href: "/services" },
   { label: "تجزئة",          emoji: "🛍️", href: "/categories/electronics" },
-  { label: "الإعلانات",      emoji: "🏗️", href: "/categories/real_estate" },
-  { label: "سفر",            emoji: "✈️", href: "/services/flight-booking" },
-  { label: "أعمال",          emoji: "💼", href: "/categories/typing_center" },
+  { label: "الإعلانات",      emoji: "🏗️", href: "/marketplace/real_estate" },
+  { label: "سفر",            emoji: "✈️", href: "/services/explore-uaq" },
+  { label: "أعمال",          emoji: "💼", href: "/services/typing-center" },
 ];
 
 export function CategoryPills({ locale }: { locale: string }) {
