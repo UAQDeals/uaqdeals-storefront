@@ -77,6 +77,11 @@ export default async function HomePage() {
 
   // Category IDs for product carousels
   const CAT_ELECTRONICS  = "a1000000-0000-0000-0000-000000000001";
+  const CAT_BABY         = "a1000000-0000-0000-0000-000000000006";
+  const CAT_TOYS         = "a1000000-0000-0000-0000-000000000007";
+  const CAT_HEALTH       = "a1000000-0000-0000-0000-000000000009";
+  const CAT_STATIONERY   = "a1000000-0000-0000-0000-000000000010";
+  const CAT_BOOKS        = "a1000000-0000-0000-0000-000000000011";
   const CAT_GROCERY      = "a1000000-0000-0000-0000-000000000002";
   const CAT_BEAUTY       = "a1000000-0000-0000-0000-000000000003";
   const CAT_HOME_KITCHEN = "a1000000-0000-0000-0000-000000000004";
@@ -100,6 +105,11 @@ export default async function HomePage() {
     { data: fashionRaw },
     { data: beautyRaw },
     { data: homeRaw },
+    { data: babyRaw },
+    { data: toysRaw },
+    { data: healthRaw },
+    { data: stationeryRaw },
+    { data: booksRaw },
   ] = await Promise.all([
     supabase
       .from("deals")
@@ -132,6 +142,11 @@ export default async function HomePage() {
     carouselSelect().eq("category_id", CAT_FASHION),
     carouselSelect().eq("category_id", CAT_BEAUTY),
     carouselSelect().eq("category_id", CAT_HOME_KITCHEN),
+    carouselSelect().eq("category_id", CAT_BABY),
+    carouselSelect().eq("category_id", CAT_TOYS),
+    carouselSelect().eq("category_id", CAT_HEALTH),
+    carouselSelect().eq("category_id", CAT_STATIONERY),
+    carouselSelect().eq("category_id", CAT_BOOKS),
   ]);
 
   const deals: DealCard[] = (dealsRaw ?? []).map((d: Row) => ({
@@ -184,6 +199,11 @@ export default async function HomePage() {
   const fashionProducts     = toCarousel(fashionRaw);
   const beautyProducts      = toCarousel(beautyRaw);
   const homeProducts        = toCarousel(homeRaw);
+  const babyProducts        = toCarousel(babyRaw);
+  const toysProducts        = toCarousel(toysRaw);
+  const healthProducts      = toCarousel(healthRaw);
+  const stationeryProducts  = toCarousel(stationeryRaw);
+  const booksProducts       = toCarousel(booksRaw);
 
   return (
     <>
@@ -282,6 +302,7 @@ export default async function HomePage() {
         emoji="🏠"
         dark={true}
         flip={false}
+        bgImage="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&h=600&fit=crop&auto=format"
       />
 
       {/* 17. Services editorial */}
@@ -299,7 +320,49 @@ export default async function HomePage() {
       {/* 18. Explore UAQ stories */}
       <StoriesGrid />
 
-      {/* 19. Vendor CTA */}
+      {/* 19. More category carousels */}
+      <ProductCarousel
+        title="Baby"
+        eyebrow="For little ones"
+        emoji="👶"
+        products={babyProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000006"}
+        viewMoreLabel="View all Baby"
+      />
+      <ProductCarousel
+        title="Toys & Games"
+        eyebrow="Fun for all ages"
+        emoji="🧸"
+        products={toysProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000007"}
+        viewMoreLabel="View all Toys"
+      />
+      <ProductCarousel
+        title="Health & Nutrition"
+        eyebrow="Stay healthy"
+        emoji="💪"
+        products={healthProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000009"}
+        viewMoreLabel="View all Health"
+      />
+      <ProductCarousel
+        title="Stationery & Office"
+        eyebrow="Work & study"
+        emoji="✏️"
+        products={stationeryProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000010"}
+        viewMoreLabel="View all Stationery"
+      />
+      <ProductCarousel
+        title="Books"
+        eyebrow="Read & learn"
+        emoji="📚"
+        products={booksProducts}
+        viewMoreHref={"/shop/a1000000-0000-0000-0000-000000000011"}
+        viewMoreLabel="View all Books"
+      />
+
+      {/* 20. Vendor CTA */}
       <VendorCta />
 
       {/* 20. Trust band */}

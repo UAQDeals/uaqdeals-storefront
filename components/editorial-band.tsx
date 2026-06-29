@@ -7,8 +7,9 @@ export type EditorialBandProps = {
   ctaLabel: string;
   ctaHref: string;
   emoji: string;
-  flip?: boolean; // true = text left, image right (default false = image left, text right)
-  dark?: boolean; // true = dark bg (default), false = light bg
+  flip?: boolean;
+  dark?: boolean;
+  bgImage?: string; // optional full-width background image
 };
 
 export function EditorialBand({
@@ -20,6 +21,7 @@ export function EditorialBand({
   emoji,
   flip = false,
   dark = true,
+  bgImage,
 }: EditorialBandProps) {
   const bg = dark ? "bg-neutral-900" : "bg-[#f5f0ee]";
   const eyebrowColor = dark ? "text-neutral-500" : "text-[color:var(--brand-maroon)]";
@@ -57,8 +59,10 @@ export function EditorialBand({
   );
 
   return (
-    <section className={`w-full ${bg}`}>
-      <div className="mx-auto max-w-[1320px] grid grid-cols-1 md:grid-cols-2 min-h-[300px]">
+    <section className={`w-full relative ${bg}`}
+      style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
+      {bgImage && <div className="absolute inset-0 bg-black/55" />}
+      <div className="relative mx-auto max-w-[1320px] grid grid-cols-1 md:grid-cols-2 min-h-[300px]">
         {flip ? (
           <>
             {textBlock}

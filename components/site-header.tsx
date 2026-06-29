@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { User, ChevronDown, ChevronRight, Menu, X, Search, MapPin } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { AnnouncementBar } from "@/components/announcement-bar";
 import { CartIcon } from "@/components/cart-icon";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -342,7 +343,9 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
           animation-play-state: paused;
         }
       `}</style>
-      <header className="sticky top-0 z-30 bg-white border-b border-neutral-200"
+      <div className="sticky top-0 z-30">
+      <AnnouncementBar />
+      <header className="relative bg-white border-b border-neutral-200"
         style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
@@ -580,6 +583,7 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
           </div>
         </div>
       </header>
+      </div>
 
       {/* ── Mobile drawer ── */}
       {mobileOpen && <div className="fixed inset-0 z-50 bg-black/50 md:hidden" onClick={closeMobile} aria-hidden />}
