@@ -26,6 +26,8 @@ export const DEDICATED: Record<string, string> = {
   social_media_mgmt:    "/services/tech-services",
 };
 
+export const RESTAURANT_SLUG = "restaurant";
+
 export function dedicatedFor(slug: string): string | null {
   return DEDICATED[slug] ?? null;
 }
