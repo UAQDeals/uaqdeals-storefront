@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { ProductDetail } from "@/components/product-detail";
 import { showProducts } from "@/lib/emirate";
 import { ProductsUnavailable } from "@/components/products-unavailable";
+import { RelatedProducts } from "@/components/related-products";
 
 export const revalidate = 60;
 
@@ -44,7 +45,7 @@ export default async function ProductDetailPage({
     supabase
     .from("products")
     .select(
-      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, brand, unit, average_rating, review_count, condition"
+      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, category_id, brand, unit, average_rating, review_count, condition"
     )
     .eq("id", id)
     .maybeSingle(),
@@ -57,6 +58,20 @@ export default async function ProductDetailPage({
     .order("created_at", { ascending: false })
     .limit(20),
   ]);
+
+  // Fetch related products from same category
+  let relatedProducts: Row[] = [];
+  if (p?.category_id) {
+    const { data: related } = await supabase
+      .from("products")
+      .select("id, name, price, sale_price, thumbnail_url, images")
+      .eq("category_id", p.category_id)
+      .eq("status", "active")
+      .neq("id", id)
+      .order("is_featured", { ascending: false })
+      .limit(10);
+    relatedProducts = related ?? [];
+  }
 
   if (!p || p.status !== "active") notFound();
 
@@ -122,6 +137,9 @@ export default async function ProductDetailPage({
           reviewer_avatar: (r.profiles as any)?.avatar_url ?? null,
         }))}
       />
+      {relatedProducts.length > 0 && (
+        <RelatedProducts products={relatedProducts} categoryId={(p?.category_id as string | null) ?? null} />
+      )}
     </div>
   );
 }
