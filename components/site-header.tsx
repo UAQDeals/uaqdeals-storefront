@@ -541,15 +541,15 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
               <div className="flex items-center justify-center flex-1 gap-0.5">
                 {showProducts && (<>
                 {[
-                  { label: "Electronics",    id: "a1000000-0000-0000-0000-000000000001" },
-                  { label: "Grocery",        id: "a1000000-0000-0000-0000-000000000002" },
-                  { label: "Pharmacy",       id: "9376492e-efbf-42fe-9b75-2f97ae84bfc2" },
-                  { label: "Beauty",         id: "a1000000-0000-0000-0000-000000000003" },
-                  { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004" },
-                  { label: "Fashion",        id: "a1000000-0000-0000-0000-000000000005" },
-                  { label: "Baby",           id: "a1000000-0000-0000-0000-000000000006" },
-                  { label: "Toys",           id: "a1000000-0000-0000-0000-000000000007" },
-                  { label: "Books",          id: "a1000000-0000-0000-0000-000000000011" },
+                  { label: "Electronics",    id: "electronics" },
+                  { label: "Grocery",        id: "grocery" },
+                  { label: "Pharmacy",       id: "pharmacy" },
+                  { label: "Beauty",         id: "beauty-fragrance" },
+                  { label: "Home & Kitchen", id: "home-kitchen" },
+                  { label: "Fashion",        id: "fashion" },
+                  { label: "Baby",           id: "baby" },
+                  { label: "Toys",           id: "toys" },
+                  { label: "Books",          id: "books" },
                 ].map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id}
                     className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
@@ -630,17 +630,17 @@ export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) 
               <div className="px-2">
                 <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">Shop</p>
                 {[
-                  { label: "Electronics", id: "a1000000-0000-0000-0000-000000000001", emoji: "📱" },
-                  { label: "Grocery", id: "a1000000-0000-0000-0000-000000000002", emoji: "🛒" },
-                  { label: "Pharmacy", id: "9376492e-efbf-42fe-9b75-2f97ae84bfc2", emoji: "💊" },
-                  { label: "Beauty & Fragrance", id: "a1000000-0000-0000-0000-000000000003", emoji: "💄" },
-                  { label: "Home & Kitchen", id: "a1000000-0000-0000-0000-000000000004", emoji: "🏠" },
-                  { label: "Fashion", id: "a1000000-0000-0000-0000-000000000005", emoji: "👗" },
-                  { label: "Baby", id: "a1000000-0000-0000-0000-000000000006", emoji: "👶" },
-                  { label: "Toys", id: "a1000000-0000-0000-0000-000000000007", emoji: "🧸" },
-                  { label: "Health & Nutrition", id: "a1000000-0000-0000-0000-000000000009", emoji: "💊" },
-                  { label: "Stationery", id: "a1000000-0000-0000-0000-000000000010", emoji: "✏️" },
-                  { label: "Books", id: "a1000000-0000-0000-0000-000000000011", emoji: "📚" },
+                  { label: "Electronics", id: "electronics", emoji: "📱" },
+                  { label: "Grocery", id: "grocery", emoji: "🛒" },
+                  { label: "Pharmacy", id: "pharmacy", emoji: "💊" },
+                  { label: "Beauty & Fragrance", id: "beauty-fragrance", emoji: "💄" },
+                  { label: "Home & Kitchen", id: "home-kitchen", emoji: "🏠" },
+                  { label: "Fashion", id: "fashion", emoji: "👗" },
+                  { label: "Baby", id: "baby", emoji: "👶" },
+                  { label: "Toys", id: "toys", emoji: "🧸" },
+                  { label: "Health & Nutrition", id: "health-nutrition", emoji: "💊" },
+                  { label: "Stationery", id: "stationery", emoji: "✏️" },
+                  { label: "Books", id: "books", emoji: "📚" },
                 ].map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id} onClick={closeMobile}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-50 transition-colors">
