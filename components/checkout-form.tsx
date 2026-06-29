@@ -11,11 +11,11 @@ import { useCart } from "@/lib/cart";
 import { DeliveryMapPicker } from "@/components/delivery-map-picker";
 import { aed } from "@/lib/format";
 
-const FREE_OVER = 200;
-const DELIVERY_FEE = 15;
-const COIN_VALUE = 0.01;
-const MIN_REDEEM = 1000;
-const MAX_REDEEM_AED = 50;
+const FREE_OVER = 100;      // app_settings: free_delivery_threshold
+const DELIVERY_FEE = 10;    // app_settings: delivery_fee
+const COIN_VALUE = 0.1;     // app_settings: coin_value  (10 coins = AED 1)
+const MIN_REDEEM = 1000;    // app_settings: min_redeem_coins
+const MAX_REDEEM_AED = 50;  // app_settings: max_redeem_aed
 
 type InitialProfile = {
   full_name: string | null;
