@@ -23,25 +23,28 @@ export default async function RestaurantPage() {
 
   const { data: raw } = await supabase
     .from("vendors")
-    .select("id, name, description, logo_url, rating, review_count, is_featured, emirate, vendor_kind")
+    .select("id, name, description, logo_url, rating, review_count, is_featured, emirate, vendor_types(vendor_kind)")
     .eq("vendor_type_id", vendorTypeRow?.id ?? "")
     .eq("status", "approved")
     .order("is_featured", { ascending: false })
     .order("rating", { ascending: false });
 
-  const vendors = (raw ?? []).map((v: Row, i: number) => ({
-    id: v.id,
-    name: v.name ?? "Restaurant",
-    description: v.description ?? "",
-    logo_url: v.logo_url ?? null,
-    hero_url: FOOD_IMAGES[i % FOOD_IMAGES.length],
-    rating: Number(v.rating ?? 0),
-    review_count: Number(v.review_count ?? 0),
-    is_featured: Boolean(v.is_featured),
-    emirate: v.emirate ?? "Umm Al Quwain",
-    is_dine_in: v.vendor_kind === "dine_in" || v.vendor_kind === "both",
-    is_delivery: v.vendor_kind !== "dine_in",
-  }));
+  const vendors = (raw ?? []).map((v: Row, i: number) => {
+    const vk = (v.vendor_types as any)?.vendor_kind ?? "restaurant";
+    return {
+      id: v.id,
+      name: v.name ?? "Restaurant",
+      description: v.description ?? "",
+      logo_url: v.logo_url ?? null,
+      hero_url: FOOD_IMAGES[i % FOOD_IMAGES.length],
+      rating: Number(v.rating ?? 0),
+      review_count: Number(v.review_count ?? 0),
+      is_featured: Boolean(v.is_featured),
+      emirate: v.emirate ?? "Umm Al Quwain",
+      is_dine_in: vk === "dine_in" || vk === "both",
+      is_delivery: vk !== "dine_in",
+    };
+  });
 
   return <RestaurantClient vendors={vendors} />;
 }
