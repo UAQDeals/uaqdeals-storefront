@@ -29,7 +29,7 @@ export function EditorialBand({
   const bodyColor = dark ? "text-neutral-400" : "text-neutral-600";
   const ctaBg = dark ? "bg-white text-neutral-900 hover:bg-neutral-100" : "bg-neutral-900 text-white hover:bg-neutral-700";
 
-  const imgBlock = (
+  const imgBlock = bgImage ? null : (
     <div
       className="hidden md:flex items-center justify-center text-8xl min-h-[300px]"
       style={{ background: dark ? "#1a1a1a" : "#e8ddd4" }}
@@ -62,7 +62,7 @@ export function EditorialBand({
     <section className={`w-full relative ${bg}`}
       style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
       {bgImage && <div className="absolute inset-0 bg-black/55" />}
-      <div className="relative mx-auto max-w-[1320px] grid grid-cols-1 md:grid-cols-2 min-h-[300px]">
+      <div className={`relative mx-auto max-w-[1320px] min-h-[300px] ${bgImage ? "flex items-center" : "grid grid-cols-1 md:grid-cols-2"}`}>
         {flip ? (
           <>
             {textBlock}
