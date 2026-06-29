@@ -213,7 +213,9 @@ export function AccountView({
     support_replies:{ label: t("supportReplies"),desc: t("supportRepliesDesc") },
   };
 
-  const displayName = profile.full_name || profile.email || "\u2014";
+  const isInternalEmail = profile.email?.includes("@uaqdeals.internal") || profile.email?.includes("@vendor.uaqdeals");
+  const displayEmail = isInternalEmail ? null : profile.email;
+  const displayName = profile.full_name || displayEmail || profile.phone_number || "\u2014";
   const initial     = (displayName?.[0] ?? "U").toUpperCase();
   const isGoogle    = profile.auth_method === "google";
   const coinAed     = (coinBalance * 0.1).toFixed(2);
@@ -510,8 +512,8 @@ export function AccountView({
                 <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t("coinWallet")}</p>
                 <p className="ms-auto text-sm font-bold text-[color:var(--brand-maroon)]">{aed(Number(coinAed))}</p>
               </div>
-              <p className="text-3xl font-extrabold text-neutral-900 leading-none">{coinBalance.toLocaleString()}</p>
-              <p className="text-[11px] text-neutral-500 mt-1">{t("coinHelp")}</p>
+              <p className="text-3xl font-extrabold text-neutral-900 leading-none mt-1">{coinBalance.toLocaleString()}</p>
+              <p className="text-[11px] text-neutral-500 mt-1.5 leading-snug">{t("coinHelp")}</p>
             </div>
             {transactions.length > 0 && (
               <div className="border-t border-[color:var(--brand-border)] pt-3">
@@ -573,7 +575,7 @@ export function AccountView({
             <dl className="divide-y divide-neutral-50">
               <KV label={t("fullName")}  value={profile.full_name} />
               <KV label={t("mobile")}    value={profile.phone_number} />
-              <KV label={t("email")}     value={profile.email} />
+              <KV label={t("email")}     value={displayEmail} />
               <KV label={t("emirate")}   value={profile.emirate ?? "UAQ"} />
             </dl>
           </div>

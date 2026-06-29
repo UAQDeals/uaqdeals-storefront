@@ -117,7 +117,7 @@
     "memberSince": "عضو منذ {date}",
     "coinWallet": "محفظة العملات",
     "coinEquiv": "≈ {amount}",
-    "coinHelp": "100 عملة = 1 د.إ. استبدل عند الدفع بعد جمع 1,000 عملة.",
+    "coinHelp": "10 عملات = 1 د.إ. استبدل عند الدفع بعد جمع 1,000 عملة.",
     "recentActivity": "النشاط الأخير",
     "myOrders": "طلباتي",
     "myOrdersDesc": "تتبع وأعد الطلب",
