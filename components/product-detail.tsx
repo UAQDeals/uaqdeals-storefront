@@ -228,7 +228,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       {p.description && (
           <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-neutral-700">{p.description}</p>
+            <div className="prose prose-sm mt-2 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: p.description }} />
           </div>
         )}
 
