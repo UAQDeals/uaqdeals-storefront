@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, ChevronRight, Check, Search as SearchIcon, X } from "lucide-react";
+import { CatalogSearch } from "./catalog-search";
 
 type Product = Record<string, any>;
 type Category = { id: string; name: string; is_approved: boolean | null; parent_id: string | null };
@@ -487,9 +488,18 @@ export function VendorProductsManager({
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-neutral-900">Products</h1>
-        <button onClick={openCreate} className="rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-sm font-semibold text-white">
-          + Add Product
-        </button>
+        <div className="flex gap-2">
+          <CatalogSearch
+            vendorId={vendorId}
+            onAdded={async () => {
+              const { data } = await supabase.from("products").select("*, categories(name)").eq("vendor_id", vendorId).order("created_at", { ascending: false });
+              if (data) setProducts(data);
+            }}
+          />
+          <button onClick={openCreate} className="rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-sm font-semibold text-white">
+            + Add Product
+          </button>
+        </div>
       </div>
 
       {/* Bulk */}
