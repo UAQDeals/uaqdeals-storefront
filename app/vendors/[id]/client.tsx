@@ -20,16 +20,25 @@ function QtyButton({ product }: { product: Product }) {
     return (
       <button
         onClick={() => {
-              add({
-                id: product.id,
-                product_id: product.id,
-                name: product.name,
-                price: Number(product.sale_price ?? product.price ?? 0),
-                original_price: product.price ? Number(product.price) : null,
-                image: product.thumbnail_url ?? null,
-                vendor_name: null,
-                variant: null,
-              });
+              // Add without opening side drawer (restaurant flow uses floating cart bar)
+              const store = useCart.getState();
+              const existing = store.items.find((i) => i.product_id === product.id);
+              if (existing) {
+                store.setQty(product.id, existing.qty + 1);
+              } else {
+                const newItem = {
+                  id: product.id,
+                  product_id: product.id,
+                  name: product.name,
+                  price: Number(product.sale_price ?? product.price ?? 0),
+                  original_price: product.price ? Number(product.price) : null,
+                  image: product.thumbnail_url ?? null,
+                  vendor_name: null,
+                  variant: null,
+                  qty: 1,
+                };
+                useCart.setState({ items: [...store.items, newItem] });
+              }
               toast.success(`${product.name} added`);
             }}
         className="flex items-center gap-1 rounded-full bg-[color:var(--brand-maroon)] px-4 py-2 text-xs font-bold text-white hover:opacity-90 transition-opacity shrink-0">
