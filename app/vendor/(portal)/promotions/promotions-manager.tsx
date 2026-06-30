@@ -136,8 +136,7 @@ function DealDialog({ vendorId, products, deal, onClose, onSaved }: {
       if (imageFile) {
         const ext = imageFile.name.split(".").pop();
         const path = `${vendorId}/${Date.now()}.${ext}`;
-        const bytes = await imageFile.arrayBuffer();
-        await supabase.storage.from("deal_images").uploadBinary(path, new Uint8Array(bytes), { contentType: imageFile.type, upsert: true });
+        const bytes = await supabase.storage.from("deal_images").upload(path, imageFile, { contentType: imageFile.type, upsert: true });
         imageUrl = supabase.storage.from("deal_images").getPublicUrl(path).data.publicUrl;
       }
       const payload = {

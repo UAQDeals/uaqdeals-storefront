@@ -133,8 +133,7 @@ function DishDialog({ vendorId, dish, onClose, onSaved }: {
         const { data: { user } } = await supabase.auth.getUser();
         const ext = imageFile.name.split(".").pop();
         const path = `${vendorId}/${Date.now()}.${ext}`;
-        const bytes = await imageFile.arrayBuffer();
-        await supabase.storage.from("products").uploadBinary(path, new Uint8Array(bytes), { contentType: imageFile.type, upsert: true });
+        const bytes = await supabase.storage.from("products").upload(path, imageFile, { contentType: imageFile.type, upsert: true });
         thumbUrl = supabase.storage.from("products").getPublicUrl(path).data.publicUrl;
       }
       const payload: any = {

@@ -62,8 +62,7 @@ export function BusinessProfileManager({ vendorId }: { vendorId: string }) {
   }
 
   async function uploadImage(file: File, bucket: string, path: string) {
-    const bytes = await file.arrayBuffer();
-    await supabase.storage.from(bucket).uploadBinary(path, new Uint8Array(bytes), { contentType: file.type, upsert: true });
+    await supabase.storage.from(bucket).upload(path, file, { contentType: file.type, upsert: true });
     return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   }
 
