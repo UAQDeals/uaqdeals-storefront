@@ -5,10 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV = [
-  { label: "Dashboard", href: "/vendor/dashboard" },
-  { label: "Products", href: "/vendor/products" },
-  { label: "Orders", href: "/vendor/orders" },
-  { label: "Finance", href: "/vendor/finance" },
+  { label: "Dashboard",        href: "/vendor/dashboard" },
+  { label: "Products",         href: "/vendor/products" },
+  { label: "Orders",           href: "/vendor/orders" },
+  { label: "Finance",          href: "/vendor/finance" },
+  { label: "Promotions",       href: "/vendor/promotions" },
+  { label: "Menu",             href: "/vendor/menu" },
+  { label: "Business Profile", href: "/vendor/profile" },
+  { label: "Support",          href: "/vendor/support" },
 ];
 
 export function VendorPortalNav({ vendorName }: { vendorName: string }) {
