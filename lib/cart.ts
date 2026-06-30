@@ -12,6 +12,7 @@ export type CartItem = {
   image: string | null;
   variant: string | null;     // human-readable variant summary, e.g. "Size: M"
   vendor_name: string | null;
+  vendor_id?: string | null;
   qty: number;
 };
 
@@ -31,6 +32,9 @@ type CartState = {
   // coupon (persisted with items, carried to checkout)
   coupon: { code: string; discount: number; id: string; freeShipping: boolean } | null;
   setCoupon: (c: { code: string; discount: number; id: string; freeShipping: boolean } | null) => void;
+  // single-vendor enforcement for restaurant ordering
+  getActiveVendorId: () => string | null;
+  clearAndSetVendor: (vendorId: string | null) => void;
 };
 
 export const useCart = create<CartState>()(
@@ -53,6 +57,12 @@ export const useCart = create<CartState>()(
             .filter((i) => i.qty > 0),
         }),
       clear: () => set({ items: [], coupon: null }),
+      getActiveVendorId: () => {
+        const items = get().items;
+        const withVendor = items.find((i) => i.vendor_id);
+        return withVendor?.vendor_id ?? null;
+      },
+      clearAndSetVendor: () => set({ items: [] }),
       totalQty: () => get().items.reduce((s, i) => s + i.qty, 0),
       subtotal: () => get().items.reduce((s, i) => s + i.qty * i.price, 0),
       drawerOpen: false,

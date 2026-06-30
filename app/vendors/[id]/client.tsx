@@ -11,7 +11,7 @@ import { toast } from "sonner";
 type Product = any;
 type Vendor = { id: string; name: string; description: string | null; logo_url: string | null; rating: number | null; review_count: number | null; emirate: string | null };
 
-function QtyButton({ product }: { product: Product }) {
+function QtyButton({ product, onAdd }: { product: Product; onAdd: (p: Product) => void }) {
   const { items, add, setQty } = useCart();
   const item = items.find((i) => i.product_id === product.id);
   const qty = item?.qty ?? 0;
@@ -19,28 +19,7 @@ function QtyButton({ product }: { product: Product }) {
   if (qty === 0) {
     return (
       <button
-        onClick={() => {
-              // Add without opening side drawer (restaurant flow uses floating cart bar)
-              const store = useCart.getState();
-              const existing = store.items.find((i) => i.product_id === product.id);
-              if (existing) {
-                store.setQty(product.id, existing.qty + 1);
-              } else {
-                const newItem = {
-                  id: product.id,
-                  product_id: product.id,
-                  name: product.name,
-                  price: Number(product.sale_price ?? product.price ?? 0),
-                  original_price: product.price ? Number(product.price) : null,
-                  image: product.thumbnail_url ?? null,
-                  vendor_name: null,
-                  variant: null,
-                  qty: 1,
-                };
-                useCart.setState({ items: [...store.items, newItem] });
-              }
-              toast.success(`${product.name} added`);
-            }}
+        onClick={() => onAdd(product)}
         className="flex items-center gap-1 rounded-full bg-[color:var(--brand-maroon)] px-4 py-2 text-xs font-bold text-white hover:opacity-90 transition-opacity shrink-0">
         <Plus className="h-3.5 w-3.5" /> Add
       </button>
@@ -64,9 +43,43 @@ function QtyButton({ product }: { product: Product }) {
 
 export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped: Record<string, Product[]> }) {
   const { items } = useCart();
+  const [confirmSwitch, setConfirmSwitch] = useState<{ otherVendorName: string; pendingProduct: Product } | null>(null);
   const totalItems = items.reduce((s, i) => s + i.qty, 0);
   const totalPrice = items.reduce((s, i) => s + Number(i.price) * i.qty, 0);
   const categories = Object.keys(grouped);
+
+  function performAdd(product: Product, vendorId: string, vendorName: string) {
+    const store = useCart.getState();
+    const existing = store.items.find((i) => i.product_id === product.id);
+    if (existing) {
+      store.setQty(product.id, existing.qty + 1);
+    } else {
+      const newItem = {
+        id: product.id,
+        product_id: product.id,
+        name: product.name,
+        price: Number(product.sale_price ?? product.price ?? 0),
+        original_price: product.price ? Number(product.price) : null,
+        image: product.thumbnail_url ?? null,
+        vendor_name: vendorName,
+        vendor_id: vendorId,
+        variant: null,
+        qty: 1,
+      };
+      useCart.setState({ items: [...store.items, newItem] });
+    }
+    toast.success(`${product.name} added`);
+  }
+
+  function onAddToCart(product: Product, vendorId: string, vendorName: string) {
+    const activeVendorId = useCart.getState().getActiveVendorId();
+    if (activeVendorId && activeVendorId !== vendorId) {
+      const otherVendorName = useCart.getState().items.find((i) => i.vendor_id === activeVendorId)?.vendor_name ?? "another restaurant";
+      setConfirmSwitch({ otherVendorName, pendingProduct: product });
+      return;
+    }
+    performAdd(product, vendorId, vendorName);
+  }
   const [activeTab, setActiveTab] = useState(categories[0] ?? "");
 
   return (
@@ -168,13 +181,41 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
                   </div>
 
                   {/* +/- stepper */}
-                  <QtyButton product={p} />
+                  <QtyButton product={p} onAdd={(prod) => onAddToCart(prod, vendor.id, vendor.name)} />
                 </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {/* ── Switch restaurant confirmation dialog ── */}
+      {confirmSwitch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 className="text-base font-extrabold text-neutral-900 mb-2">Start a new order?</h3>
+            <p className="text-sm text-neutral-600 mb-5">
+              Your cart has items from <span className="font-semibold">{confirmSwitch.otherVendorName}</span>.
+              Adding items from {vendor.name} will clear your current cart.
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmSwitch(null)}
+                className="flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors">
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  useCart.getState().clearAndSetVendor(vendor.id);
+                  performAdd(confirmSwitch.pendingProduct, vendor.id, vendor.name);
+                  setConfirmSwitch(null);
+                }}
+                className="flex-1 rounded-xl bg-[color:var(--brand-maroon)] py-2.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+                Clear &amp; Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Floating cart bar ── */}
       {totalItems > 0 && (
