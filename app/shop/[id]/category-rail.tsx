@@ -58,7 +58,7 @@ export function CategoryRail({
         <ChevronLeft className="h-5 w-5 rtl:rotate-180" />
       </button>
 
-      <div ref={ref} className="flex gap-5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div ref={ref} className="flex justify-center gap-5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((c) => {
           const img = images[c.id];
           const icon = iconFor(c.name);
