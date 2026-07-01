@@ -6,11 +6,6 @@ import { QuickAddButton } from "@/components/quick-add-button";
 import type { ProductCard } from "@/components/featured-products";
 
 type Cat = { id: string; name: string };
-type TrendingItem = {
-  rank: number;
-  search_term: string;
-  catalog: { id: string; title: string; brand: string | null; main_image_url: string | null };
-};
 
 export function ShopCategoryDesktop({
   category,
@@ -18,14 +13,12 @@ export function ShopCategoryDesktop({
   breadcrumb,
   products,
   railImages = {},
-  trendingItems = [],
 }: {
   category: Cat;
   children: Cat[];
   breadcrumb: Cat[];
   products: ProductCard[];
   railImages?: Record<string, string | null>;
-  trendingItems?: TrendingItem[];
 }) {
   return (
     <div className="bg-[color:var(--brand-cream)] pb-12">
@@ -56,53 +49,6 @@ export function ShopCategoryDesktop({
             <h2 className="text-[17px] font-extrabold tracking-tight text-neutral-900">Shop {category.name}</h2>
           </div>
           <CategoryRail items={children} images={railImages} />
-        </div>
-      )}
-
-      {/* Trending Now */}
-      {trendingItems.length > 0 && (
-        <div className="mx-auto max-w-[1320px] px-5 pt-8 md:px-8">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-6 w-1.5 rounded-full bg-brand-gradient" />
-            <h2 className="text-[17px] font-extrabold tracking-tight text-neutral-900">🔥 Trending Now</h2>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {trendingItems.map((item) => {
-              const href = item.catalog.brand
-                ? `/search?q=${encodeURIComponent(item.catalog.brand)}`
-                : "/shop/electronics";
-              return (
-                <Link
-                  key={item.catalog.id}
-                  href={href}
-                  className="group/card flex w-36 shrink-0 flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:border-[color:var(--brand-maroon)] hover:shadow-sm"
-                >
-                  <div className="flex h-32 items-center justify-center overflow-hidden bg-neutral-50">
-                    {item.catalog.main_image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.catalog.main_image_url}
-                        alt={item.catalog.title}
-                        className="h-full w-full object-contain p-2 transition group-hover/card:scale-105"
-                      />
-                    ) : (
-                      <div className="h-10 w-10 rounded-full bg-neutral-200" />
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1 p-2.5">
-                    {item.catalog.brand && (
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-[color:var(--brand-maroon)] line-clamp-1">
-                        {item.catalog.brand}
-                      </p>
-                    )}
-                    <p className="line-clamp-2 text-xs font-semibold leading-tight text-neutral-800">
-                      {item.catalog.title}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
         </div>
       )}
 

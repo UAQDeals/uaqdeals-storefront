@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { MobileCategoryNoon } from "./mobile-category-noon";
 import { CategoryHero, subtitleFor } from "@/components/category-hero";
 import { ShopCategoryDesktop } from "./shop-category-desktop";
-import { TrendingNow } from "@/components/trending-now";
 import type { ProductCard } from "@/components/featured-products";
 
 export const dynamic = "force-dynamic";
@@ -28,16 +27,6 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     : supabase.from("categories").select("id, name, parent_id, slug").eq("slug", id).maybeSingle();
 
   const [{ data: catRaw }] = await Promise.all([catQuery]);
-
-  // Fetch trending items separately (PostgREST join needs explicit call)
-  const { data: trendingRaw } = await supabase
-    .from("trending_products")
-    .select("rank, search_term, catalog:catalog_id(id, title, brand, main_image_url)")
-    .order("rank", { ascending: true })
-    .limit(20);
-  const trendingItems = ((trendingRaw ?? []) as any[]).filter(
-    (r) => r?.catalog && r.catalog?.id && r.catalog?.title
-  );
   const cat = catRaw;
 
   if (!cat) notFound();
@@ -153,8 +142,6 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     return { id: child.id as string, name: child.name as string, children: grand };
   });
 
-  // Top-level slug for conditional trending row
-  const topSlug = cat.slug ?? breadcrumb[0]?.name?.toLowerCase().replace(/\s+/g, "-") ?? "";
 
   return (
     <>
@@ -162,12 +149,6 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
       <div className="hidden md:block">
         <CategoryHero title={cat.name} />
       </div>
-      {/* Trending Now — shows on both mobile and desktop for electronics */}
-      {topSlug === "electronics" && (
-        <div className="mx-auto max-w-6xl px-4 pt-4">
-          <TrendingNow />
-        </div>
-      )}
       {/* Mobile: Noon department rail + subcategory accordions */}
       <div className="md:hidden">
         <MobileCategoryNoon
@@ -176,7 +157,6 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
           category={cat}
           subtitle={subtitleFor(cat.name)}
           sections={sections}
-          trendingItems={topSlug === "electronics" ? trendingItems : []}
         />
       </div>
       {/* Desktop: flat subcategory landing */}
@@ -187,7 +167,6 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
           breadcrumb={breadcrumb}
           products={gridProducts}
           railImages={railImages}
-          trendingItems={topSlug === "electronics" ? trendingItems : []}
         />
       </div>
     </>
