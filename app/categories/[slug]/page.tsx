@@ -7,6 +7,7 @@ import {
   FeaturedProducts,
   type ProductCard,
 } from "@/components/featured-products";
+import { TrendingNow } from "@/components/trending-now";
 
 export const revalidate = 120;
 
@@ -118,6 +119,9 @@ export default async function CategoryDetailPage({
           )}
         </div>
       </div>
+
+      {/* Trending Now — only on electronics */}
+      {slug === "electronics" && <TrendingNow />}
 
       {/* Products */}
       {products.length ? (
