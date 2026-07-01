@@ -42,6 +42,15 @@ export default async function CategoryDetailPage({
 
   const supabase = await createClient();
 
+  // If this slug exists in the product catalog (categories table), send to
+  // the richer /shop/[slug] page instead of the vendor-type page.
+  const { data: catalogCat } = await supabase
+    .from("categories")
+    .select("slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (catalogCat) redirect("/shop/" + slug);
+
   const { data: vt } = await supabase
     .from("vendor_types")
     .select("id, name, slug, description, is_product")

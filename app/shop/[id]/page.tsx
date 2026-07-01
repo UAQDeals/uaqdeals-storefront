@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { MobileCategoryNoon } from "./mobile-category-noon";
 import { CategoryHero, subtitleFor } from "@/components/category-hero";
 import { ShopCategoryDesktop } from "./shop-category-desktop";
+import { TrendingNow } from "@/components/trending-now";
 import type { ProductCard } from "@/components/featured-products";
 
 export const dynamic = "force-dynamic";
@@ -142,12 +143,21 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     return { id: child.id as string, name: child.name as string, children: grand };
   });
 
+  // Top-level slug for conditional trending row
+  const topSlug = breadcrumb[0]?.name?.toLowerCase().replace(/\s+/g, "-") ?? cat.slug ?? "";
+
   return (
     <>
       {/* Hero: desktop only — mobile uses the in-column banner */}
       <div className="hidden md:block">
         <CategoryHero title={cat.name} />
       </div>
+      {/* Trending Now — electronics top-level only */}
+      {topSlug === "electronics" && (
+        <div className="mx-auto max-w-6xl px-4 pt-4">
+          <TrendingNow />
+        </div>
+      )}
       {/* Mobile: Noon department rail + subcategory accordions */}
       <div className="md:hidden">
         <MobileCategoryNoon
