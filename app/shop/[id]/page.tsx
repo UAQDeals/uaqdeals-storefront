@@ -35,7 +35,9 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     .limit(20);
 
   const [{ data: catRaw }, { data: trendingRaw }] = await Promise.all([catQuery, trendingQuery]);
-  const trendingItems = (trendingRaw ?? []) as any[];
+  const trendingItems = ((trendingRaw ?? []) as any[]).filter(
+    (r) => r?.catalog && r.catalog?.id && r.catalog?.title
+  );
   const cat = catRaw;
 
   if (!cat) notFound();
