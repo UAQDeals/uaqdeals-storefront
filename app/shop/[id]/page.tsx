@@ -187,6 +187,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
           breadcrumb={breadcrumb}
           products={gridProducts}
           railImages={railImages}
+          trendingItems={topSlug === "electronics" ? trendingItems : []}
         />
       </div>
     </>
