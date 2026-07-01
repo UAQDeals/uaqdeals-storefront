@@ -27,14 +27,14 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     ? supabase.from("categories").select("id, name, parent_id, slug").eq("id", id).maybeSingle()
     : supabase.from("categories").select("id, name, parent_id, slug").eq("slug", id).maybeSingle();
 
-  // Fetch trending items for electronics category
-  const trendingQuery = supabase
+  const [{ data: catRaw }] = await Promise.all([catQuery]);
+
+  // Fetch trending items separately (PostgREST join needs explicit call)
+  const { data: trendingRaw } = await supabase
     .from("trending_products")
     .select("rank, search_term, catalog:catalog_id(id, title, brand, main_image_url)")
     .order("rank", { ascending: true })
     .limit(20);
-
-  const [{ data: catRaw }, { data: trendingRaw }] = await Promise.all([catQuery, trendingQuery]);
   const trendingItems = ((trendingRaw ?? []) as any[]).filter(
     (r) => r?.catalog && r.catalog?.id && r.catalog?.title
   );
