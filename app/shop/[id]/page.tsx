@@ -152,7 +152,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
       <div className="hidden md:block">
         <CategoryHero title={cat.name} />
       </div>
-      {/* Trending Now — electronics top-level only */}
+      {/* Trending Now — shows on both mobile and desktop for electronics */}
       {topSlug === "electronics" && (
         <div className="mx-auto max-w-6xl px-4 pt-4">
           <TrendingNow />

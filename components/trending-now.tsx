@@ -66,11 +66,12 @@ export async function TrendingNow() {
 
 function TrendingCard({ item }: { item: TrendingItem }) {
   const { catalog, search_term } = item;
-  const searchUrl = `/search?q=${encodeURIComponent(search_term)}`;
+  // Link to shop/electronics — search against catalog coming in a future sprint
+  const href = `/shop/electronics`;
 
   return (
     <Link
-      href={searchUrl}
+      href={href}
       className="group flex w-36 shrink-0 flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:border-[color:var(--brand-maroon)] hover:shadow-sm sm:w-40"
     >
       {/* Image */}
