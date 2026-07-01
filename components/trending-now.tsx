@@ -66,8 +66,10 @@ export async function TrendingNow() {
 
 function TrendingCard({ item }: { item: TrendingItem }) {
   const { catalog, search_term } = item;
-  // Link to shop/electronics — search against catalog coming in a future sprint
-  const href = `/shop/electronics`;
+  // Link to products filtered by brand name
+  const href = catalog.brand
+    ? `/search?q=${encodeURIComponent(catalog.brand)}`
+    : `/shop/electronics`;
 
   return (
     <Link

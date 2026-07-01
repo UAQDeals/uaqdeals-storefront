@@ -144,7 +144,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   });
 
   // Top-level slug for conditional trending row
-  const topSlug = breadcrumb[0]?.name?.toLowerCase().replace(/\s+/g, "-") ?? cat.slug ?? "";
+  const topSlug = cat.slug ?? breadcrumb[0]?.name?.toLowerCase().replace(/\s+/g, "-") ?? "";
 
   return (
     <>
