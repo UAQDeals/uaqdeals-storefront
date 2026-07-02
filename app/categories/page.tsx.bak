@@ -1,6 +1,7 @@
+import { createClient } from "@/lib/supabase/server";
 import { DEDICATED } from "@/lib/service-routes";
 import Link from "next/link";
-import { showProducts, isTypeEnabled, enabledProductCategories } from "@/lib/emirate";
+import { showProducts } from "@/lib/emirate";
 
 export const metadata = { title: "Categories — UAQ Deals" };
 export const revalidate = 300;
@@ -113,19 +114,11 @@ function ServiceCard({ slug, name, img }: { slug: string; name: string; img: str
 }
 
 export default async function CategoriesPage() {
+  const supabase = await createClient();
   const showProd = await showProducts();
-  const productCats = await enabledProductCategories();
-
-  // Service sections filtered by the admin Emirates toggles; empty
-  // sections disappear entirely.
-  const serviceSections: { title: string; items: { slug: string; name: string; img: string }[] }[] = [];
-  for (const sec of SERVICE_SECTIONS) {
-    const items: { slug: string; name: string; img: string }[] = [];
-    for (const s of sec.items) {
-      if (await isTypeEnabled(s.slug)) items.push(s);
-    }
-    if (items.length > 0) serviceSections.push({ title: sec.title, items });
-  }
+  const { data: productCats } = await supabase
+    .from("categories").select("id, name").filter("parent_id", "is", null)
+    .eq("is_active", true).order("sort_order").order("name");
 
   return (
     <div className="min-h-screen bg-[color:var(--brand-cream)]">
@@ -174,7 +167,7 @@ export default async function CategoriesPage() {
         )}
 
         {/* ── Service Sections — mirrors /services page layout ── */}
-        {serviceSections.map((sec) => (
+        {SERVICE_SECTIONS.map((sec) => (
           <section key={sec.title}>
             <div className="flex items-center gap-3 mb-4">
               <h2 className="text-[15px] font-bold text-neutral-800">{sec.title}</h2>
