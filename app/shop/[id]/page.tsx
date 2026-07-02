@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { enabledProductCategories } from "@/lib/emirate";
 import { MobileCategoryNoon } from "./mobile-category-noon";
 import { CategoryHero, subtitleFor } from "@/components/category-hero";
 import { ShopCategoryDesktop } from "./shop-category-desktop";
@@ -110,7 +111,10 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     railImages[child.id] = pics.length ? pics[Math.floor(Math.random() * pics.length)] : null;
   }
 
-  // ── Mobile (Noon-style): department rail (all top-level categories) + each
+  const enabledRootIds = new Set(
+    (await enabledProductCategories()).map((c) => c.id)
+  );
+  // ── Mobile (Noon-style): department rail (enabled top-level categories) + each
   //    subcategory as an accordion of its sub-subcategories (image per tile). ──
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sortCat = (a: any, b: any) =>
@@ -119,6 +123,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const topCategories = ((allCats ?? []) as any[])
     .filter((c) => !c.parent_id)
+    .filter((c) => enabledRootIds.has(c.id as string))
     .sort(sortCat)
     .map((c) => ({ id: c.id as string, name: c.name as string }));
   const activeTopId = breadcrumb[0]?.id ?? id;

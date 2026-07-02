@@ -142,6 +142,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     return { id: child.id as string, name: child.name as string, children: grand };
   });
 
+
   return (
     <>
       {/* Hero: desktop only — mobile uses the in-column banner */}

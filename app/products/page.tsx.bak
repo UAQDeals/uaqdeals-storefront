@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { enabledProductCategories } from "@/lib/emirate";
 import { ShopClient } from "./shop-client";
 import { showProducts } from "@/lib/emirate";
 import { ProductsUnavailable } from "@/components/products-unavailable";
@@ -39,35 +38,15 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     .in("vendor_type_id", prodVendorTypeIds);
   const prodVendorIds = (prodVendors ?? []).map((v) => v.id);
 
-  // Categories deduplicated by name, limited to trees whose
-  // TOP-LEVEL category is enabled for this emirate (ancestry walked
-  // via parent_id so subcategories of a disabled tree can't leak in)
+  // Categories that have active products — deduplicated by name
   const { data: catRaw } = await supabase
     .from("categories")
-    .select("id, name, parent_id")
+    .select("id, name")
     .order("name");
-
-  const enabledRootIds = new Set(
-    (await enabledProductCategories()).map((c) => c.id)
-  );
-  const parentOf = new Map<string, string | null>();
-  for (const c of catRaw ?? []) {
-    parentOf.set(c.id, (c as { parent_id: string | null }).parent_id);
-  }
-  const rootOf = (cid: string): string => {
-    let cur = cid;
-    for (let i = 0; i < 12; i++) {
-      const p = parentOf.get(cur);
-      if (!p) return cur;
-      cur = p;
-    }
-    return cur;
-  };
 
   const seen = new Set<string>();
   const categories: { id: string; name: string }[] = [];
   for (const c of catRaw ?? []) {
-    if (!enabledRootIds.has(rootOf(c.id))) continue;
     if (!seen.has(c.name)) { seen.add(c.name); categories.push(c); }
   }
 
