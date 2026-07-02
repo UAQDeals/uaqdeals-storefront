@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
@@ -18,6 +19,14 @@ export default async function LoginPage({
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 py-16 text-center">
+      <Image
+        src="/uaq_logo.png"
+        alt="UAQ Deals"
+        width={120}
+        height={40}
+        priority
+        className="h-12 w-auto"
+      />
       <h1 className="text-brand-gradient mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">
         Welcome to UAQ Deals
       </h1>
