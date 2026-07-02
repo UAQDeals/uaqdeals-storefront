@@ -85,11 +85,6 @@ export default async function HomePage() {
     { label: "Services", href: "/services" },
     ...((await isTypeEnabled("real_estate")) ? [{ label: "Real Estate", href: "/marketplace/real_estate" }] : []),
   ];
-  const quickTiles = [
-    ...((await isTypeEnabled("fish_market")) ? ["fish"] : []),
-    ...(enabledNames.has("Pharmacy") ? ["pharmacy"] : []),
-    ...((await isTypeEnabled("restaurant")) ? ["food"] : []),
-  ];
 
   // Category IDs for product carousels
   const CAT_ELECTRONICS  = "a1000000-0000-0000-0000-000000000001";
@@ -244,7 +239,7 @@ export default async function HomePage() {
       {/* <CategoryPills locale={locale} /> */}
 
       {/* 4. Quick access strip */}
-      <QuickAccessStrip visible={quickTiles} />
+      <QuickAccessStrip />
 
       {/* 5. Category explorer — services only */}
       <CategoryExplorer />
