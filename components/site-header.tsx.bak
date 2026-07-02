@@ -166,42 +166,7 @@ function MobileEmirateChip() {
   );
 }
 
-export function SiteHeader({
-  showProducts = true,
-  availability,
-}: {
-  showProducts?: boolean;
-  availability?: { cats: string[]; onTypes: string[]; knownTypes: string[] };
-}) {
-  // ── Emirate availability gates (everything visible when the
-  //    prop is absent, for back-compat) ──────────────────────
-  const catOn = (name: string) =>
-    !availability || availability.cats.includes(name);
-  const typeOn = (slug: string) =>
-    !availability ||
-    !availability.knownTypes.includes(slug) ||
-    availability.onTypes.includes(slug);
-  // Product entries gate by their CATEGORY, mirroring the app
-  const CAT_GATED: Record<string, string> = {
-    grocery: "Grocery",
-    electronics: "Electronics",
-    meat_shop: "Meat Shop",
-    pharmacy: "Pharmacy",
-    jewellery: "Jewellery",
-  };
-  const itemOpen = (slug: string) =>
-    CAT_GATED[slug] ? catOn(CAT_GATED[slug]) : typeOn(slug);
-  const NAV_CAT_NAME: Record<string, string> = {
-    "beauty-fragrance": "Beauty & Fragrance",
-    "home-kitchen": "Home & Kitchen",
-  };
-  const stripOn = (c: { label: string; id: string }) =>
-    catOn(NAV_CAT_NAME[c.id] ?? c.label);
-  // Same group count/order as SHOP_GROUPS -- only items filtered
-  const shopGroups = SHOP_GROUPS.map((g) => ({
-    ...g,
-    items: g.items.filter((it) => itemOpen(it.slug)),
-  }));
+export function SiteHeader({ showProducts = true }: { showProducts?: boolean }) {
   const locale = useLocale();
   const isRTL = locale === "ar";
   const t = useTranslations("common");
@@ -523,7 +488,7 @@ export function SiteHeader({
                     <div className="flex" style={{ minHeight: 320 }}>
                       {/* Left: Group tabs */}
                       <div className="w-44 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
-                        {shopGroups.map((g, i) => (
+                        {SHOP_GROUPS.map((g, i) => (
                           <button key={i} onMouseEnter={() => setActiveGroup(i)}
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-medium transition-colors text-start"
                             style={{ color: activeGroup === i ? "var(--brand-maroon)" : "#555", background: activeGroup === i ? "#fff" : "transparent", borderInlineStart: activeGroup === i ? "2px solid var(--brand-maroon)" : "2px solid transparent" }}>
@@ -535,7 +500,7 @@ export function SiteHeader({
                       <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: 420 }}>
 
                         <div className="grid grid-cols-3 gap-2.5">
-                          {shopGroups[activeGroup].items.map((item) => {
+                          {SHOP_GROUPS[activeGroup].items.map((item) => {
                             const img = catImages[item.slug];
                             return (
                               <Link key={item.slug} href={`/categories/${item.slug}`} onClick={() => setShopOpen(false)}
@@ -585,7 +550,7 @@ export function SiteHeader({
                   { label: "Baby",           id: "baby" },
                   { label: "Toys",           id: "toys" },
                   { label: "Books",          id: "books" },
-                ].filter(stripOn).map((c) => (
+                ].map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id}
                     className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
                     {c.label}
@@ -626,7 +591,7 @@ export function SiteHeader({
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100" style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
           {mobileGroup !== null ? (
             <button onClick={() => setMobileGroup(null)} className="flex items-center gap-2 text-[13.5px] font-semibold text-neutral-700">
-              <ChevronRight className="w-4 h-4 rotate-180" />{label(shopGroups[mobileGroup])}
+              <ChevronRight className="w-4 h-4 rotate-180" />{label(SHOP_GROUPS[mobileGroup])}
             </button>
           ) : (
             <span className="text-[15px] font-bold text-white">Menu</span>
@@ -676,7 +641,7 @@ export function SiteHeader({
                   { label: "Health & Nutrition", id: "health-nutrition", emoji: "💊" },
                   { label: "Stationery", id: "stationery", emoji: "✏️" },
                   { label: "Books", id: "books", emoji: "📚" },
-                ].filter(stripOn).map((c) => (
+                ].map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id} onClick={closeMobile}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-50 transition-colors">
                     <span className="text-xl">{c.emoji}</span>
@@ -708,8 +673,8 @@ export function SiteHeader({
             </div>
           ) : (
             <div className="py-2 px-2">
-              <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{label(shopGroups[mobileGroup])}</p>
-              {shopGroups[mobileGroup].items.map((item) => (
+              <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{label(SHOP_GROUPS[mobileGroup])}</p>
+              {SHOP_GROUPS[mobileGroup].items.map((item) => (
                 <Link key={item.slug} href={`/categories/${item.slug}`} onClick={closeMobile}
                   className="flex items-center gap-3 px-3 py-3.5 rounded-lg hover:bg-neutral-50 transition-colors">
                   <span className="w-1.5 h-1.5 rounded-full bg-[color:var(--brand-maroon)] opacity-50" />

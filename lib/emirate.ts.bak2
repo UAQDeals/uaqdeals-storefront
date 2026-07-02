@@ -103,20 +103,3 @@ export const enabledProductCategories = cache(
       .map(({ id, name }) => ({ id, name }));
   }
 );
-
-// Compact availability bundle for client components (site header):
-// enabled category names, enabled vendor-type slugs, and the full set
-// of known slugs (so unknown slugs can stay visible, matching the app).
-export const availabilitySnapshot = cache(
-  async (): Promise<{ cats: string[]; onTypes: string[]; knownTypes: string[] }> => {
-    const em = await getEmirate();
-    const { categories, types } = await getAvailability();
-    const knownTypes = types.map((t) => t.slug);
-    if (!em) return { cats: [], onTypes: [], knownTypes };
-    return {
-      cats: categories.filter((c) => inList(c.emirates, em)).map((c) => c.name),
-      onTypes: types.filter((t) => inList(t.emirates, em)).map((t) => t.slug),
-      knownTypes,
-    };
-  }
-);

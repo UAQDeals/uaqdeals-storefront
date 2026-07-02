@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getEmirate, showProducts as emirateShowProducts, enabledProductCategories, isTypeEnabled } from "@/lib/emirate";
+import { getEmirate, showProducts as emirateShowProducts } from "@/lib/emirate";
 import { getTranslations, getLocale } from "next-intl/server";
 import { type BannerCard } from "@/components/home-banners";
 import { HomeHero } from "@/components/home-hero";
@@ -74,17 +74,6 @@ export default async function HomePage() {
   const locale = await getLocale();
   const emirate = await getEmirate();
   const nowIso = new Date().toISOString();
-  const enabledCats = await enabledProductCategories();
-  const enabledIds = new Set(enabledCats.map((c) => c.id));
-  const enabledNames = new Set(enabledCats.map((c) => c.name));
-  const heroChips = [
-    ...(enabledNames.has("Grocery") ? [{ label: "Grocery", href: "/shop/grocery" }] : []),
-    ...((await isTypeEnabled("restaurant")) ? [{ label: "Restaurants", href: "/categories/restaurant" }] : []),
-    ...(enabledNames.has("Pharmacy") ? [{ label: "Pharmacy", href: "/categories/pharmacy" }] : []),
-    ...(enabledNames.has("Electronics") ? [{ label: "Electronics", href: "/shop/electronics" }] : []),
-    { label: "Services", href: "/services" },
-    ...((await isTypeEnabled("real_estate")) ? [{ label: "Real Estate", href: "/marketplace/real_estate" }] : []),
-  ];
 
   // Category IDs for product carousels
   const CAT_ELECTRONICS  = "a1000000-0000-0000-0000-000000000001";
@@ -141,23 +130,23 @@ export default async function HomePage() {
 
     supabase
       .from("banners")
-      .select("id, title, image_url, mobile_image_url, link_type, link_value, sort_order, emirates")
+      .select("id, title, image_url, mobile_image_url, link_type, link_value, sort_order")
       .eq("is_active", true)
       .or(`ends_at.is.null,ends_at.gt.${nowIso}`)
       .order("sort_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(40),
 
-    enabledIds.has(CAT_ELECTRONICS) ? carouselSelect().eq("category_id", CAT_ELECTRONICS) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_GROCERY) ? carouselSelect().eq("category_id", CAT_GROCERY) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_FASHION) ? carouselSelect().eq("category_id", CAT_FASHION) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_BEAUTY) ? carouselSelect().eq("category_id", CAT_BEAUTY) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_HOME_KITCHEN) ? carouselSelect().eq("category_id", CAT_HOME_KITCHEN) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_BABY) ? carouselSelect().eq("category_id", CAT_BABY) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_TOYS) ? carouselSelect().eq("category_id", CAT_TOYS) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_HEALTH) ? carouselSelect().eq("category_id", CAT_HEALTH) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_STATIONERY) ? carouselSelect().eq("category_id", CAT_STATIONERY) : Promise.resolve({ data: [] as Row[] }),
-    enabledIds.has(CAT_BOOKS) ? carouselSelect().eq("category_id", CAT_BOOKS) : Promise.resolve({ data: [] as Row[] }),
+    carouselSelect().eq("category_id", CAT_ELECTRONICS),
+    carouselSelect().eq("category_id", CAT_GROCERY),
+    carouselSelect().eq("category_id", CAT_FASHION),
+    carouselSelect().eq("category_id", CAT_BEAUTY),
+    carouselSelect().eq("category_id", CAT_HOME_KITCHEN),
+    carouselSelect().eq("category_id", CAT_BABY),
+    carouselSelect().eq("category_id", CAT_TOYS),
+    carouselSelect().eq("category_id", CAT_HEALTH),
+    carouselSelect().eq("category_id", CAT_STATIONERY),
+    carouselSelect().eq("category_id", CAT_BOOKS),
   ]);
 
   const deals: DealCard[] = (dealsRaw ?? []).map((d: Row) => ({
@@ -184,14 +173,8 @@ export default async function HomePage() {
     condition: p.condition ?? null,
   }));
 
-  // Only banners targeted at this emirate (no emirates set = show everywhere)
-  const allBanners = (bannersRaw ?? []).filter((b: Row) => {
-    const list = b.emirates;
-    if (Array.isArray(list) && list.length > 0) {
-      return emirate ? list.includes(emirate) : false;
-    }
-    return true;
-  });
+  // Split banners by position (sort_order ranges)
+  const allBanners = bannersRaw ?? [];
   const banners: BannerCard[] = allBanners.filter((b: Row) => !b.sort_order || b.sort_order <= 10).map((b: Row) => ({
     id: b.id, title: b.title, image_url: b.image_url, mobile_image_url: b.mobile_image_url ?? null, link_type: b.link_type, link_value: b.link_value,
   }));
@@ -225,7 +208,7 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero — banner carousel position 1 */}
-      <HomeHero banners={banners} emirate={emirate} chips={heroChips} />
+      <HomeHero banners={banners} emirate={emirate} />
 
       {/* 2. Deals carousel — under hero */}
       <DealsStrip
@@ -245,7 +228,6 @@ export default async function HomePage() {
       <CategoryExplorer />
 
       {/* 6. Electronics carousel */}
-      {enabledIds.has(CAT_ELECTRONICS) && (
       <ProductCarousel
         title="Electronics"
         eyebrow="Latest tech"
@@ -254,13 +236,11 @@ export default async function HomePage() {
         viewMoreHref={"/shop/electronics"}
         viewMoreLabel="View all Electronics"
       />
-      )}
 
       {/* 7. Mid banner position 2 */}
       <MidBanner banners={bannersPos2} />
 
       {/* 8. Grocery carousel */}
-      {enabledIds.has(CAT_GROCERY) && (
       <ProductCarousel
         title="Grocery"
         eyebrow="Fresh & local"
@@ -269,7 +249,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/grocery"}
         viewMoreLabel="View all Grocery"
       />
-      )}
 
       {/* 9. Coinback loyalty spotlight */}
       <CoinbackSpotlight />
@@ -281,7 +260,6 @@ export default async function HomePage() {
       <MidBanner banners={bannersPos3} />
 
       {/* 12. Fashion carousel */}
-      {enabledIds.has(CAT_FASHION) && (
       <ProductCarousel
         title="Fashion"
         eyebrow="Style & trends"
@@ -290,10 +268,8 @@ export default async function HomePage() {
         viewMoreHref={"/shop/fashion"}
         viewMoreLabel="View all Fashion"
       />
-      )}
 
       {/* 13. Beauty & Fragrance carousel */}
-      {enabledIds.has(CAT_BEAUTY) && (
       <ProductCarousel
         title="Beauty & Fragrance"
         eyebrow="Look & feel great"
@@ -302,13 +278,11 @@ export default async function HomePage() {
         viewMoreHref={"/shop/beauty-fragrance"}
         viewMoreLabel="View all Beauty"
       />
-      )}
 
       {/* 14. Mid banner position 4 */}
       <MidBanner banners={bannersPos4} />
 
       {/* 15. Home & Kitchen carousel */}
-      {enabledIds.has(CAT_HOME_KITCHEN) && (
       <ProductCarousel
         title="Home & Kitchen"
         eyebrow="For your home"
@@ -317,7 +291,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/home-kitchen"}
         viewMoreLabel="View all Home & Kitchen"
       />
-      )}
 
       {/* 16. Featured listings — Real Estate */}
       <EditorialBand
@@ -348,7 +321,6 @@ export default async function HomePage() {
       <StoriesGrid />
 
       {/* 19. More category carousels */}
-      {enabledIds.has(CAT_BABY) && (
       <ProductCarousel
         title="Baby"
         eyebrow="For little ones"
@@ -357,8 +329,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/baby"}
         viewMoreLabel="View all Baby"
       />
-      )}
-      {enabledIds.has(CAT_TOYS) && (
       <ProductCarousel
         title="Toys & Games"
         eyebrow="Fun for all ages"
@@ -367,8 +337,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/toys"}
         viewMoreLabel="View all Toys"
       />
-      )}
-      {enabledIds.has(CAT_HEALTH) && (
       <ProductCarousel
         title="Health & Nutrition"
         eyebrow="Stay healthy"
@@ -377,8 +345,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/health-nutrition"}
         viewMoreLabel="View all Health"
       />
-      )}
-      {enabledIds.has(CAT_STATIONERY) && (
       <ProductCarousel
         title="Stationery & Office"
         eyebrow="Work & study"
@@ -387,8 +353,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/stationery"}
         viewMoreLabel="View all Stationery"
       />
-      )}
-      {enabledIds.has(CAT_BOOKS) && (
       <ProductCarousel
         title="Books"
         eyebrow="Read & learn"
@@ -397,7 +361,6 @@ export default async function HomePage() {
         viewMoreHref={"/shop/books"}
         viewMoreLabel="View all Books"
       />
-      )}
 
       {/* 20. Vendor CTA */}
       <VendorCta />

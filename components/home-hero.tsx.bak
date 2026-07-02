@@ -32,11 +32,9 @@ const AUTOPLAY_MS = 5000;
 export function HomeHero({
   banners,
   emirate,
-  chips,
 }: {
   banners: BannerCard[];
   emirate: string | null;
-  chips?: { label: string; href: string }[];
 }) {
   const locale = useLocale();
   const isRTL = locale === "ar";
@@ -96,7 +94,7 @@ export function HomeHero({
               <br className="hidden sm:block" /> delivered today.
             </h1>
             <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/85 sm:text-[15px]">
-              Groceries, food, pharmacy, services and local listings — one super-app for all of {place}.
+              Groceries, food, pharmacy, services and local listings — one super-app for all of Umm Al Quwain.
             </p>
 
             {/* Search (routes to /search) */}
@@ -110,7 +108,7 @@ export function HomeHero({
 
             {/* Quick chips */}
             <div className="mt-5 flex flex-wrap gap-2">
-              {(chips ?? CHIPS).map((c) => (
+              {CHIPS.map((c) => (
                 <Link
                   key={c.href}
                   href={c.href}

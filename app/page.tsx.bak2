@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getEmirate, showProducts as emirateShowProducts, enabledProductCategories, isTypeEnabled } from "@/lib/emirate";
+import { getEmirate, showProducts as emirateShowProducts, enabledProductCategories } from "@/lib/emirate";
 import { getTranslations, getLocale } from "next-intl/server";
 import { type BannerCard } from "@/components/home-banners";
 import { HomeHero } from "@/components/home-hero";
@@ -74,17 +74,7 @@ export default async function HomePage() {
   const locale = await getLocale();
   const emirate = await getEmirate();
   const nowIso = new Date().toISOString();
-  const enabledCats = await enabledProductCategories();
-  const enabledIds = new Set(enabledCats.map((c) => c.id));
-  const enabledNames = new Set(enabledCats.map((c) => c.name));
-  const heroChips = [
-    ...(enabledNames.has("Grocery") ? [{ label: "Grocery", href: "/shop/grocery" }] : []),
-    ...((await isTypeEnabled("restaurant")) ? [{ label: "Restaurants", href: "/categories/restaurant" }] : []),
-    ...(enabledNames.has("Pharmacy") ? [{ label: "Pharmacy", href: "/categories/pharmacy" }] : []),
-    ...(enabledNames.has("Electronics") ? [{ label: "Electronics", href: "/shop/electronics" }] : []),
-    { label: "Services", href: "/services" },
-    ...((await isTypeEnabled("real_estate")) ? [{ label: "Real Estate", href: "/marketplace/real_estate" }] : []),
-  ];
+  const enabledIds = new Set((await enabledProductCategories()).map((c) => c.id));
 
   // Category IDs for product carousels
   const CAT_ELECTRONICS  = "a1000000-0000-0000-0000-000000000001";
@@ -225,7 +215,7 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero — banner carousel position 1 */}
-      <HomeHero banners={banners} emirate={emirate} chips={heroChips} />
+      <HomeHero banners={banners} emirate={emirate} />
 
       {/* 2. Deals carousel — under hero */}
       <DealsStrip
