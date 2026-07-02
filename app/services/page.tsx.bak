@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { dedicatedFor } from "@/lib/service-routes";
 import { getTranslations } from "next-intl/server";
-import { isTypeEnabled } from "@/lib/emirate";
 
 // ── Section data mirroring Flutter services_screen.dart ──────────────────────
 
@@ -127,17 +126,6 @@ function ServiceCard({
 
 export default async function ServicesPage() {
   const t = await getTranslations("common");
-
-  // Filter each section to slugs enabled for this emirate; drop
-  // sections that end up empty.
-  const visibleSections: typeof SECTIONS = [];
-  for (const section of SECTIONS) {
-    const items = [];
-    for (const item of section.items) {
-      if (await isTypeEnabled(item.slug)) items.push(item);
-    }
-    if (items.length > 0) visibleSections.push({ ...section, items });
-  }
   // locale is determined by cookie via i18n/request.ts
   // We can't call useLocale in server component, so we pass both name keys
   // and let the client pick — but since this is a server page rendering static
@@ -169,7 +157,7 @@ export default async function ServicesPage() {
 
       {/* Sections */}
       <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10 space-y-10">
-        {visibleSections.map((section) => (
+        {SECTIONS.map((section) => (
           <section key={section.title.en}>
             {/* Section title */}
             <div className="flex items-center gap-3 mb-4">
