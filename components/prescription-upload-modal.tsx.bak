@@ -36,10 +36,6 @@ export function PrescriptionUploadModal({
       const { data: { publicUrl } } = supabase.storage
         .from("prescriptions")
         .getPublicUrl(path);
-      // Some sign-ins (phone OTP specifically) aren't reliably creating
-      // a profiles row yet -- self-heal here rather than hard-fail on
-      // the FK constraint below.
-      await supabase.from("profiles").upsert({ id: userId }, { onConflict: "id" });
       const { error: dbErr } = await supabase.from("prescriptions").insert({
         customer_id: userId,
         product_id:  productId,
