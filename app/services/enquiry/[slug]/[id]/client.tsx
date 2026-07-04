@@ -125,7 +125,7 @@ export function GovtEnquiryClient({
         {/* Hero: image contained on a tinted panel so logos show whole */}
         {imageUrl && (
           <div className="rounded-3xl p-5 mb-5"
-            style={{ background: "linear-gradient(135deg, rgba(142,27,58,0.06), rgba(199,41,49,0.04))" }}>
+            style={{ background: "#F5F3F1" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
