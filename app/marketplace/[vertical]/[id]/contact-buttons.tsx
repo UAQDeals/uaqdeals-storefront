@@ -4,8 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-const PHONE = "+971544776967";
-const WA_PHONE = "971544776967";
+const PHONE = "+971542205775";
+const WA_PHONE = "971542205775";
 
 export function ContactButtons({
   vertical,

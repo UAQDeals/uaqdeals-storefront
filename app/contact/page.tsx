@@ -23,7 +23,7 @@ export default async function ContactPage() {
           <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("reachDirectly")}</h2>
             <ul className="mt-4 space-y-4">
-              <ContactRow icon={<Phone className="h-4 w-4" />} label={t("phone")} value="+971 54 477 6967" href="tel:+971544776967" />
+              <ContactRow icon={<Phone className="h-4 w-4" />} label={t("phone")} value="+971 54 220 5775" href="tel:+971542205775" />
               <ContactRow icon={<Mail className="h-4 w-4" />} label={t("email")} value="uaqdeals@gmail.com" href="mailto:uaqdeals@gmail.com" />
               <ContactRow icon={<Globe className="h-4 w-4" />} label={t("website")} value="www.uaqdeals.ae" href="https://www.uaqdeals.ae" />
               <ContactRow icon={<MapPin className="h-4 w-4" />} label={t("location")} value={t("locationValue")} />

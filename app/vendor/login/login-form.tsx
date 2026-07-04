@@ -25,7 +25,7 @@ export function VendorLoginForm() {
   async function handleReset() {
     setError(null);
     if (mode === "phone") {
-      setError("Password reset works by email. Phone-registered vendors, please contact support at +971 54 477 6967.");
+      setError("Password reset works by email. Phone-registered vendors, please contact support at +971 54 220 5775.");
       return;
     }
     if (!email.trim()) {

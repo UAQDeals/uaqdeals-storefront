@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-const PHONE = "+971544776967";
-const PHONE_WA = "971544776967"; // wa.me wants no + or spaces
+const PHONE = "+971542205775";
+const PHONE_WA = "971542205775"; // wa.me wants no + or spaces
 const WA_MESSAGE = "Hi UAQ Deals, I have a question.";
 
 export function FloatingContact() {

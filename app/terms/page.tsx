@@ -100,7 +100,7 @@ export default function TermsPage() {
           <p>
             For any questions about these Terms, contact us at{" "}
             <a href="mailto:uaqdeals@gmail.com" className="font-semibold text-[color:var(--brand-maroon)]">uaqdeals@gmail.com</a>{" "}
-            or call +971 54 477 6967.
+            or call +971 54 220 5775.
           </p>
         </Section>
       </div>
