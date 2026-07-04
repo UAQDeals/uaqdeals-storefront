@@ -118,7 +118,7 @@ export function GovtEnquiryClient({
     "w-full h-12 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/15 focus:border-[#8E1B3A] transition";
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6] pb-28">
+    <div className="min-h-screen bg-[#FAF8F6]">
       <Header title={serviceTitle} onBack={() => router.push(`/services/enquiry/${slug}`)} />
 
       <div className="mx-auto max-w-lg px-5 pt-5">
@@ -201,19 +201,18 @@ export function GovtEnquiryClient({
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Sticky submit */}
-      <div className="fixed bottom-0 inset-x-0 z-20 bg-gradient-to-t from-[#FAF8F6] via-[#FAF8F6] to-transparent pt-6 pb-5 px-5">
-        <div className="mx-auto max-w-lg">
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="w-full rounded-full py-4 text-white font-bold text-[15px] shadow-lg shadow-[#8E1B3A]/25 disabled:opacity-60 transition active:scale-[0.99]"
-            style={{ background: `linear-gradient(135deg, ${MAROON}, ${MAROON2})` }}>
-            {loading ? "Submitting…" : "Submit enquiry"}
-          </button>
-        </div>
+        {/* Submit (inline) */}
+        <button
+          onClick={submit}
+          disabled={loading}
+          className="w-full rounded-full py-4 mt-6 text-white font-bold text-[15px] shadow-lg shadow-[#8E1B3A]/25 disabled:opacity-60 transition active:scale-[0.99]"
+          style={{ background: `linear-gradient(135deg, ${MAROON}, ${MAROON2})` }}>
+          {loading ? "Submitting…" : "Submit enquiry"}
+        </button>
+
+        {/* Clears the global mobile bottom nav so nothing is hidden behind it */}
+        <div className="h-28" />
       </div>
     </div>
   );
