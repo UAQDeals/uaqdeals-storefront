@@ -6,7 +6,6 @@ import { ChevronLeft, Upload, X, CheckCircle, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-// field key -> { column in govt_service_enquiries, label }
 const DOC_FIELDS: { key: string; col: string; label: string }[] = [
   { key: "trade_license",    col: "trade_license_path",    label: "Trade License Copy" },
   { key: "passport",         col: "passport_path",         label: "Passport Copy" },
@@ -18,8 +17,14 @@ const DOC_FIELDS: { key: string; col: string; label: string }[] = [
 ];
 
 export function GovtEnquiryClient({
-  slug, title, tagline,
-}: { slug: string; title: string; tagline: string }) {
+  slug, serviceId, serviceTitle, description, imageUrl,
+}: {
+  slug: string;
+  serviceId: string;
+  serviceTitle: string;
+  description: string;
+  imageUrl: string;
+}) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -46,7 +51,6 @@ export function GovtEnquiryClient({
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Upload each provided file to the PRIVATE bucket; keep the path.
       const docPaths: Record<string, string> = {};
       for (const f of DOC_FIELDS) {
         const file = files[f.key];
@@ -62,6 +66,8 @@ export function GovtEnquiryClient({
 
       const { error } = await supabase.from("govt_service_enquiries").insert({
         vendor_type_slug: slug,
+        service_id: serviceId,
+        service_title: serviceTitle,
         user_id: user?.id ?? null,
         name: name.trim(),
         company_name: company.trim() || null,
@@ -87,14 +93,14 @@ export function GovtEnquiryClient({
   if (done) {
     return (
       <div className="min-h-screen bg-neutral-50">
-        <Header title={title} onBack={() => router.back()} />
+        <Header title={serviceTitle} onBack={() => router.push(`/services/enquiry/${slug}`)} />
         <div className="mx-auto max-w-md px-4 py-16 text-center">
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
             <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
           </div>
           <h2 className="text-[22px] font-extrabold text-neutral-900">Enquiry Received!</h2>
           <p className="text-neutral-500 text-[14px] mt-2 leading-relaxed">
-            Thanks {name.split(" ")[0]}! Our {title} team will review your enquiry and contact you shortly on {phone}.
+            Thanks {name.split(" ")[0]}! Our team will review your enquiry for {serviceTitle} and contact you shortly on {phone}.
           </p>
           <button onClick={() => router.push("/services")}
             className="mt-8 inline-block rounded-xl px-6 py-3 text-white font-bold text-[14px]"
@@ -108,9 +114,25 @@ export function GovtEnquiryClient({
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Header title={title} onBack={() => router.back()} />
+      <Header title={serviceTitle} onBack={() => router.push(`/services/enquiry/${slug}`)} />
+
       <div className="mx-auto max-w-lg px-4 py-6">
-        <p className="text-neutral-500 text-[14px] mb-6">{tagline}</p>
+        {/* Listing banner */}
+        {imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt={serviceTitle} className="w-full h-48 object-cover rounded-2xl mb-4" />
+        )}
+        <h2 className="text-[20px] font-extrabold text-neutral-900">{serviceTitle}</h2>
+        {description && (
+          <p className="text-neutral-500 text-[14px] mt-1.5 leading-relaxed whitespace-pre-wrap">{description}</p>
+        )}
+
+        <div className="h-px bg-neutral-200 my-6" />
+
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="w-4 h-4 text-[#8E1B3A]" />
+          <h3 className="text-[16px] font-bold text-neutral-900">Your Enquiry</h3>
+        </div>
 
         <div className="space-y-4">
           <div>
@@ -138,7 +160,7 @@ export function GovtEnquiryClient({
           </div>
 
           <div>
-            <label className="block text-[13px] font-semibold text-neutral-700 mb-1.5">Your Enquiry</label>
+            <label className="block text-[13px] font-semibold text-neutral-700 mb-1.5">Any Enquiry</label>
             <textarea
               className="w-full min-h-[120px] rounded-xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50"
               value={enquiry}
@@ -208,7 +230,7 @@ function Header({ title, onBack }: { title: string; onBack: () => void }) {
         <button onClick={onBack} className="p-1 -ml-1 text-neutral-700">
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-[17px] font-extrabold text-neutral-900">{title}</h1>
+        <h1 className="text-[17px] font-extrabold text-neutral-900 truncate">{title}</h1>
       </div>
     </div>
   );
