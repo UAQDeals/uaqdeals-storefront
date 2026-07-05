@@ -98,7 +98,10 @@ export default async function ProductDetailPage({
     images: (Array.isArray(p.images) ? (p.images as string[]) : []) as string[],
     variants: (Array.isArray(p.variants) ? p.variants : []) as Array<{
       name: string;
-      options: string[];
+      price: number | null;
+      sale_price: number | null;
+      sku?: string | null;
+      stock_quantity: number;
     }>,
     stock_quantity: p.stock_quantity as number | null,
     track_stock: Boolean(p.track_stock),
