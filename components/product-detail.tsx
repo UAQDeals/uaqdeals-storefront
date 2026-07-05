@@ -167,9 +167,9 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           {!oos && !isRx && !lowStock && <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">{tc("inStock")}</span>}
         </div>
 
-        {p.variants?.length > 0 && (
+        {p.variants?.length > 0 && p.variants.some((v) => Array.isArray((v as { options?: unknown }).options)) && (
           <div className="mt-6 space-y-4">
-            {p.variants.map((v) => (
+            {p.variants.filter((v) => Array.isArray((v as { options?: unknown }).options)).map((v) => (
               <div key={v.name}>
                 <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{v.name}</p>
                 <div className="mt-2 flex flex-wrap gap-2">
