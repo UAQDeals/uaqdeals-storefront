@@ -1,12 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { selectEmirate } from "./actions";
 
 type Em = { name: string; emoji: string; full: boolean; grad: string[] };
 
 export function EmirateGrid({ emirates }: { emirates: Em[] }) {
+  const router = useRouter();
   const [picking, setPicking] = useState<string | null>(null);
+
+  async function choose(name: string) {
+    setPicking(name);
+    try {
+      await selectEmirate(name);
+      router.push("/");
+      router.refresh();
+    } catch (e) {
+      setPicking(null);
+    }
+  }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
@@ -16,7 +29,7 @@ export function EmirateGrid({ emirates }: { emirates: Em[] }) {
           <button
             key={em.name}
             disabled={!!picking}
-            onClick={() => { setPicking(em.name); selectEmirate(em.name); }}
+            onClick={() => choose(em.name)}
             className="group relative bg-white rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl disabled:opacity-70"
             style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}
           >

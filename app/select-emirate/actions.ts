@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function selectEmirate(name: string) {
@@ -12,7 +11,8 @@ export async function selectEmirate(name: string) {
     sameSite: "lax",
   });
   // Bust the cached RSC for every route under the root layout so the new
-  // emirate shows immediately (no hard refresh needed).
+  // emirate shows immediately. Navigation happens client-side (see grid.tsx)
+  // so iOS Safari commits the Set-Cookie before the redirect -- doing the
+  // redirect() here races the cookie on Safari and white-screens the app.
   revalidatePath("/", "layout");
-  redirect("/");
 }
