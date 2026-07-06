@@ -22,6 +22,7 @@ type Product = {
   average_rating: number | null; review_count: number;
   specs?: Record<string, string> | null; sku?: string | null;
   is_halal?: boolean; weight_based?: boolean; weight_unit?: string | null;
+  delivery_days?: number | null;
 };
 
 type Review = {
@@ -137,7 +138,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const maxQty = availStock > 0 ? availStock : 1;
 
   function pushToCart() {
-    add({ id: lineId, product_id: p.id, name: p.name, price: unitPrice, original_price: hasSale ? p.price : null, image: gallery[0] ?? null, variant: variantSummary || null, vendor_name: p.vendor_name }, qty);
+    add({ id: lineId, product_id: p.id, name: p.name, price: unitPrice, original_price: hasSale ? p.price : null, image: gallery[0] ?? null, variant: variantSummary || null, vendor_name: p.vendor_name, vendor_id: p.vendor_id }, qty);
   }
 
   function handleAdd() {
@@ -181,6 +182,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       .filter(([, v]) => v != null && String(v).trim() !== "")
       .map(([k, v]) => [k, String(v)] as [string, string]),
   ];
+
+  // Expected delivery — only for product vendors that publish a lead time.
+  const deliveryDays = typeof p.delivery_days === "number" && p.delivery_days > 0 ? p.delivery_days : null;
+  const getItByDate = deliveryDays != null
+    ? new Date(Date.now() + deliveryDays * 86_400_000).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" })
+    : null;
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -261,6 +268,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           {!oos && lowStock && <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">{tc("onlyLeft", { count: p.stock_quantity! })}</span>}
           {!oos && !isRx && !lowStock && <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">{tc("inStock")}</span>}
         </div>
+
+        {getItByDate && (
+          <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-neutral-700">
+            <Truck className="h-4 w-4 text-[color:var(--brand-maroon)]" /> {t("getItBy", { date: getItByDate })}
+          </p>
+        )}
 
         {hasVariants && (
           <div className="mt-6 space-y-4">

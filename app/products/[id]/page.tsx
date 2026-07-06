@@ -76,15 +76,17 @@ export default async function ProductDetailPage({
   if (!p || p.status !== "active") notFound();
 
   let vendor_name: string | null = null;
+  let delivery_days: number | null = null;
   if (p.vendor_id) {
     const { data: v } = await supabase
       .from("vendors")
-      .select("name, vendor_types(name, mask_vendor_identity)")
+      .select("name, delivery_days, vendor_types(name, mask_vendor_identity)")
       .eq("id", p.vendor_id)
       .maybeSingle();
     if (v) {
       const masked = (v as Row).vendor_types?.mask_vendor_identity;
       vendor_name = masked ? "UAQ Deals Mart" : ((v as Row).name ?? null);
+      delivery_days = (v as Row).delivery_days != null ? Number((v as Row).delivery_days) : null;
     }
   }
 
@@ -112,6 +114,7 @@ export default async function ProductDetailPage({
     brand: (p.brand as string | null) ?? null,
     unit: (p.unit as string | null) ?? null,
     vendor_name,
+    delivery_days,
     condition: (p.condition as string | null) ?? null,
     average_rating: (p.average_rating as number | null) ?? null,
     review_count: (p.review_count as number | null) ?? 0,

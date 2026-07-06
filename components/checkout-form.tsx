@@ -157,6 +157,42 @@ export function CheckoutForm({
         throw new Error(msg);
       }
 
+      // Snapshot the expected delivery date from the cart's vendor lead times
+      // (max across distinct vendors). Product vendors only — restaurants have
+      // no delivery_days, so the field stays null. Non-fatal on failure.
+      try {
+        const vendorIds = items
+          .map((i) => i.vendor_id)
+          .filter((v): v is string => !!v);
+        const missing = items.filter((i) => !i.vendor_id).map((i) => i.product_id);
+        if (missing.length > 0) {
+          const { data: prods } = await supabase
+            .from("products")
+            .select("vendor_id")
+            .in("id", missing);
+          for (const pr of prods ?? []) if (pr.vendor_id) vendorIds.push(pr.vendor_id as string);
+        }
+        const distinct = Array.from(new Set(vendorIds));
+        if (distinct.length > 0) {
+          const { data: vendors } = await supabase
+            .from("vendors")
+            .select("delivery_days")
+            .in("id", distinct);
+          const maxDays = (vendors ?? []).reduce((m, v) => {
+            const d = v.delivery_days != null ? Number(v.delivery_days) : 0;
+            return d > m ? d : m;
+          }, 0);
+          if (maxDays > 0) {
+            const d = new Date();
+            d.setDate(d.getDate() + maxDays);
+            const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            await supabase.from("orders").update({ expected_delivery_date: iso }).eq("id", orderId);
+          }
+        }
+      } catch {
+        /* non-fatal — leave expected_delivery_date null */
+      }
+
       clear();
       toast.success(t("orderPlaced"));
       window.location.assign(`/orders/${orderId}`);

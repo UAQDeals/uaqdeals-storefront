@@ -105,7 +105,8 @@
     "trustReturnsSub": "بدون متاعب داخل أم القيوين",
     "trustSecureTitle": "دفع آمن",
     "trustSecureSub": "بياناتك محمية",
-    "added1": "تمت إضافة {name} إلى السلة"
+    "added1": "تمت إضافة {name} إلى السلة",
+    "getItBy": "استلمه بحلول {date}"
   },
   "cartPage": {
     "title": "سلة التسوق",
@@ -215,7 +216,8 @@
     "paymentSection": "الدفع",
     "payAt": "ادفع {amount} عند استلام الطلب.",
     "items": "المنتجات",
-    "earned": "لقد كسبت {count} عملة على هذا الطلب."
+    "earned": "لقد كسبت {count} عملة على هذا الطلب.",
+    "getItBy": "استلمه بحلول {date}"
   },
   "orders": {
     "title": "طلباتي",

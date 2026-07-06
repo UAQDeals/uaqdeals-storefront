@@ -105,7 +105,8 @@
     "trustReturnsSub": "Hassle-free within UAQ",
     "trustSecureTitle": "Secure checkout",
     "trustSecureSub": "Your data is protected",
-    "added1": "Added {name} to cart"
+    "added1": "Added {name} to cart",
+    "getItBy": "Get it by {date}"
   },
   "cartPage": {
     "title": "Your Cart",
@@ -215,7 +216,8 @@
     "paymentSection": "Payment",
     "payAt": "Pay {amount} when you receive the order.",
     "items": "Items",
-    "earned": "You earned {count} coins on this order."
+    "earned": "You earned {count} coins on this order.",
+    "getItBy": "Get it by {date}"
   },
   "orders": {
     "title": "My orders",

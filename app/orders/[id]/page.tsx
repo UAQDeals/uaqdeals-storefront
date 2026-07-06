@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Check, Package, ShoppingBag } from "lucide-react";
+import { Check, Package, ShoppingBag, Truck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { aed } from "@/lib/format";
 
 export async function generateMetadata() {
@@ -27,12 +27,14 @@ export default async function OrderConfirmationPage({
 
   const t = await getTranslations("orderConfirm");
   const tc = await getTranslations("common");
+  const locale = await getLocale();
+  const dateLocale = locale === "ar" ? "ar-AE" : "en-AE";
   const tco = await getTranslations("checkout");
   const tord = await getTranslations("orders");
 
   const { data: order } = await supabase
     .from("orders")
-    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, created_at, order_items(*, products(thumbnail_url, name))")
+    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, order_items(*, products(thumbnail_url, name))")
     .eq("id", id)
     .eq("customer_id", user.id)
     .maybeSingle();
@@ -60,6 +62,14 @@ export default async function OrderConfirmationPage({
           <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("deliverySection")}</h2>
           <p className="mt-3 text-sm text-neutral-800">{order.delivery_address}</p>
           {order.delivery_notes && <p className="mt-1 text-xs text-neutral-500">{order.delivery_notes}</p>}
+          {order.expected_delivery_date && (
+            <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-neutral-700">
+              <Truck className="h-4 w-4 text-[color:var(--brand-maroon)]" />
+              {t("getItBy", {
+                date: new Date(order.expected_delivery_date).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" }),
+              })}
+            </p>
+          )}
         </section>
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("paymentSection")}</h2>
