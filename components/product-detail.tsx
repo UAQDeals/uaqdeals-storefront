@@ -328,11 +328,13 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         </div>
 
         {/* Delivery & returns trust panel */}
-        <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-[color:var(--brand-border)] bg-[color:var(--brand-border)] sm:grid-cols-2">
-          <TrustRow icon={<Truck className="h-4 w-4" />} title={t("trustDeliveryTitle")} sub={t("trustDeliverySub")} />
-          <TrustRow icon={<BadgeCheck className="h-4 w-4" />} title={t("trustCodTitle")} sub={t("trustCodSub")} />
-          <TrustRow icon={<RotateCcw className="h-4 w-4" />} title={t("trustReturnsTitle")} sub={t("trustReturnsSub")} />
-          <TrustRow icon={<ShieldCheck className="h-4 w-4" />} title={t("trustSecureTitle")} sub={t("trustSecureSub")} />
+        <div className="mt-6 rounded-2xl border border-[color:var(--brand-border)] bg-gradient-to-b from-[color:var(--brand-maroon)]/[0.035] to-white p-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_rgba(0,0,0,0.10)]">
+          <div className="grid grid-cols-2">
+            <TrustRow icon={<Truck className="h-[18px] w-[18px]" />} title={t("trustDeliveryTitle")} sub={t("trustDeliverySub")} className="border-b border-e border-black/[0.06]" />
+            <TrustRow icon={<BadgeCheck className="h-[18px] w-[18px]" />} title={t("trustCodTitle")} sub={t("trustCodSub")} className="border-b border-black/[0.06]" />
+            <TrustRow icon={<RotateCcw className="h-[18px] w-[18px]" />} title={t("trustReturnsTitle")} sub={t("trustReturnsSub")} className="border-e border-black/[0.06]" />
+            <TrustRow icon={<ShieldCheck className="h-[18px] w-[18px]" />} title={t("trustSecureTitle")} sub={t("trustSecureSub")} />
+          </div>
         </div>
 
         {rxOpen && (
@@ -481,13 +483,15 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   );
 }
 
-function TrustRow({ icon, title, sub }: { icon: ReactNode; title: string; sub: string }) {
+function TrustRow({ icon, title, sub, className = "" }: { icon: ReactNode; title: string; sub: string; className?: string }) {
   return (
-    <div className="flex items-center gap-3 bg-white px-4 py-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--brand-maroon)]/8 text-[color:var(--brand-maroon)]">{icon}</span>
+    <div className={"group flex items-center gap-3 rounded-xl px-3.5 py-3.5 transition-colors duration-200 hover:bg-white " + className}>
+      <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--brand-maroon)]/[0.12] to-[color:var(--brand-maroon)]/[0.04] text-[color:var(--brand-maroon)] ring-1 ring-inset ring-[color:var(--brand-maroon)]/10 shadow-sm transition-transform duration-200 group-hover:scale-[1.06]">
+        {icon}
+      </span>
       <div className="min-w-0">
-        <p className="text-xs font-semibold text-neutral-800">{title}</p>
-        <p className="truncate text-[11px] text-neutral-500">{sub}</p>
+        <p className="text-[13px] font-semibold leading-tight text-neutral-900">{title}</p>
+        <p className="mt-0.5 truncate text-[11px] leading-tight text-neutral-500">{sub}</p>
       </div>
     </div>
   );
