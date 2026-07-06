@@ -58,7 +58,18 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   // ── Desktop (Noon-style): products across this category's whole subtree, plus
   //    a representative product image per subcategory. Products attach via
   //    category_id; the tree is walked via parent_id. ──
-  const { data: allCats } = await supabase.from("categories").select("id, name, parent_id, sort_order");
+  // Page through ALL categories — there are >1000 and PostgREST caps a single
+  // response at 1000, which would otherwise orphan deep branches from the tree.
+  const allCats: { id: string; name: string; parent_id: string | null; sort_order: number | null }[] = [];
+  for (let from = 0; ; from += 1000) {
+    const { data: pageCats } = await supabase
+      .from("categories")
+      .select("id, name, parent_id, sort_order")
+      .range(from, from + 999);
+    const rows = pageCats ?? [];
+    allCats.push(...rows);
+    if (rows.length < 1000) break;
+  }
   const childrenMap = new Map<string, string[]>();
   for (const c of allCats ?? []) {
     if (!c.parent_id) continue;
@@ -77,7 +88,9 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     }
     return out;
   };
-  const subtreeIds = Array.from(descendantsOf(id));
+  // Aggregate products from this category AND every descendant, keyed by the
+  // category's UUID (not the URL slug).
+  const subtreeIds = Array.from(descendantsOf(cat.id));
 
   const { data: gridRaw } = await supabase
     .from("products")
