@@ -412,12 +412,12 @@ export function SiteHeader({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
-                placeholder="Search products, deals, services…"
-                className="flex-1 h-11 bg-neutral-100 border border-neutral-200 border-r-0 rounded-l-full px-5 text-[14px] font-semibold text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-neutral-50"
+                placeholder={isRTL ? "ابحث عن منتجات وعروض وخدمات…" : "Search products, deals, services…"}
+                className="flex-1 h-11 bg-neutral-100 border border-neutral-200 border-e-0 rounded-s-full px-5 text-[14px] font-semibold text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-neutral-50"
               />
               <button
                 type="submit"
-                className="h-11 px-5 bg-[color:var(--brand-maroon)] border border-[color:var(--brand-maroon)] border-l-0 rounded-r-full text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center"
+                className="h-11 px-5 bg-[color:var(--brand-maroon)] border border-[color:var(--brand-maroon)] border-s-0 rounded-e-full text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -499,11 +499,11 @@ export function SiteHeader({
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search products, deals…"
-              className="flex-1 h-9 bg-neutral-100 rounded-l-full px-4 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none border border-neutral-200 border-r-0"
+              placeholder={isRTL ? "ابحث عن منتجات وعروض…" : "Search products, deals…"}
+              className="flex-1 h-9 bg-neutral-100 rounded-s-full px-4 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none border border-neutral-200 border-e-0"
             />
             <button type="submit"
-              className="h-9 px-3 bg-[color:var(--brand-maroon)] rounded-r-full text-white flex items-center justify-center border border-[color:var(--brand-maroon)] border-l-0">
+              className="h-9 px-3 bg-[color:var(--brand-maroon)] rounded-e-full text-white flex items-center justify-center border border-[color:var(--brand-maroon)] border-s-0">
               <Search className="w-3.5 h-3.5" />
             </button>
           </form>
@@ -640,7 +640,7 @@ export function SiteHeader({
         {mobileGroup === null && (
           <div className="px-4 py-3 border-b border-neutral-100">
             <form onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.querySelector("input") as HTMLInputElement).value.trim(); if (q) { closeMobile(); router.push(`/search?q=${encodeURIComponent(q)}`); } }} className="flex gap-2">
-              <input type="text" placeholder="Search…" className="flex-1 h-10 border border-neutral-300 px-3 text-[13.5px] focus:outline-none focus:border-neutral-900" />
+              <input type="text" placeholder={isRTL ? "بحث…" : "Search…"} className="flex-1 h-10 border border-neutral-300 px-3 text-[13.5px] focus:outline-none focus:border-neutral-900" />
               <button type="submit" className="h-10 px-4 bg-[color:var(--brand-maroon)] text-white flex items-center justify-center">
                 <Search className="w-4 h-4" />
               </button>

@@ -7,13 +7,28 @@ import { Search, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import type { BannerCard } from "@/components/home-banners";
 
 const CHIPS = [
-  { label: "Grocery", href: "/shop/grocery" },
-  { label: "Restaurants", href: "/categories/restaurant" },
-  { label: "Pharmacy", href: "/categories/pharmacy" },
-  { label: "Electronics", href: "/shop/electronics" },
-  { label: "Services", href: "/services" },
-  { label: "Real Estate", href: "/marketplace/real_estate" },
+  { label: "Grocery", ar: "بقالة", href: "/shop/grocery" },
+  { label: "Restaurants", ar: "مطاعم", href: "/categories/restaurant" },
+  { label: "Pharmacy", ar: "صيدلية", href: "/categories/pharmacy" },
+  { label: "Electronics", ar: "إلكترونيات", href: "/shop/electronics" },
+  { label: "Services", ar: "خدمات", href: "/services" },
+  { label: "Real Estate", ar: "عقارات", href: "/marketplace/real_estate" },
 ];
+
+const AR_EMIRATES: Record<string, string> = {
+  "Umm Al Quwain": "أم القيوين",
+  "Al Hamriyah": "الحمرية",
+};
+
+// Arabic labels for hero chips keyed by href (chips may be built server-side in English).
+const AR_CHIP: Record<string, string> = {
+  "/shop/grocery": "بقالة",
+  "/categories/restaurant": "مطاعم",
+  "/categories/pharmacy": "صيدلية",
+  "/shop/electronics": "إلكترونيات",
+  "/services": "خدمات",
+  "/marketplace/real_estate": "عقارات",
+};
 
 function bannerHref(b: BannerCard): string {
   if (!b.link_type || !b.link_value) return "#";
@@ -41,6 +56,7 @@ export function HomeHero({
   const locale = useLocale();
   const isRTL = locale === "ar";
   const place = emirate ?? "Umm Al Quwain";
+  const placeName = isRTL ? (AR_EMIRATES[place] ?? place) : place;
 
   const slides = banners.slice(0, 6);
   const count = slides.length;
@@ -89,14 +105,16 @@ export function HomeHero({
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11.5px] font-bold text-white backdrop-blur-sm">
               <MapPin className="h-3.5 w-3.5" />
-              {place}
+              {placeName}
             </span>
             <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.5px] text-white sm:text-[40px]">
-              Everything in {place},
-              <br className="hidden sm:block" /> delivered today.
+              {isRTL ? (<>كل شيء في {placeName}،<br className="hidden sm:block" /> يصلك اليوم.</>)
+                     : (<>Everything in {placeName},<br className="hidden sm:block" /> delivered today.</>)}
             </h1>
             <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/85 sm:text-[15px]">
-              Groceries, food, pharmacy, services and local listings — one super-app for all of {place}.
+              {isRTL
+                ? `بقالة وطعام وصيدلية وخدمات وقوائم محلية — تطبيق واحد شامل لكل ${placeName}.`
+                : `Groceries, food, pharmacy, services and local listings — one super-app for all of ${placeName}.`}
             </p>
 
             {/* Search (routes to /search) */}
@@ -105,7 +123,9 @@ export function HomeHero({
               className="mt-6 flex w-full max-w-md items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg transition hover:shadow-xl"
             >
               <Search className="h-4.5 w-4.5 shrink-0 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
-              <span className="text-[13.5px] font-medium text-neutral-400">Search products, deals, services…</span>
+              <span className="text-[13.5px] font-medium text-neutral-400">
+                {isRTL ? "ابحث عن منتجات وعروض وخدمات…" : "Search products, deals, services…"}
+              </span>
             </Link>
 
             {/* Quick chips */}
@@ -116,7 +136,7 @@ export function HomeHero({
                   href={c.href}
                   className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
                 >
-                  {c.label}
+                  {isRTL ? (AR_CHIP[c.href] ?? (c as { ar?: string }).ar ?? c.label) : c.label}
                 </Link>
               ))}
             </div>
