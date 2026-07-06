@@ -172,7 +172,10 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         <div className="mt-5 flex items-end gap-3">
           <span className="text-3xl font-extrabold text-[color:var(--brand-maroon)]">{aed(unitPrice)}</span>
           {hasSale && <span className="text-base text-neutral-500 line-through">{aed(p.price)}</span>}
-          {p.unit && <span className="text-xs text-neutral-500">/ {p.unit}</span>}
+          {/* Only show a real unit (e.g. "kg", "piece") — a blank or purely numeric value like "1" is not a unit. */}
+          {p.unit && p.unit.trim() !== "" && Number.isNaN(Number(p.unit)) && (
+            <span className="text-xs text-neutral-500">/ {p.unit}</span>
+          )}
         </div>
 
         <div className="mt-3 flex flex-wrap gap-2">
