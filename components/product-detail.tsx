@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, Smartphone, ShoppingCart, Tag, Store, Star, ChevronDown , FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Minus, Plus, ShoppingBag, ShoppingCart, Tag, Store, Star, FileText, Zap, Share2, Truck, RotateCcw, ShieldCheck, BadgeCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -19,6 +20,8 @@ type Product = {
   requires_prescription: boolean; vendor_id: string | null; brand: string | null;
   unit: string | null; vendor_name: string | null; condition?: string | null;
   average_rating: number | null; review_count: number;
+  specs?: Record<string, string> | null; sku?: string | null;
+  is_halal?: boolean; weight_based?: boolean; weight_unit?: string | null;
 };
 
 type Review = {
@@ -44,6 +47,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const selectedVariant = selectedVariantIdx != null ? p.variants[selectedVariantIdx] : null;
   const [qty, setQty] = useState(1);
   const { add } = useCart();
+  const router = useRouter();
   const [rxUploaded, setRxUploaded] = useState(false);
   const [rxOpen, setRxOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -98,6 +102,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const hasSale = baseSale != null && baseSale > 0 && baseSale < basePrice;
   const unitPrice = hasSale ? (baseSale as number) : basePrice;
   const discountPct = hasSale ? Math.round(((basePrice - (baseSale as number)) / basePrice) * 100) : 0;
+  const savings = hasSale ? basePrice - (baseSale as number) : 0;
 
   // Stock: per-variant when one is selected, else product-level. When the
   // product has variants, stock lives on each variant (the parent stock is 0),
@@ -119,11 +124,53 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const variantSummary = selectedVariant ? selectedVariant.name : "";
   const lineId = p.id + (variantSummary ? "::" + variantSummary.replace(/\s+/g, "_") : "");
 
+  // Available units for the current selection — caps the quantity stepper.
+  const availStock = selectedVariant
+    ? selectedVariant.stock_quantity
+    : (p.track_stock ? (p.stock_quantity ?? 0) : Infinity);
+  const maxQty = availStock > 0 ? availStock : 1;
+
+  function pushToCart() {
+    add({ id: lineId, product_id: p.id, name: p.name, price: unitPrice, original_price: hasSale ? p.price : null, image: gallery[0] ?? null, variant: variantSummary || null, vendor_name: p.vendor_name }, qty);
+  }
+
   function handleAdd() {
     if (!canAdd) return;
-    add({ id: lineId, product_id: p.id, name: p.name, price: unitPrice, original_price: hasSale ? p.price : null, image: gallery[0] ?? null, variant: variantSummary || null, vendor_name: p.vendor_name }, qty);
+    pushToCart();
     toast.success(t("added", { qty, name: p.name }));
   }
+
+  function handleBuyNow() {
+    if (!canAdd) return;
+    pushToCart();
+    router.push("/checkout");
+  }
+
+  async function handleShare() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: p.name, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success(t("linkCopied"));
+      }
+    } catch {
+      /* user dismissed the share sheet — no-op */
+    }
+  }
+
+  // Spec rows: explicit `specs` map plus a few core attributes, when present.
+  const specRows: Array<[string, string]> = [
+    ...(p.brand ? [[t("brandLabel"), p.brand] as [string, string]] : []),
+    ...(p.sku ? [[t("skuLabel"), p.sku] as [string, string]] : []),
+    ...(p.condition ? [[t("conditionLabel"), p.condition === "used" ? t("used") : t("new")] as [string, string]] : []),
+    ...(p.is_halal ? [[t("halalLabel"), t("yes")] as [string, string]] : []),
+    ...(p.unit && Number.isNaN(Number(p.unit)) ? [[t("unitLabel"), p.unit] as [string, string]] : []),
+    ...Object.entries(p.specs ?? {})
+      .filter(([, v]) => v != null && String(v).trim() !== "")
+      .map(([k, v]) => [k, String(v)] as [string, string]),
+  ];
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -169,6 +216,21 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           </div>
         )}
 
+        {/* Rating summary — jumps to the reviews section below. */}
+        {avgRating > 0 && (
+          <a href="#reviews" className="mt-2 inline-flex items-center gap-1.5 text-sm">
+            <span className="flex">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className={`h-4 w-4 ${i < Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
+              ))}
+            </span>
+            <span className="font-semibold">{avgRating.toFixed(1)}</span>
+            <span className="text-neutral-500 hover:text-[color:var(--brand-maroon)] hover:underline">
+              ({reviews.length || p.review_count} {(reviews.length || p.review_count) === 1 ? t("review") : t("reviews")})
+            </span>
+          </a>
+        )}
+
         <div className="mt-5 flex items-end gap-3">
           <span className="text-3xl font-extrabold text-[color:var(--brand-maroon)]">{aed(unitPrice)}</span>
           {hasSale && <span className="text-base text-neutral-500 line-through">{aed(p.price)}</span>}
@@ -177,6 +239,11 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
             <span className="text-xs text-neutral-500">/ {p.unit}</span>
           )}
         </div>
+        {hasSale && (
+          <p className="mt-1 text-sm font-semibold text-green-700">
+            {t("save")} {aed(savings)} ({discountPct}%)
+          </p>
+        )}
 
         <div className="mt-3 flex flex-wrap gap-2">
           {isRx && <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">{t("prescriptionRequired")}</span>}
@@ -222,9 +289,9 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
 
         <div className="mt-7 flex flex-wrap items-stretch gap-3">
           <div className="inline-flex items-center rounded-full border border-neutral-200 bg-white">
-            <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100" aria-label="−"><Minus className="h-4 w-4" /></button>
+            <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-40" aria-label="−" disabled={qty <= 1}><Minus className="h-4 w-4" /></button>
             <span className="w-8 text-center text-sm font-semibold">{qty}</span>
-            <button onClick={() => setQty((q) => q + 1)} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100" aria-label="+"><Plus className="h-4 w-4" /></button>
+            <button onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-40" aria-label="+" disabled={qty >= maxQty}><Plus className="h-4 w-4" /></button>
           </div>
 
           {canAdd ? (
@@ -248,6 +315,26 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           )}
         </div>
 
+        {/* Buy Now (express to checkout) + Share */}
+        <div className="mt-3 flex items-stretch gap-3">
+          {canAdd && (
+            <button onClick={handleBuyNow} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[color:var(--brand-maroon)] px-6 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)]/5">
+              <Zap className="h-4 w-4" /> {t("buyNow")}
+            </button>
+          )}
+          <button onClick={handleShare} aria-label={t("share")} className="inline-flex items-center justify-center gap-2 rounded-full border border-neutral-200 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-50">
+            <Share2 className="h-4 w-4" /> <span className="hidden sm:inline">{t("share")}</span>
+          </button>
+        </div>
+
+        {/* Delivery & returns trust panel */}
+        <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-[color:var(--brand-border)] bg-[color:var(--brand-border)] sm:grid-cols-2">
+          <TrustRow icon={<Truck className="h-4 w-4" />} title={t("trustDeliveryTitle")} sub={t("trustDeliverySub")} />
+          <TrustRow icon={<BadgeCheck className="h-4 w-4" />} title={t("trustCodTitle")} sub={t("trustCodSub")} />
+          <TrustRow icon={<RotateCcw className="h-4 w-4" />} title={t("trustReturnsTitle")} sub={t("trustReturnsSub")} />
+          <TrustRow icon={<ShieldCheck className="h-4 w-4" />} title={t("trustSecureTitle")} sub={t("trustSecureSub")} />
+        </div>
+
         {rxOpen && (
         <PrescriptionUploadModal
           productId={p.id}
@@ -266,6 +353,20 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           </div>
         )}
 
+        {specRows.length > 0 && (
+          <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("specifications")}</h2>
+            <dl className="mt-3 overflow-hidden rounded-xl border border-[color:var(--brand-border)]">
+              {specRows.map(([k, v], i) => (
+                <div key={k} className={"flex text-sm " + (i % 2 ? "bg-white" : "bg-neutral-50/60")}>
+                  <dt className="w-2/5 shrink-0 px-4 py-2.5 font-medium capitalize text-neutral-500">{k.replace(/_/g, " ")}</dt>
+                  <dd className="px-4 py-2.5 text-neutral-800">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+
         <p className="mt-8 text-xs text-neutral-500">
           {t("needHelp")}{" "}
           <Link href="/contact" className="font-semibold text-[color:var(--brand-maroon)] hover:underline">{t("contactUs")}</Link>
@@ -273,7 +374,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       </div>
 
       {/* ── Reviews section ──────────────────────────────────────────── */}
-      <div className="md:col-span-2 border-t border-[color:var(--brand-border)] pt-8 mt-2">
+      <div id="reviews" className="scroll-mt-24 md:col-span-2 border-t border-[color:var(--brand-border)] pt-8 mt-2">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-bold tracking-tight">Customer Reviews</h2>
@@ -375,6 +476,18 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function TrustRow({ icon, title, sub }: { icon: ReactNode; title: string; sub: string }) {
+  return (
+    <div className="flex items-center gap-3 bg-white px-4 py-3">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--brand-maroon)]/8 text-[color:var(--brand-maroon)]">{icon}</span>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-neutral-800">{title}</p>
+        <p className="truncate text-[11px] text-neutral-500">{sub}</p>
       </div>
     </div>
   );
