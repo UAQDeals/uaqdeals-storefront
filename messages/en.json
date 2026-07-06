@@ -79,6 +79,8 @@
     "contactUs": "Contact us",
     "add": "Add",
     "options": "Options",
+    "selectOne": "(select one)",
+    "selectOption": "Select an option",
     "added1": "Added {name} to cart"
   },
   "cartPage": {

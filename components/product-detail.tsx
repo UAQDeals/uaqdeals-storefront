@@ -99,11 +99,15 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const unitPrice = hasSale ? (baseSale as number) : basePrice;
   const discountPct = hasSale ? Math.round(((basePrice - (baseSale as number)) / basePrice) * 100) : 0;
 
-  // Stock: per-variant when one is selected, else product-level.
+  // Stock: per-variant when one is selected, else product-level. When the
+  // product has variants, stock lives on each variant (the parent stock is 0),
+  // so we defer to variant selection rather than marking the whole thing OOS.
   const variantStock = selectedVariant ? selectedVariant.stock_quantity : null;
   const oos = selectedVariant
     ? (variantStock == null || variantStock <= 0)
-    : (p.track_stock && (p.stock_quantity == null || p.stock_quantity <= 0));
+    : hasVariants
+      ? false
+      : (p.track_stock && (p.stock_quantity == null || p.stock_quantity <= 0));
   const lowStock = selectedVariant
     ? (variantStock != null && variantStock > 0 && variantStock <= 5)
     : (p.track_stock && p.stock_quantity != null && p.stock_quantity > 0 && p.stock_quantity <= 5);
@@ -182,7 +186,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           <div className="mt-6 space-y-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                Options {needsVariant && <span className="text-[color:var(--brand-maroon)]">(select one)</span>}
+                {t("options")} {needsVariant && <span className="text-[color:var(--brand-maroon)]">{t("selectOne")}</span>}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {p.variants.map((v, idx) => {
@@ -234,6 +238,8 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
               </button>
               <p className="text-center text-xs text-neutral-500">A valid prescription is required for this item.</p>
             </div>
+          ) : needsVariant ? (
+            <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">{t("selectOption")}</button>
           ) : (
             <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">{tc("outOfStock")}</button>
           )}

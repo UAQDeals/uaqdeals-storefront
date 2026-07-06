@@ -79,6 +79,8 @@
     "contactUs": "تواصل معنا",
     "add": "أضف",
     "options": "الخيارات",
+    "selectOne": "(اختر واحداً)",
+    "selectOption": "اختر خياراً",
     "added1": "تمت إضافة {name} إلى السلة"
   },
   "cartPage": {
