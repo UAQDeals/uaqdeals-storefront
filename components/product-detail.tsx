@@ -164,7 +164,11 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
   const specRows: Array<[string, string]> = [
     ...(p.brand ? [[t("brandLabel"), p.brand] as [string, string]] : []),
     ...(p.sku ? [[t("skuLabel"), p.sku] as [string, string]] : []),
-    ...(p.condition ? [[t("conditionLabel"), p.condition === "used" ? t("used") : t("new")] as [string, string]] : []),
+    ...(p.condition ? [[t("conditionLabel"),
+      p.condition === "used" ? t("used")
+      : p.condition === "new" ? t("new")
+      : p.condition === "refurbished" ? t("refurbished")
+      : p.condition.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())] as [string, string]] : []),
     ...(p.is_halal ? [[t("halalLabel"), t("yes")] as [string, string]] : []),
     ...(p.unit && Number.isNaN(Number(p.unit)) ? [[t("unitLabel"), p.unit] as [string, string]] : []),
     ...Object.entries(p.specs ?? {})
