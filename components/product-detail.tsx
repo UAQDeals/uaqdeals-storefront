@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { Minus, Plus, ShoppingBag, ShoppingCart, Tag, Store, Star, FileText, Zap, Share2, Truck, RotateCcw, ShieldCheck, BadgeCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { PrescriptionUploadModal } from "@/components/prescription-upload-modal";
 
 type Product = {
-  id: string; name: string; description: string | null;
+  id: string; name: string; name_ar?: string | null; description: string | null; description_ar?: string | null;
   price: number; sale_price: number | null;
   thumbnail_url: string | null; images: string[];
   variants: Array<{ name: string; price: number | null; sale_price: number | null; sku?: string | null; stock_quantity: number }>;
@@ -32,6 +32,12 @@ type Review = {
 export function ProductDetail({ product: p, reviews: initialReviews = [] }: { product: Product; reviews?: Review[] }) {
   const t = useTranslations("product");
   const tc = useTranslations("common");
+  const tr = useTranslations("reviews");
+  const locale = useLocale();
+  const dateLocale = locale === "ar" ? "ar-AE" : "en-AE";
+  // Prefer Arabic product content when viewing in Arabic and it exists.
+  const displayName = locale === "ar" && p.name_ar ? p.name_ar : p.name;
+  const displayDescription = locale === "ar" && p.description_ar ? p.description_ar : p.description;
 
   const gallery = useMemo(() => {
     const set: string[] = [];
@@ -75,7 +81,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { toast.error("Please sign in to leave a review"); return; }
+      if (!user) { toast.error(tr("signInRequired")); return; }
       const { error } = await supabase.from("reviews").insert({
         product_id: p.id,
         customer_id: user.id,
@@ -86,9 +92,9 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       if (error) throw error;
       setReviewSubmitted(true);
       setShowReviewForm(false);
-      toast.success("Review submitted! It will appear after approval.");
+      toast.success(tr("submitted"));
     } catch (e: any) {
-      toast.error(e.message ?? "Failed to submit review");
+      toast.error(e.message ?? tr("submitFailed"));
     } finally {
       setReviewSubmitting(false);
     }
@@ -211,7 +217,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
             <VerifiedBadge />
           </div>
         )}
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{p.name}</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{displayName}</h1>
 
         {(p.vendor_name || p.brand) && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-600">
@@ -352,10 +358,10 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         />
       )}
 
-      {p.description && (
+      {displayDescription && (
           <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
-            <div className="prose prose-sm mt-2 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: p.description }} />
+            <div className="prose prose-sm mt-2 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: displayDescription }} />
           </div>
         )}
 
@@ -383,7 +389,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
       <div id="reviews" className="scroll-mt-24 md:col-span-2 border-t border-[color:var(--brand-border)] pt-8 mt-2">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold tracking-tight">Customer Reviews</h2>
+            <h2 className="text-xl font-bold tracking-tight">{tr("title")}</h2>
             {avgRating > 0 && (
               <div className="flex items-center gap-2 mt-1">
                 <div className="flex">
@@ -392,7 +398,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
                   ))}
                 </div>
                 <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
-                <span className="text-sm text-neutral-500">({p.review_count} review{p.review_count !== 1 ? "s" : ""})</span>
+                <span className="text-sm text-neutral-500">{tr("count", { count: p.review_count })}</span>
               </div>
             )}
           </div>
@@ -401,7 +407,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
               onClick={() => setShowReviewForm(true)}
               className="flex items-center gap-2 border border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors"
             >
-              <Star className="w-4 h-4" /> Write a Review
+              <Star className="w-4 h-4" /> {tr("write")}
             </button>
           )}
         </div>
@@ -409,7 +415,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         {/* Review form */}
         {showReviewForm && !reviewSubmitted && (
           <div className="mb-8 border border-[color:var(--brand-border)] p-5 bg-neutral-50">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4">Your Review</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4">{tr("yourReview")}</h3>
             {/* Star picker */}
             <div className="flex items-center gap-1 mb-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -417,12 +423,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
                   <Star className={`w-7 h-7 transition-colors ${i < reviewRating ? "fill-amber-400 text-amber-400" : "text-neutral-300 hover:text-amber-300"}`} />
                 </button>
               ))}
-              <span className="ms-2 text-sm text-neutral-500">{reviewRating} star{reviewRating !== 1 ? "s" : ""}</span>
+              <span className="ms-2 text-sm text-neutral-500">{tr("stars", { count: reviewRating })}</span>
             </div>
             <textarea
               value={reviewComment}
               onChange={(e) => setReviewComment(e.target.value)}
-              placeholder="Share your experience with this product (optional)"
+              placeholder={tr("commentPlaceholder")}
               rows={3}
               className="w-full border border-neutral-200 px-3 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 resize-none mb-4"
             />
@@ -432,13 +438,13 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
                 disabled={reviewSubmitting}
                 className="bg-neutral-900 text-white text-sm font-bold px-6 py-2.5 hover:bg-neutral-700 transition-colors disabled:opacity-50"
               >
-                {reviewSubmitting ? "Submitting…" : "Submit Review"}
+                {reviewSubmitting ? tr("submitting") : tr("submit")}
               </button>
               <button
                 onClick={() => setShowReviewForm(false)}
                 className="border border-neutral-200 text-sm font-semibold px-6 py-2.5 hover:bg-neutral-50 transition-colors"
               >
-                Cancel
+                {tc("cancel")}
               </button>
             </div>
           </div>
@@ -446,14 +452,14 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
 
         {reviewSubmitted && (
           <div className="mb-6 bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 font-medium flex items-center gap-2">
-            <Star className="w-4 h-4" /> Thank you! Your review will appear after approval.
+            <Star className="w-4 h-4" /> {tr("thanks")}
           </div>
         )}
 
         {/* Review list */}
         {reviews.length === 0 ? (
           <div className="py-10 text-center text-neutral-400 text-sm border border-dashed border-neutral-200">
-            No reviews yet. Be the first to review this product!
+            {tr("empty")}
           </div>
         ) : (
           <div className="space-y-5">
@@ -467,8 +473,8 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold">{r.reviewer_name ?? "Customer"}</p>
-                      <p className="text-xs text-neutral-400">{new Date(r.created_at).toLocaleDateString("en-AE", { day: "numeric", month: "short", year: "numeric" })}</p>
+                      <p className="text-sm font-semibold">{r.reviewer_name ?? tr("customer")}</p>
+                      <p className="text-xs text-neutral-400">{new Date(r.created_at).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" })}</p>
                     </div>
                     <div className="flex mt-0.5 mb-2">
                       {Array.from({ length: 5 }).map((_, i) => (

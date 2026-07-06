@@ -2,6 +2,7 @@
 import { useState, useCallback, useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ShoppingBag, SlidersHorizontal, X, Search, ChevronDown } from "lucide-react";
 import { QuickAddButton } from "@/components/quick-add-button";
 import { aed } from "@/lib/format";
@@ -34,16 +35,17 @@ type Props = {
 };
 
 const SORTS = [
-  { value: "newest",     label: "Newest First" },
-  { value: "price_asc",  label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "featured",   label: "Featured" },
+  { value: "newest",     key: "sortNewest" },
+  { value: "price_asc",  key: "sortPriceAsc" },
+  { value: "price_desc", key: "sortPriceDesc" },
+  { value: "featured",   key: "sortFeatured" },
 ];
 
 export function ShopClient({
   products, categories,
   initialQ, initialCat, initialCondition, initialMin, initialMax, initialSort,
 }: Props) {
+  const t        = useTranslations("shop");
   const router   = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -82,15 +84,15 @@ export function ShopClient({
       {/* Clear */}
       {hasFilters && (
         <button onClick={clearAll} className="flex items-center gap-1.5 text-xs font-semibold text-[#C72931] hover:underline">
-          <X className="w-3.5 h-3.5" /> Clear all filters
+          <X className="w-3.5 h-3.5" /> {t("clearAll")}
         </button>
       )}
 
       {/* Condition */}
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">Condition</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">{t("condition")}</p>
         <div className="space-y-1.5">
-          {[["all", "All Items"], ["new", "New"], ["used", "Used"]].map(([val, label]) => (
+          {[["all", t("allItems")], ["new", t("new")], ["used", t("used")]].map(([val, label]) => (
             <label key={val} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -111,12 +113,12 @@ export function ShopClient({
 
       {/* Price range */}
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">Price (AED)</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">{t("price")}</p>
         <div className="flex items-center gap-2">
           <input
             className={inputCls}
             type="number"
-            placeholder="Min"
+            placeholder={t("min")}
             value={min}
             onChange={(e) => setMin(e.target.value)}
             onBlur={() => push({ min, max })}
@@ -125,7 +127,7 @@ export function ShopClient({
           <input
             className={inputCls}
             type="number"
-            placeholder="Max"
+            placeholder={t("max")}
             value={max}
             onChange={(e) => setMax(e.target.value)}
             onBlur={() => push({ min, max })}
@@ -135,19 +137,19 @@ export function ShopClient({
 
       {/* Categories */}
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">Category</p>
-        <div className="max-h-72 overflow-y-auto space-y-1 pr-1 [scrollbar-width:thin]">
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500">{t("category")}</p>
+        <div className="max-h-72 overflow-y-auto space-y-1 pe-1 [scrollbar-width:thin]">
           <button
             onClick={() => { setCat(""); push({ cat: "" }); }}
-            className={"w-full text-left rounded-lg px-2.5 py-1.5 text-sm transition-colors " + (!cat ? "bg-[#8E1B3A]/10 font-semibold text-[#8E1B3A]" : "text-neutral-600 hover:bg-neutral-100")}
+            className={"w-full text-start rounded-lg px-2.5 py-1.5 text-sm transition-colors " + (!cat ? "bg-[#8E1B3A]/10 font-semibold text-[#8E1B3A]" : "text-neutral-600 hover:bg-neutral-100")}
           >
-            All Categories
+            {t("allCategories")}
           </button>
           {categories.map((c) => (
             <button
               key={c.id}
               onClick={() => { setCat(c.id); push({ cat: c.id }); }}
-              className={"w-full text-left rounded-lg px-2.5 py-1.5 text-sm transition-colors " + (cat === c.id ? "bg-[#8E1B3A]/10 font-semibold text-[#8E1B3A]" : "text-neutral-600 hover:bg-neutral-100")}
+              className={"w-full text-start rounded-lg px-2.5 py-1.5 text-sm transition-colors " + (cat === c.id ? "bg-[#8E1B3A]/10 font-semibold text-[#8E1B3A]" : "text-neutral-600 hover:bg-neutral-100")}
             >
               {c.name}
             </button>
@@ -163,10 +165,10 @@ export function ShopClient({
       <div className="mb-6 flex flex-wrap items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <input
-            className="w-full rounded-xl border border-neutral-200 pl-9 pr-4 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]"
-            placeholder="Search products..."
+            className="w-full rounded-xl border border-neutral-200 ps-9 pe-4 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]"
+            placeholder={t("searchPlaceholder")}
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") push({ q }); }}
@@ -178,11 +180,11 @@ export function ShopClient({
           <select
             value={sort}
             onChange={(e) => { setSort(e.target.value); push({ sort: e.target.value }); }}
-            className="appearance-none rounded-xl border border-neutral-200 pl-3 pr-8 py-2.5 text-sm outline-none focus:border-[#8E1B3A] bg-white cursor-pointer"
+            className="appearance-none rounded-xl border border-neutral-200 ps-3 pe-8 py-2.5 text-sm outline-none focus:border-[#8E1B3A] bg-white cursor-pointer"
           >
-            {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            {SORTS.map((s) => <option key={s.value} value={s.value}>{t(s.key)}</option>)}
           </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+          <ChevronDown className="absolute end-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
         </div>
 
         {/* Mobile filter toggle */}
@@ -190,12 +192,12 @@ export function ShopClient({
           onClick={() => setSidebarOpen(true)}
           className="flex items-center gap-2 rounded-xl border border-neutral-200 px-4 py-2.5 text-sm font-semibold lg:hidden"
         >
-          <SlidersHorizontal className="w-4 h-4" /> Filters
+          <SlidersHorizontal className="w-4 h-4" /> {t("filters")}
           {hasFilters && <span className="w-2 h-2 rounded-full bg-[#C72931]" />}
         </button>
 
-        <p className="text-sm text-neutral-500 ml-auto">
-          {isPending ? "Loading…" : `${products.length} product${products.length === 1 ? "" : "s"}`}
+        <p className="text-sm text-neutral-500 ms-auto">
+          {isPending ? "…" : t("productCount", { count: products.length })}
         </p>
       </div>
 
@@ -209,9 +211,9 @@ export function ShopClient({
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 flex lg:hidden">
             <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
-            <div className="relative ml-auto w-72 bg-white h-full overflow-y-auto p-6 shadow-xl">
+            <div className="relative ms-auto w-72 bg-white h-full overflow-y-auto p-6 shadow-xl">
               <div className="flex items-center justify-between mb-6">
-                <p className="font-bold text-neutral-900">Filters</p>
+                <p className="font-bold text-neutral-900">{t("filters")}</p>
                 <button onClick={() => setSidebarOpen(false)}><X className="w-5 h-5" /></button>
               </div>
               <Sidebar />
@@ -224,10 +226,10 @@ export function ShopClient({
           {products.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-16 text-center">
               <ShoppingBag className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-              <p className="font-semibold text-neutral-700">No products found</p>
-              <p className="text-sm text-neutral-400 mt-1">Try adjusting your filters</p>
+              <p className="font-semibold text-neutral-700">{t("noProducts")}</p>
+              <p className="text-sm text-neutral-400 mt-1">{t("adjustFilters")}</p>
               {hasFilters && (
-                <button onClick={clearAll} className="mt-4 text-sm font-semibold text-[#C72931] hover:underline">Clear filters</button>
+                <button onClick={clearAll} className="mt-4 text-sm font-semibold text-[#C72931] hover:underline">{t("clearFilters")}</button>
               )}
             </div>
           ) : (

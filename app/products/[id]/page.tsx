@@ -45,7 +45,7 @@ export default async function ProductDetailPage({
     supabase
     .from("products")
     .select(
-      "id, name, description, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, category_id, brand, unit, average_rating, review_count, condition, specs, sku, is_halal, weight_based, weight_unit"
+      "id, name, name_ar, description, description_ar, price, sale_price, thumbnail_url, images, variants, stock_quantity, track_stock, requires_prescription, status, vendor_id, category_id, brand, unit, average_rating, review_count, condition, specs, sku, is_halal, weight_based, weight_unit"
     )
     .eq("id", id)
     .maybeSingle(),
@@ -91,7 +91,9 @@ export default async function ProductDetailPage({
   const product = {
     id: p.id as string,
     name: p.name as string,
+    name_ar: (p.name_ar as string | null) ?? null,
     description: (p.description as string | null) ?? null,
+    description_ar: (p.description_ar as string | null) ?? null,
     price: Number(p.price ?? 0),
     sale_price: p.sale_price != null ? Number(p.sale_price) : null,
     thumbnail_url: (p.thumbnail_url as string | null) ?? null,

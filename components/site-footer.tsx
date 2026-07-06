@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { MapPin, Phone, Mail, MessageCircle, ArrowRight } from "lucide-react";
 
-type FooterLink = { label: string; href: string; lead?: boolean };
+type FooterLink = { key: string; href: string; lead?: boolean };
 
 // Brand glyphs — lucide-react removed Instagram/Facebook (trademark), so inline them.
 function InstagramIcon({ className }: { className?: string }) {
@@ -45,35 +45,35 @@ function YouTubeIcon({ className }: { className?: string }) {
 }
 
 const SHOP_LINKS: FooterLink[] = [
-  { label: "All Products",        href: "/products", lead: true },
-  { label: "Electronics",         href: "/shop/a1000000-0000-0000-0000-000000000001" },
-  { label: "Grocery",             href: "/shop/a1000000-0000-0000-0000-000000000002" },
-  { label: "Beauty & Fragrance",  href: "/shop/a1000000-0000-0000-0000-000000000003" },
-  { label: "Home & Kitchen",      href: "/shop/a1000000-0000-0000-0000-000000000004" },
-  { label: "Fashion",             href: "/shop/a1000000-0000-0000-0000-000000000005" },
-  { label: "Health & Nutrition",  href: "/shop/a1000000-0000-0000-0000-000000000009" },
-  { label: "Books",               href: "/shop/a1000000-0000-0000-0000-000000000011" },
-  { label: "Marketplace",         href: "/marketplace/real_estate" },
+  { key: "allProducts",  href: "/products", lead: true },
+  { key: "electronics",  href: "/shop/a1000000-0000-0000-0000-000000000001" },
+  { key: "grocery",      href: "/shop/a1000000-0000-0000-0000-000000000002" },
+  { key: "beauty",       href: "/shop/a1000000-0000-0000-0000-000000000003" },
+  { key: "homeKitchen",  href: "/shop/a1000000-0000-0000-0000-000000000004" },
+  { key: "fashion",      href: "/shop/a1000000-0000-0000-0000-000000000005" },
+  { key: "health",       href: "/shop/a1000000-0000-0000-0000-000000000009" },
+  { key: "books",        href: "/shop/a1000000-0000-0000-0000-000000000011" },
+  { key: "marketplace",  href: "/marketplace/real_estate" },
 ];
 
 const SERVICES_LINKS: FooterLink[] = [
-  { label: "All Services",    href: "/services", lead: true },
-  { label: "Home Services",   href: "/categories/home_services" },
-  { label: "Cleaning Service",href: "/categories/cleaning_service" },
-  { label: "Pest Control",    href: "/categories/pest_control" },
-  { label: "Mobile Repair",   href: "/categories/mobile_repair" },
-  { label: "Typing Center",   href: "/categories/typing_center" },
-  { label: "Business Setup",  href: "/categories/business_setup" },
-  { label: "Explore UAQ",     href: "/services/explore-uaq" },
-  { label: "Hotel Booking",   href: "/services/hotel-booking" },
+  { key: "allServices",   href: "/services", lead: true },
+  { key: "homeServices",  href: "/categories/home_services" },
+  { key: "cleaning",      href: "/categories/cleaning_service" },
+  { key: "pestControl",   href: "/categories/pest_control" },
+  { key: "mobileRepair",  href: "/categories/mobile_repair" },
+  { key: "typingCenter",  href: "/categories/typing_center" },
+  { key: "businessSetup", href: "/categories/business_setup" },
+  { key: "exploreUaq",    href: "/services/explore-uaq" },
+  { key: "hotelBooking",  href: "/services/hotel-booking" },
 ];
 
 const HELP_LINKS: FooterLink[] = [
-  { label: "Track your order", href: "/account" },
-  { label: "Contact us",       href: "/contact" },
-  { label: "About UAQ Deals",  href: "/about" },
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Privacy Policy",   href: "/privacy" },
+  { key: "trackOrder", href: "/account" },
+  { key: "contactUs",  href: "/contact" },
+  { key: "about",      href: "/about" },
+  { key: "terms",      href: "/terms" },
+  { key: "privacy",    href: "/privacy" },
 ];
 
 const SOCIALS = [
@@ -91,10 +91,12 @@ function FooterColumn({
   title,
   links,
   cta,
+  t,
 }: {
   title: string;
   links: FooterLink[];
   cta?: { label: string; href: string };
+  t: (key: string) => string;
 }) {
   return (
     <div>
@@ -112,7 +114,7 @@ function FooterColumn({
                   : "text-[12.5px] text-neutral-400 transition-colors hover:text-white"
               }
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           </li>
         ))}
@@ -132,6 +134,7 @@ function FooterColumn({
 
 export async function SiteFooter({ showProducts = true }: { showProducts?: boolean }) {
   const t = await getTranslations("common");
+  const tf = await getTranslations("footer");
   const year = new Date().getFullYear();
 
   return (
@@ -174,8 +177,7 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
             </Link>
 
             <p className="mt-4 max-w-xs text-[12.5px] leading-relaxed text-neutral-500">
-              Umm Al Quwain&apos;s hyperlocal super-app — groceries, food, services, real estate
-              and more. Delivered locally, priced fairly.
+              {tf("tagline")}
             </p>
 
             {/* Contact */}
@@ -192,11 +194,11 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
                 className="flex items-center gap-2.5 text-[12.5px] text-neutral-400 transition-colors hover:text-white"
               >
                 <Mail className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
-                Contact support
+                {tf("contactSupport")}
               </Link>
               <p className="flex items-center gap-2.5 text-[12.5px] text-neutral-500">
                 <MapPin className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
-                Umm Al Quwain, UAE
+                {tf("location")}
               </p>
             </div>
 
@@ -220,21 +222,23 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
           {/* Shop — gated for services-only emirates */}
           {showProducts && (
             <FooterColumn
-              title="Shop"
+              title={tf("colShop")}
               links={SHOP_LINKS}
-              cta={{ label: "Sell on UAQ Deals", href: "/vendor/signup" }}
+              cta={{ label: tf("sellCta"), href: "/vendor/signup" }}
+              t={tf}
             />
           )}
 
           {/* Services */}
           <FooterColumn
-            title="Services"
+            title={tf("colServices")}
             links={SERVICES_LINKS}
-            cta={{ label: "List on UAQ Deals", href: "/vendor/signup" }}
+            cta={{ label: tf("listCta"), href: "/vendor/signup" }}
+            t={tf}
           />
 
           {/* Help */}
-          <FooterColumn title="Help" links={HELP_LINKS} />
+          <FooterColumn title={tf("colHelp")} links={HELP_LINKS} t={tf} />
         </div>
       </div>
 
