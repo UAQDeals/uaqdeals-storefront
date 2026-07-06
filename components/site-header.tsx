@@ -576,19 +576,19 @@ export function SiteHeader({
               <div className="flex items-center justify-center flex-1 gap-0.5">
                 {showProducts && (<>
                 {[
-                  { label: "Electronics",    id: "electronics" },
-                  { label: "Grocery",        id: "grocery" },
-                  { label: "Pharmacy",       id: "pharmacy" },
-                  { label: "Beauty",         id: "beauty-fragrance" },
-                  { label: "Home & Kitchen", id: "home-kitchen" },
-                  { label: "Fashion",        id: "fashion" },
-                  { label: "Baby",           id: "baby" },
-                  { label: "Toys",           id: "toys" },
-                  { label: "Books",          id: "books" },
+                  { label: "Electronics",    ar: "إلكترونيات",     id: "electronics" },
+                  { label: "Grocery",        ar: "بقالة",          id: "grocery" },
+                  { label: "Pharmacy",       ar: "صيدلية",         id: "pharmacy" },
+                  { label: "Beauty",         ar: "الجمال",         id: "beauty-fragrance" },
+                  { label: "Home & Kitchen", ar: "المنزل والمطبخ", id: "home-kitchen" },
+                  { label: "Fashion",        ar: "أزياء",          id: "fashion" },
+                  { label: "Baby",           ar: "الأطفال",        id: "baby" },
+                  { label: "Toys",           ar: "ألعاب",          id: "toys" },
+                  { label: "Books",          ar: "كتب",            id: "books" },
                 ].filter(stripOn).map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id}
                     className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
-                    {c.label}
+                    {isRTL ? c.ar : c.label}
                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
                   </Link>
                 ))}
@@ -601,7 +601,7 @@ export function SiteHeader({
                 </Link>
                 <Link href="/marketplace/real_estate"
                   className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
-                  Marketplace
+                  {isRTL ? "السوق" : "Marketplace"}
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
               </div>
@@ -609,7 +609,7 @@ export function SiteHeader({
               <Link href="/deals"
                 className="ml-auto inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[13px] font-extrabold text-white whitespace-nowrap transition-all hover:scale-105"
                 style={{ background: "#C72931", boxShadow: "0 2px 12px rgba(199,41,49,0.5)" }}>
-                <DealsMark size={15} />Deals
+                <DealsMark size={15} />{t("deals")}
               </Link>
               )}
 
@@ -657,30 +657,30 @@ export function SiteHeader({
                 <Link href="/deals" onClick={closeMobile}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-[14px] font-extrabold text-white"
                   style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
-                  <DealsMark size={18} />Deals &amp; Offers
+                  <DealsMark size={18} />{isRTL ? "العروض والتخفيضات" : "Deals & Offers"}
                 </Link>
               </div>
               <div className="h-px bg-neutral-100 my-2 mx-5" />
               {/* Product Categories */}
               <div className="px-2">
-                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">Shop</p>
+                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("shop")}</p>
                 {[
-                  { label: "Electronics", id: "electronics", emoji: "📱" },
-                  { label: "Grocery", id: "grocery", emoji: "🛒" },
-                  { label: "Pharmacy", id: "pharmacy", emoji: "💊" },
-                  { label: "Beauty & Fragrance", id: "beauty-fragrance", emoji: "💄" },
-                  { label: "Home & Kitchen", id: "home-kitchen", emoji: "🏠" },
-                  { label: "Fashion", id: "fashion", emoji: "👗" },
-                  { label: "Baby", id: "baby", emoji: "👶" },
-                  { label: "Toys", id: "toys", emoji: "🧸" },
-                  { label: "Health & Nutrition", id: "health-nutrition", emoji: "💊" },
-                  { label: "Stationery", id: "stationery", emoji: "✏️" },
-                  { label: "Books", id: "books", emoji: "📚" },
+                  { label: "Electronics", ar: "إلكترونيات", id: "electronics", emoji: "📱" },
+                  { label: "Grocery", ar: "بقالة", id: "grocery", emoji: "🛒" },
+                  { label: "Pharmacy", ar: "صيدلية", id: "pharmacy", emoji: "💊" },
+                  { label: "Beauty & Fragrance", ar: "الجمال والعطور", id: "beauty-fragrance", emoji: "💄" },
+                  { label: "Home & Kitchen", ar: "المنزل والمطبخ", id: "home-kitchen", emoji: "🏠" },
+                  { label: "Fashion", ar: "أزياء", id: "fashion", emoji: "👗" },
+                  { label: "Baby", ar: "الأطفال", id: "baby", emoji: "👶" },
+                  { label: "Toys", ar: "ألعاب", id: "toys", emoji: "🧸" },
+                  { label: "Health & Nutrition", ar: "الصحة والتغذية", id: "health-nutrition", emoji: "💊" },
+                  { label: "Stationery", ar: "قرطاسية", id: "stationery", emoji: "✏️" },
+                  { label: "Books", ar: "كتب", id: "books", emoji: "📚" },
                 ].filter(stripOn).map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id} onClick={closeMobile}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-50 transition-colors">
                     <span className="text-xl">{c.emoji}</span>
-                    <span className="text-[14px] font-medium text-neutral-700">{c.label}</span>
+                    <span className="text-[14px] font-medium text-neutral-700">{isRTL ? c.ar : c.label}</span>
                   </Link>
                 ))}
               </div>
@@ -688,13 +688,13 @@ export function SiteHeader({
               </>)}
               {/* Other links */}
               <div className="px-2">
-                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">More</p>
+                <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("more")}</p>
                 {[
-                  { label: "Marketplace", href: "/marketplace/real_estate", emoji: "🏗️" },
-                  { label: "Services", href: "/services", emoji: "🔧" },
-                  { label: "Account", href: "/account", emoji: "👤" },
-                  { label: "About", href: "/about", emoji: "ℹ️" },
-                  { label: "Contact", href: "/contact", emoji: "📞" },
+                  { label: isRTL ? "السوق" : "Marketplace", href: "/marketplace/real_estate", emoji: "🏗️" },
+                  { label: t("services"), href: "/services", emoji: "🔧" },
+                  { label: t("account"), href: "/account", emoji: "👤" },
+                  { label: t("about"), href: "/about", emoji: "ℹ️" },
+                  { label: t("contact"), href: "/contact", emoji: "📞" },
                 ].map((item) => (
                   <Link key={item.href} href={item.href} onClick={closeMobile}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
