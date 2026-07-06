@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -18,10 +19,11 @@ export function ContactButtons({
   listingTitle: string;
   isSold?: boolean;
 }) {
+  const isRTL = useLocale() === "ar";
   if (isSold) {
     return (
       <div className="rounded-xl border-2 border-neutral-200 bg-neutral-50 py-4 text-center text-sm font-semibold text-neutral-500">
-        This item is no longer available
+        {isRTL ? "هذا العنصر لم يعد متاحاً" : "This item is no longer available"}
       </div>
     );
   }
@@ -32,11 +34,13 @@ export function ContactButtons({
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const waMsg = `Hi UAQ Deals, I'm interested in: ${listingTitle}`;
+  const waMsg = isRTL
+    ? `مرحباً UAQ Deals، أنا مهتم بـ: ${listingTitle}`
+    : `Hi UAQ Deals, I'm interested in: ${listingTitle}`;
 
   async function submitEnquiry() {
     if (!name.trim() || !phone.trim()) {
-      toast.error("Name and phone are required");
+      toast.error(isRTL ? "الاسم ورقم الهاتف مطلوبان" : "Name and phone are required");
       return;
     }
     setSubmitting(true);
@@ -55,11 +59,11 @@ export function ContactButtons({
         status: "new",
       });
       if (error) throw error;
-      toast.success("Enquiry sent! UAQ Deals will contact you soon.");
+      toast.success(isRTL ? "تم إرسال طلبك! سيتواصل معك UAQ Deals قريباً." : "Enquiry sent! UAQ Deals will contact you soon.");
       setModalOpen(false);
       setName(""); setPhone(""); setEmail(""); setMessage("");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not send enquiry");
+      toast.error(e.message ?? (isRTL ? "تعذّر إرسال الطلب" : "Could not send enquiry"));
     } finally {
       setSubmitting(false);
     }
@@ -75,7 +79,7 @@ export function ContactButtons({
           href={`tel:${PHONE}`}
           className={btnBase + " bg-gradient-to-r from-[#8E1B3A] to-[#C72931] text-white"}
         >
-          📞 Call
+          📞 {isRTL ? "اتصال" : "Call"}
         </a>
         <a
           href={`https://wa.me/${WA_PHONE}?text=${encodeURIComponent(waMsg)}`}
@@ -83,43 +87,43 @@ export function ContactButtons({
           rel="noopener noreferrer"
           className={btnBase + " border-2 border-[#25D366] text-[#25D366]"}
         >
-          💬 WhatsApp
+          💬 {isRTL ? "واتساب" : "WhatsApp"}
         </a>
         <button
           onClick={() => setModalOpen(true)}
           className={btnBase + " border-2 border-[#8E1B3A] text-[#8E1B3A]"}
         >
-          ✉️ Enquire
+          ✉️ {isRTL ? "استفسار" : "Enquire"}
         </button>
       </div>
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" onClick={() => setModalOpen(false)}>
           <div className="my-12 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-neutral-900">Send Enquiry</h2>
-            <p className="mt-1 truncate text-xs text-neutral-500">About: {listingTitle}</p>
+            <h2 className="text-lg font-bold text-neutral-900">{isRTL ? "إرسال استفسار" : "Send Enquiry"}</h2>
+            <p className="mt-1 truncate text-xs text-neutral-500">{isRTL ? "بخصوص: " : "About: "}{listingTitle}</p>
             <div className="mt-4 space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Your Name *</label>
-                <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
+                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "اسمك *" : "Your Name *"}</label>
+                <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل" : "Full name"} />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Phone *</label>
+                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "الهاتف *" : "Phone *"}</label>
                 <input className={inputCls} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Email (optional)</label>
+                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"}</label>
                 <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Message</label>
-                <textarea className={inputCls} rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="I'm interested. Can you share more details?" />
+                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "الرسالة" : "Message"}</label>
+                <textarea className={inputCls} rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={isRTL ? "أنا مهتم. هل يمكنك مشاركة المزيد من التفاصيل؟" : "I'm interested. Can you share more details?"} />
               </div>
             </div>
             <div className="mt-5 flex gap-3">
-              <button onClick={() => setModalOpen(false)} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold">Cancel</button>
+              <button onClick={() => setModalOpen(false)} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold">{isRTL ? "إلغاء" : "Cancel"}</button>
               <button onClick={submitEnquiry} disabled={submitting} className="flex-1 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-2.5 text-sm font-bold text-white disabled:opacity-60">
-                {submitting ? "Sending…" : "Send Enquiry"}
+                {submitting ? (isRTL ? "جارٍ الإرسال…" : "Sending…") : (isRTL ? "إرسال الاستفسار" : "Send Enquiry")}
               </button>
             </div>
           </div>

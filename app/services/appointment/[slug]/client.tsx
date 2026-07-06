@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   ChevronLeft, Clock, ChevronRight, X, Calendar, User, Phone,
   MapPin, CheckCircle, CreditCard, ArrowLeft,
@@ -52,6 +53,7 @@ export function AppointmentClient({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const isRTL = useLocale() === "ar";
 
   // step: list → book → payment → done
   const [step, setStep] = useState<"list" | "book" | "payment" | "done">("list");
@@ -113,11 +115,11 @@ export function AppointmentClient({
   }
 
   function proceedToPayment() {
-    if (!date) { toast.error("Please select a date"); return; }
-    if (!time) { toast.error("Please select a time slot"); return; }
-    if (!name.trim() || !phone.trim()) { toast.error("Please enter your name and phone"); return; }
+    if (!date) { toast.error(isRTL ? "يرجى اختيار التاريخ" : "Please select a date"); return; }
+    if (!time) { toast.error(isRTL ? "يرجى اختيار الوقت" : "Please select a time slot"); return; }
+    if (!name.trim() || !phone.trim()) { toast.error(isRTL ? "يرجى إدخال الاسم ورقم الهاتف" : "Please enter your name and phone"); return; }
     if (!address.trim() && slug !== "clinics" && slug !== "barber_shop") {
-      toast.error("Please enter your address"); return;
+      toast.error(isRTL ? "يرجى إدخال العنوان" : "Please enter your address"); return;
     }
     setStep("payment");
   }
@@ -130,7 +132,7 @@ export function AppointmentClient({
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { toast.error("Please sign in to book"); setLoading(false); return; }
+      if (!user) { toast.error(isRTL ? "يرجى تسجيل الدخول للحجز" : "Please sign in to book"); setLoading(false); return; }
 
       const { error } = await supabase.from("appointments").insert({
         user_id: user.id,
@@ -148,7 +150,7 @@ export function AppointmentClient({
       if (error) throw error;
       setStep("done");
     } catch (e: any) {
-      toast.error("Error: " + (e.message ?? "Could not book"));
+      toast.error((isRTL ? "خطأ: " : "Error: ") + (e.message ?? (isRTL ? "تعذّر إتمام الحجز" : "Could not book")));
     } finally {
       setLoading(false);
     }
@@ -185,14 +187,14 @@ export function AppointmentClient({
           {services.length === 0 ? (
             <div className="text-center py-16">
               <span className="text-5xl">{meta.emoji}</span>
-              <p className="text-neutral-500 mt-3">No services available yet. Please check back soon.</p>
+              <p className="text-neutral-500 mt-3">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريباً." : "No services available yet. Please check back soon."}</p>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[13px] font-bold text-neutral-700">Choose a service to book</p>
+              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "اختر خدمة للحجز" : "Choose a service to book"}</p>
               {services.map((s) => (
                 <button key={s.id} onClick={() => openBooking(s)}
-                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-left"
+                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-start"
                   style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
                   {s.image_url ? (
                     <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
@@ -207,12 +209,12 @@ export function AppointmentClient({
                     <div className="flex items-center gap-3 mt-1.5">
                       {s.price != null && (
                         <span className="text-[13px] font-extrabold" style={{ color: "#8E1B3A" }}>
-                          {s.price_label ? s.price_label + " " : ""}AED {Number(s.price).toFixed(0)}
+                          {s.price_label ? s.price_label + " " : ""}{isRTL ? "د.إ" : "AED"} {Number(s.price).toFixed(0)}
                         </span>
                       )}
                       {s.duration_minutes != null && (
                         <span className="text-[11px] text-neutral-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {s.duration_minutes} min
+                          <Clock className="w-3 h-3" /> {s.duration_minutes} {isRTL ? "دقيقة" : "min"}
                         </span>
                       )}
                     </div>
@@ -233,26 +235,26 @@ export function AppointmentClient({
             <div>
               <p className="text-[14px] font-bold text-neutral-900">{selected.title}</p>
               {selected.price != null && (
-                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>AED {Number(selected.price).toFixed(0)}</p>
+                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>{isRTL ? "د.إ" : "AED"} {Number(selected.price).toFixed(0)}</p>
               )}
             </div>
             <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-neutral-500 flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> Change
+              <ArrowLeft className="w-3.5 h-3.5" /> {isRTL ? "تغيير" : "Change"}
             </button>
           </div>
 
           {/* Date */}
           <div>
-            <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Calendar className="w-4 h-4" /> Select Date</p>
+            <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {isRTL ? "اختر التاريخ" : "Select Date"}</p>
             <input type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
           </div>
 
           {/* Time slots */}
           {date && (
             <div>
-              <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Clock className="w-4 h-4" /> Select Time</p>
+              <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Clock className="w-4 h-4" /> {isRTL ? "اختر الوقت" : "Select Time"}</p>
               {slotsForDate.length === 0 ? (
-                <p className="text-[13px] text-neutral-400 py-3">No slots available on this day. Try another date.</p>
+                <p className="text-[13px] text-neutral-400 py-3">{isRTL ? "لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخاً آخر." : "No slots available on this day. Try another date."}</p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {slotsForDate.map((slot) => {
@@ -277,28 +279,28 @@ export function AppointmentClient({
 
           {/* Details */}
           <div className="space-y-3">
-            <p className="text-[13px] font-bold text-neutral-800">Your Details</p>
+            <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "بياناتك" : "Your Details"}</p>
             <div className="relative">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name *" className={inputCls + " pl-11"} />
+              <User className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل *" : "Full Name *"} className={inputCls + " ps-11"} />
             </div>
             <div className="relative">
-              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone Number *" type="tel" className={inputCls + " pl-11"} />
+              <Phone className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={isRTL ? "رقم الهاتف *" : "Phone Number *"} type="tel" className={inputCls + " ps-11"} />
             </div>
             <div className="relative">
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <MapPin className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <input value={address} onChange={(e) => setAddress(e.target.value)}
-                placeholder={slug === "clinics" || slug === "barber_shop" ? "Address (optional)" : "Address *"} className={inputCls + " pl-11"} />
+                placeholder={slug === "clinics" || slug === "barber_shop" ? (isRTL ? "العنوان (اختياري)" : "Address (optional)") : (isRTL ? "العنوان *" : "Address *")} className={inputCls + " ps-11"} />
             </div>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              placeholder="Notes (optional)" className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50" />
+              placeholder={isRTL ? "ملاحظات (اختياري)" : "Notes (optional)"} className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50" />
           </div>
 
           <button onClick={proceedToPayment}
             className="w-full h-12 rounded-xl text-white font-extrabold text-[14px]"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            Continue to Payment
+            {isRTL ? "المتابعة إلى الدفع" : "Continue to Payment"}
           </button>
         </div>
       )}
@@ -307,18 +309,18 @@ export function AppointmentClient({
       {step === "payment" && selected && (
         <div className="mx-auto max-w-md px-4 py-8">
           <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
-            <h2 className="text-[17px] font-extrabold text-neutral-900">Confirm & Pay</h2>
+            <h2 className="text-[17px] font-extrabold text-neutral-900">{isRTL ? "التأكيد والدفع" : "Confirm & Pay"}</h2>
 
             {/* Summary */}
             <div className="rounded-xl bg-neutral-50 border border-neutral-100 p-4 space-y-2 text-[13px]">
-              <Row label="Service" value={selected.title} />
-              <Row label="Date" value={new Date(date + "T00:00:00").toLocaleDateString("en-AE", { weekday: "short", day: "numeric", month: "short" })} />
-              <Row label="Time" value={time} />
-              <Row label="Name" value={name} />
+              <Row label={isRTL ? "الخدمة" : "Service"} value={selected.title} />
+              <Row label={isRTL ? "التاريخ" : "Date"} value={new Date(date + "T00:00:00").toLocaleDateString(isRTL ? "ar-AE" : "en-AE", { weekday: "short", day: "numeric", month: "short" })} />
+              <Row label={isRTL ? "الوقت" : "Time"} value={time} />
+              <Row label={isRTL ? "الاسم" : "Name"} value={name} />
               <div className="border-t border-neutral-200 pt-2 mt-2 flex items-center justify-between">
-                <span className="font-bold">Total</span>
+                <span className="font-bold">{isRTL ? "الإجمالي" : "Total"}</span>
                 <span className="font-extrabold" style={{ color: "#8E1B3A" }}>
-                  {selected.price != null ? `AED ${Number(selected.price).toFixed(2)}` : "TBD"}
+                  {selected.price != null ? `${isRTL ? "د.إ" : "AED"} ${Number(selected.price).toFixed(2)}` : (isRTL ? "يُحدد لاحقاً" : "TBD")}
                 </span>
               </div>
             </div>
@@ -326,19 +328,19 @@ export function AppointmentClient({
             {/* Payment placeholder */}
             <div className="rounded-xl border-2 border-dashed p-4 text-center" style={{ borderColor: "#F0D0D8", background: "#FDF6F8" }}>
               <CreditCard className="w-7 h-7 mx-auto mb-2" style={{ color: "#8E1B3A" }} />
-              <p className="text-[13px] font-bold text-neutral-700">Online payment coming soon</p>
+              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "الدفع الإلكتروني قريباً" : "Online payment coming soon"}</p>
               <p className="text-[12px] text-neutral-500 mt-1">
-                For now, confirm your booking and our team will arrange payment on service.
+                {isRTL ? "في الوقت الحالي، أكّد حجزك وسيقوم فريقنا بترتيب الدفع عند تقديم الخدمة." : "For now, confirm your booking and our team will arrange payment on service."}
               </p>
             </div>
 
             <button onClick={bookAppointment} disabled={loading}
               className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-              {loading ? "Confirming…" : "Confirm Booking"}
+              {loading ? (isRTL ? "جارٍ التأكيد…" : "Confirming…") : (isRTL ? "تأكيد الحجز" : "Confirm Booking")}
             </button>
             <button onClick={() => setStep("book")} className="w-full text-[13px] font-semibold text-neutral-500">
-              Back
+              {isRTL ? "رجوع" : "Back"}
             </button>
           </div>
         </div>
@@ -350,17 +352,17 @@ export function AppointmentClient({
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
             <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
           </div>
-          <h2 className="text-[22px] font-extrabold text-neutral-900">Booking Confirmed!</h2>
+          <h2 className="text-[22px] font-extrabold text-neutral-900">{isRTL ? "تم تأكيد الحجز!" : "Booking Confirmed!"}</h2>
           <p className="text-neutral-500 text-[14px] mt-2 leading-relaxed">
-            Your {selected.title} appointment is booked for{" "}
+            {isRTL ? (<>تم حجز موعد {selected.title} في{" "}</>) : (<>Your {selected.title} appointment is booked for{" "}</>)}
             <span className="font-semibold text-neutral-700">
-              {new Date(date + "T00:00:00").toLocaleDateString("en-AE", { weekday: "long", day: "numeric", month: "long" })} at {time}
-            </span>. Our team will contact you to confirm.
+              {new Date(date + "T00:00:00").toLocaleDateString(isRTL ? "ar-AE" : "en-AE", { weekday: "long", day: "numeric", month: "long" })} {isRTL ? "الساعة" : "at"} {time}
+            </span>{isRTL ? ". سيتواصل معك فريقنا للتأكيد." : ". Our team will contact you to confirm."}
           </p>
           <button onClick={() => router.push("/services")}
             className="mt-8 inline-block rounded-xl px-6 py-3 text-white font-bold text-[14px]"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            Back to Services
+            {isRTL ? "العودة إلى الخدمات" : "Back to Services"}
           </button>
         </div>
       )}

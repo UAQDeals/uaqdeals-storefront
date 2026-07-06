@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   ChevronLeft, Globe, Smartphone, ShoppingCart, Package,
   Calculator, Code2, Search, Megaphone, MessageCircle,
@@ -42,6 +43,7 @@ function EnquiryModal({
   emoji: string;
   onClose: () => void;
 }) {
+  const isRTL = useLocale() === "ar";
   const supabase = createClient();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -51,7 +53,7 @@ function EnquiryModal({
 
   async function submit() {
     if (!name || !phone) {
-      toast.error("Please enter your name and phone number");
+      toast.error(isRTL ? "يرجى إدخال اسمك ورقم هاتفك" : "Please enter your name and phone number");
       return;
     }
     setLoading(true);
@@ -68,10 +70,10 @@ function EnquiryModal({
         status: "open",
       });
       if (error) throw error;
-      toast.success("Enquiry sent! We'll get back to you shortly.");
+      toast.success(isRTL ? "تم إرسال الاستفسار! سنتواصل معك قريباً." : "Enquiry sent! We'll get back to you shortly.");
       onClose();
     } catch (e: any) {
-      toast.error("Error: " + (e.message ?? "Could not submit"));
+      toast.error((isRTL ? "خطأ: " : "Error: ") + (e.message ?? (isRTL ? "تعذر الإرسال" : "Could not submit")));
     } finally {
       setLoading(false);
     }
@@ -83,12 +85,12 @@ function EnquiryModal({
       <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-5 space-y-4 max-h-[90dvh] overflow-y-auto">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] text-neutral-400 font-medium">Enquire About</p>
+            <p className="text-[11px] text-neutral-400 font-medium">{isRTL ? "استفسار عن" : "Enquire About"}</p>
             <h3 className="text-[16px] font-bold text-neutral-900 leading-tight">{service.title}</h3>
             {service.price != null && (
               <span className="inline-block mt-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold"
                 style={{ background: "#FDE8EC", color: "#8E1B3A" }}>
-                {service.price_label ?? "Starting from"} AED {Number(service.price).toLocaleString()}
+                {service.price_label ?? (isRTL ? "يبدأ من" : "Starting from")} AED {Number(service.price).toLocaleString()}
               </span>
             )}
           </div>
@@ -98,17 +100,17 @@ function EnquiryModal({
         </div>
 
         <div className="space-y-3">
-          <Field icon={User} placeholder="Full Name *" value={name} onChange={setName} />
-          <Field icon={Phone} placeholder="Phone Number *" value={phone} onChange={setPhone} type="tel" />
-          <Field icon={Mail} placeholder="Email (optional)" value={email} onChange={setEmail} type="email" />
+          <Field icon={User} placeholder={isRTL ? "الاسم الكامل *" : "Full Name *"} value={name} onChange={setName} />
+          <Field icon={Phone} placeholder={isRTL ? "رقم الهاتف *" : "Phone Number *"} value={phone} onChange={setPhone} type="tel" />
+          <Field icon={Mail} placeholder={isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"} value={email} onChange={setEmail} type="email" />
           <div className="relative">
-            <FileText className="absolute left-3 top-3.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+            <FileText className="absolute start-3 top-3.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Tell us about your requirements..."
+              placeholder={isRTL ? "أخبرنا عن متطلباتك..." : "Tell us about your requirements..."}
               rows={3}
-              className="w-full rounded-xl border border-neutral-300 pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A]"
+              className="w-full rounded-xl border border-neutral-300 ps-10 pe-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A]"
             />
           </div>
         </div>
@@ -119,9 +121,9 @@ function EnquiryModal({
           className="w-full h-12 rounded-xl text-white font-bold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
           style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
         >
-          {loading ? "Submitting..." : <><MessageCircle className="w-4 h-4" /> Send Enquiry</>}
+          {loading ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : <><MessageCircle className="w-4 h-4" /> {isRTL ? "إرسال الاستفسار" : "Send Enquiry"}</>}
         </button>
-        <p className="text-center text-[11px] text-neutral-400">We typically respond within a few hours</p>
+        <p className="text-center text-[11px] text-neutral-400">{isRTL ? "نرد عادةً خلال بضع ساعات" : "We typically respond within a few hours"}</p>
       </div>
     </div>
   );
@@ -135,13 +137,13 @@ function Field({
 }) {
   return (
     <div className="relative">
-      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+      <Icon className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-12 rounded-xl border border-neutral-300 pl-10 pr-4 text-sm focus:outline-none focus:border-[#8E1B3A]"
+        className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]"
       />
     </div>
   );
@@ -156,6 +158,7 @@ function ServiceCard({
   emoji: string;
   onEnquire: (s: Service) => void;
 }) {
+  const isRTL = useLocale() === "ar";
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -164,7 +167,7 @@ function ServiceCard({
       style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
     >
       <button
-        className="w-full flex items-center gap-3 p-3.5 text-left"
+        className="w-full flex items-center gap-3 p-3.5 text-start"
         onClick={() => setExpanded((v) => !v)}
       >
         <div
@@ -188,7 +191,7 @@ function ServiceCard({
               className="inline-block mt-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold"
               style={{ background: "#FDE8EC", color: "#8E1B3A" }}
             >
-              {service.price_label ?? "Starting from"} AED {Number(service.price).toLocaleString()}
+              {service.price_label ?? (isRTL ? "يبدأ من" : "Starting from")} AED {Number(service.price).toLocaleString()}
             </span>
           )}
         </div>
@@ -215,7 +218,7 @@ function ServiceCard({
           )}
           {service.description && (
             <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-100">
-              <p className="text-[11px] font-bold text-neutral-700 mb-1">Description</p>
+              <p className="text-[11px] font-bold text-neutral-700 mb-1">{isRTL ? "الوصف" : "Description"}</p>
               <p className="text-[13px] text-neutral-600 leading-relaxed">{service.description}</p>
             </div>
           )}
@@ -224,7 +227,7 @@ function ServiceCard({
             className="w-full h-11 rounded-xl text-white font-bold text-[13px] flex items-center justify-center gap-2"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
           >
-            <MessageCircle className="w-4 h-4" /> Enquire Now
+            <MessageCircle className="w-4 h-4" /> {isRTL ? "استفسر الآن" : "Enquire Now"}
           </button>
         </div>
       )}
@@ -241,6 +244,7 @@ export function TechServicesClient({
   slugMeta: SlugMeta;
   initialSlug: string;
 }) {
+  const isRTL = useLocale() === "ar";
   const router = useRouter();
   const slugs = Object.keys(slugMeta);
   const [activeSlug, setActiveSlug] = useState(
@@ -259,7 +263,7 @@ export function TechServicesClient({
           <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-neutral-100">
             <ChevronLeft className="w-5 h-5 text-neutral-700" />
           </button>
-          <h1 className="text-[17px] font-bold text-neutral-900">Tech & Digital Services</h1>
+          <h1 className="text-[17px] font-bold text-neutral-900">{isRTL ? "الخدمات التقنية والرقمية" : "Tech & Digital Services"}</h1>
         </div>
       </div>
 
@@ -271,7 +275,7 @@ export function TechServicesClient({
           <SlugIcon className="w-7 h-7 shrink-0" />
           <div>
             <p className="text-[16px] font-extrabold">{meta.emoji} {meta.label}</p>
-            <p className="text-[11px] text-white/70">Professional digital services for your business</p>
+            <p className="text-[11px] text-white/70">{isRTL ? "خدمات رقمية احترافية لأعمالك" : "Professional digital services for your business"}</p>
           </div>
         </div>
 
@@ -301,8 +305,8 @@ export function TechServicesClient({
         {services.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <span className="text-5xl">{meta.emoji}</span>
-            <p className="text-[14px] text-neutral-500">No {meta.label} packages yet</p>
-            <p className="text-[12px] text-neutral-400">Check back soon</p>
+            <p className="text-[14px] text-neutral-500">{isRTL ? `لا توجد باقات ${meta.label} بعد` : `No ${meta.label} packages yet`}</p>
+            <p className="text-[12px] text-neutral-400">{isRTL ? "تحقق مرة أخرى قريباً" : "Check back soon"}</p>
           </div>
         ) : (
           <div className="space-y-3">

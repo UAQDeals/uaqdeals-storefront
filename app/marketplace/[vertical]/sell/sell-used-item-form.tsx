@@ -2,14 +2,32 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 const CATEGORIES = ["Phones & Accessories", "Tablets", "Laptops", "TV", "Refrigerator", "Washing Machine", "AC"];
 const CONDITIONS = ["New", "Like New", "Good", "Fair"];
 
+const CATEGORY_LABELS_AR: Record<string, string> = {
+  "Phones & Accessories": "الهواتف والإكسسوارات",
+  "Tablets": "الأجهزة اللوحية",
+  "Laptops": "أجهزة الكمبيوتر المحمولة",
+  "TV": "التلفزيونات",
+  "Refrigerator": "الثلاجات",
+  "Washing Machine": "الغسالات",
+  "AC": "المكيفات",
+};
+const CONDITION_LABELS_AR: Record<string, string> = {
+  "New": "جديد",
+  "Like New": "شبه جديد",
+  "Good": "جيد",
+  "Fair": "مقبول",
+};
+
 export function SellUsedItemForm({ userId }: { userId: string }) {
   const router = useRouter();
+  const isRTL = useLocale() === "ar";
   const supabase = createClient();
 
   const [title, setTitle] = useState("");
@@ -40,9 +58,9 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
   }
 
   async function submit() {
-    if (!title.trim()) { toast.error("Title is required"); return; }
+    if (!title.trim()) { toast.error(isRTL ? "العنوان مطلوب" : "Title is required"); return; }
     const p = parseFloat(price);
-    if (isNaN(p) || p <= 0) { toast.error("Price is required"); return; }
+    if (isNaN(p) || p <= 0) { toast.error(isRTL ? "السعر مطلوب" : "Price is required"); return; }
     setUploading(true);
     try {
       const imageUrls: string[] = [];
@@ -74,10 +92,10 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         status: "pending",
       });
       if (error) throw error;
-      toast.success("Item submitted for review!");
+      toast.success(isRTL ? "تم إرسال العنصر للمراجعة!" : "Item submitted for review!");
       router.push("/marketplace/used_items");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not submit");
+      toast.error(e.message ?? (isRTL ? "تعذّر الإرسال" : "Could not submit"));
       setUploading(false);
     }
   }
@@ -89,7 +107,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
     return (
       <div className="flex flex-col items-center py-12">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-[#8E1B3A]" />
-        <p className="mt-3 text-sm text-neutral-500">Uploading your listing…</p>
+        <p className="mt-3 text-sm text-neutral-500">{isRTL ? "جارٍ رفع إعلانك…" : "Uploading your listing…"}</p>
       </div>
     );
   }
@@ -97,45 +115,45 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
   return (
     <div className="space-y-5">
       <div>
-        <label className={labelCls}>Title *</label>
-        <input className={inputCls} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. iPhone 13, Samsung 55 inch TV, MacBook Air M2..." />
+        <label className={labelCls}>{isRTL ? "العنوان *" : "Title *"}</label>
+        <input className={inputCls} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={isRTL ? "مثال: آيفون 13، تلفزيون سامسونج 55 بوصة، ماك بوك إير M2..." : "e.g. iPhone 13, Samsung 55 inch TV, MacBook Air M2..."} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelCls}>Category *</label>
+          <label className={labelCls}>{isRTL ? "الفئة *" : "Category *"}</label>
           <select className={inputCls} value={category} onChange={(e) => setCategory(e.target.value)}>
-            {CATEGORIES.map((c) => (<option key={c} value={c}>{c}</option>))}
+            {CATEGORIES.map((c) => (<option key={c} value={c}>{isRTL ? CATEGORY_LABELS_AR[c] ?? c : c}</option>))}
           </select>
         </div>
         <div>
-          <label className={labelCls}>Condition *</label>
+          <label className={labelCls}>{isRTL ? "الحالة *" : "Condition *"}</label>
           <select className={inputCls} value={condition} onChange={(e) => setCondition(e.target.value)}>
-            {CONDITIONS.map((c) => (<option key={c} value={c}>{c}</option>))}
+            {CONDITIONS.map((c) => (<option key={c} value={c}>{isRTL ? CONDITION_LABELS_AR[c] ?? c : c}</option>))}
           </select>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelCls}>Price (AED) *</label>
+          <label className={labelCls}>{isRTL ? "السعر (درهم) *" : "Price (AED) *"}</label>
           <input className={inputCls} type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="250" />
         </div>
         <div className="flex items-end">
           <label className="flex cursor-pointer items-center gap-2 text-sm">
             <input type="checkbox" checked={negotiable} onChange={(e) => setNegotiable(e.target.checked)} className="h-4 w-4 accent-[#8E1B3A]" />
-            <span className="font-semibold text-neutral-700">Negotiable</span>
+            <span className="font-semibold text-neutral-700">{isRTL ? "قابل للتفاوض" : "Negotiable"}</span>
           </label>
         </div>
       </div>
 
       <div>
-        <label className={labelCls}>Description</label>
-        <textarea className={inputCls} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe your item..." />
+        <label className={labelCls}>{isRTL ? "الوصف" : "Description"}</label>
+        <textarea className={inputCls} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={isRTL ? "صِف العنصر الخاص بك..." : "Describe your item..."} />
       </div>
 
       <div>
-        <label className={labelCls}>Photos ({images.length})</label>
+        <label className={labelCls}>{isRTL ? `الصور (${images.length})` : `Photos (${images.length})`}</label>
         {images.length > 0 && (
           <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {images.map((f, i) => (
@@ -144,7 +162,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
                 <button
                   type="button"
                   onClick={() => removeImage(i)}
-                  className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+                  className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
                 >×</button>
               </div>
             ))}
@@ -152,12 +170,12 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         )}
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#8E1B3A] px-4 py-2 text-sm font-semibold text-[#8E1B3A]">
           <input type="file" accept="image/*" multiple onChange={addImages} className="hidden" />
-          + Add Photos
+          {isRTL ? "+ إضافة صور" : "+ Add Photos"}
         </label>
       </div>
 
       <div>
-        <label className={labelCls}>Video (optional)</label>
+        <label className={labelCls}>{isRTL ? "فيديو (اختياري)" : "Video (optional)"}</label>
         {video && (
           <div className="mb-2 flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm">
             <span className="flex-1 truncate">🎥 {video.name}</span>
@@ -166,7 +184,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         )}
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#8E1B3A] px-4 py-2 text-sm font-semibold text-[#8E1B3A]">
           <input type="file" accept="video/*" onChange={(e) => setVideo(e.target.files?.[0] ?? null)} className="hidden" />
-          {video ? "Change Video" : "+ Add Video"}
+          {video ? (isRTL ? "تغيير الفيديو" : "Change Video") : (isRTL ? "+ إضافة فيديو" : "+ Add Video")}
         </label>
       </div>
 
@@ -174,7 +192,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         onClick={submit}
         className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white"
       >
-        Submit for Review
+        {isRTL ? "إرسال للمراجعة" : "Submit for Review"}
       </button>
     </div>
   );

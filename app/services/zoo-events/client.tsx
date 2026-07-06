@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   ChevronLeft, MapPin, Clock, Calendar, Ticket,
   X, User, Phone, Plus, Minus, CheckCircle, Copy,
@@ -81,6 +82,7 @@ function TicketModal({
   isFreeEvent?: boolean;
   onClose: () => void;
 }) {
+  const isRTL = useLocale() === "ar";
   const supabase = createClient();
   const sorted = [...(ticketOptions ?? [])].sort((a, b) => a.display_order - b.display_order);
   // Per-ticket-type counts, keyed by option id. All start at 0 (Airbnb style).
@@ -123,14 +125,14 @@ function TicketModal({
     : (eventPriceLabel ?? "Standard");
 
   async function submit() {
-    if (type === "attraction" && totalQty === 0) { toast.error("Please add at least one ticket"); return; }
-    if (type === "attraction" && !visitDate) { toast.error("Please select a visit date"); return; }
-    if (!name.trim() || !phone.trim()) { toast.error("Please enter your name and phone"); return; }
+    if (type === "attraction" && totalQty === 0) { toast.error(isRTL ? "الرجاء إضافة تذكرة واحدة على الأقل" : "Please add at least one ticket"); return; }
+    if (type === "attraction" && !visitDate) { toast.error(isRTL ? "الرجاء اختيار تاريخ الزيارة" : "Please select a visit date"); return; }
+    if (!name.trim() || !phone.trim()) { toast.error(isRTL ? "الرجاء إدخال الاسم ورقم الهاتف" : "Please enter your name and phone"); return; }
 
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { toast.error("Please sign in to book tickets"); setLoading(false); return; }
+      if (!user) { toast.error(isRTL ? "الرجاء تسجيل الدخول لحجز التذاكر" : "Please sign in to book tickets"); setLoading(false); return; }
 
       const code = genTicketCode();
       const { error } = await supabase.from("ticket_bookings").insert({
@@ -151,7 +153,7 @@ function TicketModal({
       if (error) throw error;
       setETicket(code);
     } catch (e: any) {
-      toast.error("Error: " + (e.message ?? "Could not book"));
+      toast.error((isRTL ? "خطأ: " : "Error: ") + (e.message ?? (isRTL ? "تعذّر إتمام الحجز" : "Could not book")));
     } finally {
       setLoading(false);
     }
@@ -165,29 +167,29 @@ function TicketModal({
         <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 space-y-5">
           <div className="flex flex-col items-center text-center gap-2">
             <CheckCircle className="w-14 h-14" style={{ color: "#16A34A" }} />
-            <h3 className="text-[20px] font-extrabold text-neutral-900">Booking Received!</h3>
+            <h3 className="text-[20px] font-extrabold text-neutral-900">{isRTL ? "تم استلام الحجز!" : "Booking Received!"}</h3>
             <p className="text-[13px] text-neutral-500">{title}</p>
           </div>
           <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-3"
             style={{ borderColor: "#8E1B3A", background: "#FDF2F4" }}>
             {qrDataUrl && (
-              <img src={qrDataUrl} alt="Ticket QR Code" className="mx-auto rounded-lg" style={{ width: 180, height: 180 }} />
+              <img src={qrDataUrl} alt={isRTL ? "رمز QR للتذكرة" : "Ticket QR Code"} className="mx-auto rounded-lg" style={{ width: 180, height: 180 }} />
             )}
             <div className="space-y-1">
-              <p className="text-[11px] font-bold tracking-widest text-neutral-400">E-TICKET CODE</p>
+              <p className="text-[11px] font-bold tracking-widest text-neutral-400">{isRTL ? "رمز التذكرة الإلكترونية" : "E-TICKET CODE"}</p>
               <p className="text-[22px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>{eTicket}</p>
             </div>
           </div>
-          <p className="text-[12px] text-neutral-400 text-center">Your booking is pending confirmation. You'll get an email once it's confirmed.</p>
+          <p className="text-[12px] text-neutral-400 text-center">{isRTL ? "حجزك قيد التأكيد. ستصلك رسالة بريد إلكتروني عند تأكيده." : "Your booking is pending confirmation. You'll get an email once it's confirmed."}</p>
           <div className="flex gap-3">
-            <button onClick={() => { navigator.clipboard.writeText(eTicket); toast.success("Code copied!"); }}
+            <button onClick={() => { navigator.clipboard.writeText(eTicket); toast.success(isRTL ? "تم نسخ الرمز!" : "Code copied!"); }}
               className="flex-1 h-11 rounded-xl border border-neutral-300 flex items-center justify-center gap-2 text-[13px] font-semibold text-neutral-700">
-              <Copy className="w-4 h-4" /> Copy Code
+              <Copy className="w-4 h-4" /> {isRTL ? "نسخ الرمز" : "Copy Code"}
             </button>
             <button onClick={onClose}
               className="flex-1 h-11 rounded-xl text-white font-bold text-[13px]"
               style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-              Done
+              {isRTL ? "تم" : "Done"}
             </button>
           </div>
         </div>
@@ -208,7 +210,7 @@ function TicketModal({
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="text-[17px] font-extrabold text-neutral-900">
-                {type === "attraction" ? "Book Tickets" : (isFreeEvent ? "Get Free Ticket" : "Buy Tickets")}
+                {type === "attraction" ? (isRTL ? "حجز التذاكر" : "Book Tickets") : (isFreeEvent ? (isRTL ? "احصل على تذكرة مجانية" : "Get Free Ticket") : (isRTL ? "شراء التذاكر" : "Buy Tickets"))}
               </h3>
               <p className="text-[12px] text-neutral-500 mt-0.5 line-clamp-1">{title}</p>
             </div>
@@ -221,9 +223,9 @@ function TicketModal({
           {type === "attraction" && sorted.length > 0 ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-[13px] font-bold text-neutral-800">Tickets</p>
+                <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "التذاكر" : "Tickets"}</p>
                 {totalQty > 0 && (
-                  <span className="text-[12px] font-bold" style={{ color: "#8E1B3A" }}>{totalQty} selected</span>
+                  <span className="text-[12px] font-bold" style={{ color: "#8E1B3A" }}>{isRTL ? `${totalQty} محدد` : `${totalQty} selected`}</span>
                 )}
               </div>
               {sorted.map(t => {
@@ -236,8 +238,8 @@ function TicketModal({
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-bold text-neutral-900">{t.ticket_type}</p>
                       <p className="text-[11px] text-neutral-500">
-                        AED {t.price}
-                        {t.max_persons ? ` · up to ${t.max_persons} persons` : ""}
+                        {isRTL ? `${t.price} د.إ` : `AED ${t.price}`}
+                        {t.max_persons ? (isRTL ? ` · حتى ${t.max_persons} أشخاص` : ` · up to ${t.max_persons} persons`) : ""}
                         {t.description ? ` · ${t.description}` : ""}
                       </p>
                     </div>
@@ -260,7 +262,7 @@ function TicketModal({
           ) : (
             /* Events — single guest counter */
             <div className="flex items-center justify-between">
-              <p className="text-[13px] font-bold text-neutral-800">Guests</p>
+              <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "الضيوف" : "Guests"}</p>
               <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden">
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))}
                   className="w-9 h-9 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
@@ -279,27 +281,27 @@ function TicketModal({
           {/* Visit date (attractions only) */}
           {type === "attraction" && (
             <div className="space-y-1.5">
-              <p className="text-[13px] font-bold text-neutral-800">Visit Date <span className="text-red-500">*</span></p>
+              <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "تاريخ الزيارة" : "Visit Date"} <span className="text-red-500">*</span></p>
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+                <Calendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
                 <input type="date" min={today} value={visitDate} onChange={e => setVisitDate(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-neutral-300 pl-10 pr-4 text-[13px] font-semibold focus:outline-none focus:border-[#8E1B3A]" />
+                  className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-[13px] font-semibold focus:outline-none focus:border-[#8E1B3A]" />
               </div>
             </div>
           )}
 
           {/* Contact */}
           <div className="space-y-2.5">
-            <p className="text-[13px] font-bold text-neutral-800">Your Details</p>
+            <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "بياناتك" : "Your Details"}</p>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="Full Name *"
-                className="w-full h-12 rounded-xl border border-neutral-300 pl-10 pr-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+              <User className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+              <input value={name} onChange={e => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل *" : "Full Name *"}
+                className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
             </div>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone Number *" type="tel"
-                className="w-full h-12 rounded-xl border border-neutral-300 pl-10 pr-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+              <Phone className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder={isRTL ? "رقم الهاتف *" : "Phone Number *"} type="tel"
+                className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
             </div>
           </div>
 
@@ -307,9 +309,9 @@ function TicketModal({
           {totalPrice > 0 && (
             <div className="flex items-center justify-between rounded-xl px-4 py-3"
               style={{ background: "#FDE8EC" }}>
-              <p className="text-[13px] text-neutral-600">Total ({totalQty}×)</p>
+              <p className="text-[13px] text-neutral-600">{isRTL ? "الإجمالي" : "Total"} ({totalQty}×)</p>
               <p className="text-[16px] font-extrabold" style={{ color: "#8E1B3A" }}>
-                AED {totalPrice.toFixed(2)}
+                {isRTL ? `${totalPrice.toFixed(2)} د.إ` : `AED ${totalPrice.toFixed(2)}`}
               </p>
             </div>
           )}
@@ -317,7 +319,7 @@ function TicketModal({
           <button onClick={submit} disabled={loading}
             className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            {loading ? "Processing..." : (isFreeEvent ? "Confirm Free Ticket" : "Confirm Booking")}
+            {loading ? (isRTL ? "جارٍ المعالجة..." : "Processing...") : (isFreeEvent ? (isRTL ? "تأكيد التذكرة المجانية" : "Confirm Free Ticket") : (isRTL ? "تأكيد الحجز" : "Confirm Booking"))}
           </button>
         </div>
       </div>
@@ -327,6 +329,7 @@ function TicketModal({
 
 // ── Attraction Card ───────────────────────────────────────────────────────────
 function AttractionCard({ attraction, onBook }: { attraction: Attraction; onBook: () => void }) {
+  const isRTL = useLocale() === "ar";
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-neutral-100"
       style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.07)" }}>
@@ -359,7 +362,7 @@ function AttractionCard({ attraction, onBook }: { attraction: Attraction; onBook
               .map(t => (
                 <span key={t.id} className="px-2 py-0.5 rounded-md text-[11px] font-bold"
                   style={{ background: "#FDE8EC", color: "#8E1B3A" }}>
-                  {t.ticket_type} — AED {t.price}
+                  {isRTL ? `${t.ticket_type} — ${t.price} د.إ` : `${t.ticket_type} — AED ${t.price}`}
                 </span>
               ))}
           </div>
@@ -367,7 +370,7 @@ function AttractionCard({ attraction, onBook }: { attraction: Attraction; onBook
         <button onClick={onBook}
           className="w-full h-11 rounded-xl text-white font-bold text-[13px] flex items-center justify-center gap-2"
           style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-          <Ticket className="w-4 h-4" /> Book Tickets
+          <Ticket className="w-4 h-4" /> {isRTL ? "حجز التذاكر" : "Book Tickets"}
         </button>
       </div>
     </div>
@@ -376,6 +379,7 @@ function AttractionCard({ attraction, onBook }: { attraction: Attraction; onBook
 
 // ── Event Card ────────────────────────────────────────────────────────────────
 function EventCard({ event, onBook }: { event: Event; onBook: () => void }) {
+  const isRTL = useLocale() === "ar";
   const isFree = !event.ticket_price || event.ticket_price === 0;
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-neutral-100"
@@ -384,11 +388,11 @@ function EventCard({ event, onBook }: { event: Event; onBook: () => void }) {
         {event.image_url
           ? <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
           : <div className="w-full h-full flex items-center justify-center text-5xl">🎉</div>}
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[11px] font-extrabold"
+        <div className="absolute top-3 end-3 px-2.5 py-1 rounded-lg text-[11px] font-extrabold"
           style={isFree
             ? { background: "#16A34A", color: "#fff" }
             : { background: "#8E1B3A", color: "#fff" }}>
-          {isFree ? "FREE" : `AED ${event.ticket_price}`}
+          {isFree ? (isRTL ? "مجاني" : "FREE") : (isRTL ? `${event.ticket_price} د.إ` : `AED ${event.ticket_price}`)}
         </div>
       </div>
       <div className="p-4 space-y-2.5">
@@ -408,7 +412,7 @@ function EventCard({ event, onBook }: { event: Event; onBook: () => void }) {
         <button onClick={onBook}
           className="w-full h-11 rounded-xl text-white font-bold text-[13px] flex items-center justify-center gap-2"
           style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-          <Ticket className="w-4 h-4" /> {isFree ? "Get Free Ticket" : "Buy Tickets"}
+          <Ticket className="w-4 h-4" /> {isFree ? (isRTL ? "احصل على تذكرة مجانية" : "Get Free Ticket") : (isRTL ? "شراء التذاكر" : "Buy Tickets")}
         </button>
       </div>
     </div>
@@ -422,6 +426,7 @@ export function ZooEventsClient({
   attractions: Attraction[];
   events: Event[];
 }) {
+  const isRTL = useLocale() === "ar";
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"attractions" | "events">("attractions");
   const [modal, setModal] = useState<{
@@ -439,7 +444,7 @@ export function ZooEventsClient({
           <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10">
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
-          <h1 className="text-[17px] font-bold text-white flex-1">Zoo &amp; Events</h1>
+          <h1 className="text-[17px] font-bold text-white flex-1">{isRTL ? "الحديقة والفعاليات" : "Zoo & Events"}</h1>
         </div>
 
         {/* Tabs */}
@@ -448,9 +453,9 @@ export function ZooEventsClient({
             <button key={tab} onClick={() => setActiveTab(tab)}
               className="flex-1 sm:flex-none sm:px-8 py-3 text-[13px] font-bold capitalize transition-colors relative"
               style={activeTab === tab ? { color: "#fff" } : { color: "rgba(255,255,255,0.55)" }}>
-              {tab === "attractions" ? "Attractions" : "Events"}
+              {tab === "attractions" ? (isRTL ? "المعالم" : "Attractions") : (isRTL ? "الفعاليات" : "Events")}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full" />
+                <div className="absolute bottom-0 start-0 end-0 h-0.5 bg-white rounded-full" />
               )}
             </button>
           ))}
@@ -462,7 +467,7 @@ export function ZooEventsClient({
           attractions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <span className="text-5xl">🦁</span>
-              <p className="text-[15px] text-neutral-500">No attractions available</p>
+              <p className="text-[15px] text-neutral-500">{isRTL ? "لا توجد معالم متاحة" : "No attractions available"}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -476,8 +481,8 @@ export function ZooEventsClient({
           events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <span className="text-5xl">🎉</span>
-              <p className="text-[15px] text-neutral-500">No upcoming events</p>
-              <p className="text-[12px] text-neutral-400">Check back soon!</p>
+              <p className="text-[15px] text-neutral-500">{isRTL ? "لا توجد فعاليات قادمة" : "No upcoming events"}</p>
+              <p className="text-[12px] text-neutral-400">{isRTL ? "تحقق مرة أخرى قريباً!" : "Check back soon!"}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

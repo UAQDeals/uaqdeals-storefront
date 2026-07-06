@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   ChevronLeft, ChevronRight, ArrowLeft, CheckCircle, FileText, MessageCircle,
 } from "lucide-react";
@@ -25,6 +26,7 @@ export function ServiceCartClient({
   slug: string; meta: Meta; services: Service[];
 }) {
   const router = useRouter();
+  const isRTL = useLocale() === "ar";
   const supabase = createClient();
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,7 +47,7 @@ export function ServiceCartClient({
       if (f.required && !values[f.key]?.trim()) {
         const el = document.getElementById("field_" + f.key);
         el?.focus();
-        toast.error("Please fill in: " + f.label);
+        toast.error((isRTL ? "يرجى تعبئة: " : "Please fill in: ") + f.label);
         return;
       }
     }
@@ -90,7 +92,7 @@ export function ServiceCartClient({
       if (error) throw error;
       setStep("added");
     } catch (e: any) {
-      toast.error("Error: " + (e.message ?? "Could not submit request"));
+      toast.error((isRTL ? "خطأ: " : "Error: ") + (e.message ?? (isRTL ? "تعذّر إرسال الطلب" : "Could not submit request")));
     } finally {
       setSubmitting(false);
     }
@@ -126,14 +128,14 @@ export function ServiceCartClient({
           {services.length === 0 ? (
             <div className="text-center py-16">
               <span className="text-5xl">{meta.emoji}</span>
-              <p className="text-neutral-500 mt-3">No services available yet. Please check back soon.</p>
+              <p className="text-neutral-500 mt-3">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريبًا." : "No services available yet. Please check back soon."}</p>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[13px] font-bold text-neutral-700">Choose a service</p>
+              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "اختر خدمة" : "Choose a service"}</p>
               {services.map((s) => (
                 <button key={s.id} onClick={() => openForm(s)}
-                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-left"
+                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-start"
                   style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
                   {s.image_url ? (
                     <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
@@ -147,7 +149,7 @@ export function ServiceCartClient({
                     {s.description && <p className="text-[12px] text-neutral-500 line-clamp-2 mt-0.5">{s.description}</p>}
                     {s.price != null && (
                       <span className="text-[13px] font-extrabold mt-1 inline-block" style={{ color: "#8E1B3A" }}>
-                        {s.price_label ? s.price_label + " " : ""}AED {Number(s.price).toFixed(0)}
+                        {s.price_label ? s.price_label + " " : ""}{isRTL ? "درهم" : "AED"} {Number(s.price).toFixed(0)}
                       </span>
                     )}
                   </div>
@@ -166,19 +168,19 @@ export function ServiceCartClient({
             <div>
               <p className="text-[14px] font-bold text-neutral-900">{selected.title}</p>
               {selected.price != null && (
-                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>AED {Number(selected.price).toFixed(0)}</p>
+                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>{isRTL ? "درهم" : "AED"} {Number(selected.price).toFixed(0)}</p>
               )}
             </div>
             <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-neutral-500 flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> Change
+              <ArrowLeft className="w-3.5 h-3.5" /> {isRTL ? "تغيير" : "Change"}
             </button>
           </div>
 
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4" style={{ color: "#8E1B3A" }} />
-            <h3 className="text-[15px] font-bold text-neutral-800">Your Information</h3>
+            <h3 className="text-[15px] font-bold text-neutral-800">{isRTL ? "معلوماتك" : "Your Information"}</h3>
           </div>
-          <p className="text-[12px] text-neutral-500 -mt-3">We need a few details to process this service.</p>
+          <p className="text-[12px] text-neutral-500 -mt-3">{isRTL ? "نحتاج بعض التفاصيل لمعالجة هذه الخدمة." : "We need a few details to process this service."}</p>
 
           {meta.fields.map((f) => (
             <div key={f.key}>
@@ -200,9 +202,9 @@ export function ServiceCartClient({
           <button onClick={submitEnquiry} disabled={submitting}
             className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
             style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            <MessageCircle className="w-4 h-4" /> {submitting ? "Submitting..." : "Request Service"}
+            <MessageCircle className="w-4 h-4" /> {submitting ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : (isRTL ? "اطلب الخدمة" : "Request Service")}
           </button>
-          <p className="text-center text-[12px] text-neutral-400">Our team will contact you to confirm details.</p>
+          <p className="text-center text-[12px] text-neutral-400">{isRTL ? "سيتواصل معك فريقنا لتأكيد التفاصيل." : "Our team will contact you to confirm details."}</p>
         </div>
       )}
 
@@ -212,18 +214,20 @@ export function ServiceCartClient({
           <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
             <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
           </div>
-          <h2 className="text-[22px] font-extrabold text-neutral-900">Request Submitted!</h2>
+          <h2 className="text-[22px] font-extrabold text-neutral-900">{isRTL ? "تم إرسال الطلب!" : "Request Submitted!"}</h2>
           <p className="text-neutral-500 text-[14px] mt-2">
-            We've received your request for {meta.title}: {selected.title}. Our team will contact you shortly to confirm.
+            {isRTL
+              ? `لقد استلمنا طلبك لـ ${meta.title}: ${selected.title}. سيتواصل معك فريقنا قريبًا للتأكيد.`
+              : `We've received your request for ${meta.title}: ${selected.title}. Our team will contact you shortly to confirm.`}
           </p>
           <div className="mt-8 flex flex-col gap-3">
             <button onClick={() => router.push("/services")}
               className="rounded-xl px-6 py-3 text-white font-bold text-[14px]"
               style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-              Browse More Services
+              {isRTL ? "تصفّح المزيد من الخدمات" : "Browse More Services"}
             </button>
             <button onClick={() => setStep("list")} className="text-[13px] font-semibold text-neutral-500">
-              Request another service
+              {isRTL ? "اطلب خدمة أخرى" : "Request another service"}
             </button>
           </div>
         </div>
