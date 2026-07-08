@@ -21,12 +21,11 @@ function RatingBadge({ rating }: { rating: number }) {
 }
 
 export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
-  const [tab, setTab] = useState<"delivery" | "dine_in">("delivery");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    let list = vendors.filter((v) => tab === "delivery" ? v.is_delivery : v.is_dine_in);
+    let list = vendors.filter((v) => v.is_delivery);
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter((v) => v.name.toLowerCase().includes(q) || v.description.toLowerCase().includes(q));
@@ -35,7 +34,7 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
     if (filter === "featured") list = list.filter((v) => v.is_featured);
     if (filter === "az") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [vendors, tab, search, filter]);
+  }, [vendors, search, filter]);
 
   const filters = [
     { key: "top_rated", label: "Rating 4.5+", icon: Star },
@@ -90,23 +89,6 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
               </button>
             ))}
           </div>
-
-          {/* Tabs */}
-          <div className="flex border-b border-neutral-100">
-            {[
-              { key: "delivery", label: "Delivery", icon: Bike },
-              { key: "dine_in",  label: "Dining Out", icon: UtensilsCrossed },
-            ].map(({ key, label, icon: Icon }) => (
-              <button key={key}
-                onClick={() => setTab(key as "delivery" | "dine_in")}
-                className={"flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-b-2 transition-colors " +
-                  (tab === key
-                    ? "border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)]"
-                    : "border-transparent text-neutral-500 hover:text-neutral-700")}>
-                <Icon className="h-4 w-4" /> {label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -116,7 +98,7 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
           <div className="py-16 text-center">
             <UtensilsCrossed className="h-12 w-12 mx-auto mb-3 text-neutral-200" />
             <p className="text-neutral-500 text-sm">
-              {search ? `No results for "${search}"` : tab === "delivery" ? "No restaurants available for delivery" : "No dine-in restaurants available"}
+              {search ? `No results for "${search}"` : "No restaurants available for delivery"}
             </p>
           </div>
         ) : (
@@ -135,11 +117,9 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
                   <Star className="h-4 w-4 text-neutral-400" />
                 </button>
                 {/* Delivery time */}
-                {tab === "delivery" && (
-                  <div className="absolute bottom-3 start-3 flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[11px] font-bold text-neutral-800">
-                    <Clock className="h-3 w-3" /> 25-35 min
-                  </div>
-                )}
+                <div className="absolute bottom-3 start-3 flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[11px] font-bold text-neutral-800">
+                  <Clock className="h-3 w-3" /> 25-35 min
+                </div>
               </div>
 
               {/* Info */}
@@ -157,24 +137,12 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
                   </span>
                   <span className="h-1 w-1 rounded-full bg-neutral-300" />
                   <span className="flex items-center gap-1">
-                    {tab === "delivery"
-                      ? <><Bike className="h-3 w-3" /> Delivery</>
-                      : <><UtensilsCrossed className="h-3 w-3" /> Dine In</>}
+                    <Bike className="h-3 w-3" /> Delivery
                   </span>
-                  {tab === "delivery" && (
-                    <>
-                      <span className="h-1 w-1 rounded-full bg-neutral-300" />
-                      <span className="font-semibold text-neutral-500">AED 30 for two</span>
-                    </>
-                  )}
+                  <span className="h-1 w-1 rounded-full bg-neutral-300" />
+                  <span className="font-semibold text-neutral-500">AED 30 for two</span>
                   <ChevronRight className="h-3.5 w-3.5 ms-auto text-neutral-300" />
                 </div>
-
-                {tab === "dine_in" && (
-                  <button className="mt-3 w-full rounded-xl border border-[color:var(--brand-maroon)] py-2 text-sm font-bold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors">
-                    Reserve a Table
-                  </button>
-                )}
               </div>
             </Link>
           ))
