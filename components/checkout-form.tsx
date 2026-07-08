@@ -125,6 +125,10 @@ export function CheckoutForm({
       toast.error(t("fillRequired"));
       return;
     }
+    if (mapLat == null || mapLng == null) {
+      toast.error(t("fillRequired"));
+      return;
+    }
     if (items.length === 0) return;
 
     setPlacing(true);
@@ -137,7 +141,7 @@ export function CheckoutForm({
         variant: i.variant ?? null,
       }));
 
-      const { data: orderId, error } = await supabase.rpc("place_order", {
+      const { data: orderId, error } = await supabase.rpc("place_order_v2", {
         p_items: payload,
         p_use_coins: useCoins,
         p_coupon_code: coupon?.code ?? null,
@@ -145,6 +149,8 @@ export function CheckoutForm({
         p_phone: phone.trim(),
         p_address: `${address.trim()}, ${city.trim()}`,
         p_notes: notes.trim() || null,
+        p_lat: mapLat,
+        p_lng: mapLng,
       });
 
       if (error || !orderId) {
@@ -153,6 +159,8 @@ export function CheckoutForm({
           code.includes("INSUFFICIENT_STOCK") ? t("outOfStock") :
           code.includes("PRODUCT_INACTIVE")   ? t("itemUnavailable") :
           code.includes("EMPTY_CART")         ? t("fillRequired") :
+          code.match(/^GROCERY_UNAVAILABLE:/) ? t("groceryUnavailable", { department: code.split(":")[1] }) :
+          code.includes("GROCERY_NO_ZONE")     ? t("groceryNoZone") :
           t("orderFailed");
         throw new Error(msg);
       }
