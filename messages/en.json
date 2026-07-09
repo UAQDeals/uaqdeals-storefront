@@ -205,6 +205,10 @@
     "placeOrder": "Place Order",
     "placing": "Placing…",
     "fillRequired": "Please fill name, phone and address",
+    "outOfStock": "Sorry, one of the items in your cart is currently out of stock.",
+    "groceryUnavailable": "Sorry, {department} isn't available for delivery to your address yet.",
+    "groceryNoZone": "Grocery delivery isn't available in your area yet.",
+    "phoneInUse": "This phone number is linked to another account. Please use a different number.",
     "orderPlaced": "Order placed!",
     "backToCart": "Back to cart"
   },
