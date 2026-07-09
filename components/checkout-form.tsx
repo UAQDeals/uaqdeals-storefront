@@ -161,6 +161,7 @@ export function CheckoutForm({
           code.includes("EMPTY_CART")         ? t("fillRequired") :
           code.match(/^GROCERY_UNAVAILABLE:/) ? t("groceryUnavailable", { department: code.split(":")[1] }) :
           code.includes("GROCERY_NO_ZONE")     ? t("groceryNoZone") :
+          code.includes("PHONE_IN_USE")        ? t("phoneInUse") :
           t("orderFailed");
         throw new Error(msg);
       }
