@@ -141,7 +141,7 @@ export function CheckoutForm({
         variant: i.variant ?? null,
       }));
 
-      const { data: orderId, error } = await supabase.rpc("place_order_v2", {
+      const { data: orderId, error } = await supabase.rpc("place_order_v3", {
         p_items: payload,
         p_use_coins: useCoins,
         p_coupon_code: coupon?.code ?? null,
