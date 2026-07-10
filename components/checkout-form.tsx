@@ -195,7 +195,7 @@ export function CheckoutForm({
             const d = new Date();
             d.setDate(d.getDate() + maxDays);
             const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-            await supabase.from("orders").update({ expected_delivery_date: iso }).eq("id", orderId);
+            await supabase.rpc("set_expected_delivery_date", { p_order_id: orderId, p_date: iso });
           }
         }
       } catch {

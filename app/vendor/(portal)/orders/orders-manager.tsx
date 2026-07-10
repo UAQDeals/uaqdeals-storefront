@@ -72,7 +72,7 @@ export function VendorOrdersManager({
     const upd: Order = { status: next, updated_at: now };
     if (next === "confirmed") upd.confirmed_at = now;
     try {
-      const { error } = await supabase.from("orders").update(upd).eq("id", selected.id);
+      const { error } = await supabase.rpc("vendor_advance_order", { p_order_id: selected.id, p_next_status: (upd as any).status });
       if (error) throw error;
       const updated = { ...selected, ...upd };
       setSelected(updated);
@@ -91,10 +91,7 @@ export function VendorOrdersManager({
     setBusy(true);
     const now = new Date().toISOString();
     try {
-      const { error } = await supabase
-        .from("orders")
-        .update({ status: "cancelled", cancelled_at: now, updated_at: now })
-        .eq("id", selected.id);
+      const { error } = await supabase.rpc("vendor_advance_order", { p_order_id: selected.id, p_next_status: "cancelled" });
       if (error) throw error;
       const updated = { ...selected, status: "cancelled", cancelled_at: now };
       setSelected(updated);
