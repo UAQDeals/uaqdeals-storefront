@@ -34,14 +34,35 @@ export default async function OrderConfirmationPage({
 
   const { data: order } = await supabase
     .from("orders")
-    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, order_items(*, products(thumbnail_url, name))")
+    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, order_items(*, products(thumbnail_url, name))")
     .eq("id", id)
     .eq("customer_id", user.id)
     .maybeSingle();
 
+  // For split parents: fetch child sub-orders with their items
+  const isParent = order && !order.parent_order_id && !order.vendor_id;
+  const { data: childOrders } = isParent
+    ? await supabase
+        .from("orders")
+        .select("id, vendor_id, delivery_tier, subtotal, order_items(*, products(thumbnail_url, name)), vendors(name)")
+        .eq("parent_order_id", id)
+        .eq("customer_id", user.id)
+        .order("created_at")
+    : { data: null };
+
   if (!order) notFound();
 
-  const items = (order.order_items ?? []) as Row[];
+  const children = (childOrders ?? []) as Row[];
+  // For split parents use children's items; for single orders use own items
+  const childItems: { vendorName: string; tier: string | null; items: Row[] }[] =
+    children.map((c: Row) => ({
+      vendorName: c.vendors?.name ?? "UAQ Deals Mart",
+      tier: c.delivery_tier ?? null,
+      items: (c.order_items ?? []) as Row[],
+    }));
+  const items = childItems.length > 0
+    ? childItems.flatMap((g) => g.items)
+    : (order.order_items ?? []) as Row[];
   const ref = order.order_number ?? String(order.id).slice(0, 8).toUpperCase();
 
   return (
@@ -80,28 +101,69 @@ export default async function OrderConfirmationPage({
 
       <section className="mt-6 rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("items")}</h2>
-        <ul className="mt-4 space-y-3">
-          {items.map((it: Row) => {
-            const thumb = it.products?.thumbnail_url ?? null;
-            return (
-              <li key={it.id} className="flex gap-3 text-sm">
-                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
-                  {thumb ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={thumb} alt={it.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-neutral-300"><ShoppingBag className="h-5 w-5" /></div>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 font-medium">{it.name}</p>
-                  <p className="text-xs text-neutral-500">{it.quantity} × {aed(it.unit_price)}{it.notes ? ` · ${it.notes}` : ""}</p>
-                </div>
-                <p className="text-sm font-semibold">{aed(it.total_price)}</p>
-              </li>
-            );
-          })}
-        </ul>
+        {/* split: grouped by vendor */}
+        {childItems.length > 0 ? (
+          <div className="mt-4 space-y-4">
+            {childItems.map((group, gi) => (
+              <div key={gi}>
+                {childItems.length > 1 && (
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">{group.vendorName}</span>
+                    {group.tier && (
+                      <span className="rounded px-1.5 py-0.5 text-[10px] bg-neutral-100 text-neutral-500">{group.tier.replace("_", " ")}</span>
+                    )}
+                  </div>
+                )}
+                <ul className="space-y-3">
+                  {group.items.map((it: Row) => {
+                    const thumb = it.products?.thumbnail_url ?? null;
+                    return (
+                      <li key={it.id} className="flex gap-3 text-sm">
+                        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                          {thumb ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={thumb} alt={it.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-neutral-300"><ShoppingBag className="h-5 w-5" /></div>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="line-clamp-1 font-medium">{it.name}</p>
+                          <p className="text-xs text-neutral-500">{it.quantity} × {aed(it.unit_price)}{it.notes ? ` · ${it.notes}` : ""}</p>
+                        </div>
+                        <p className="text-sm font-semibold">{aed(it.total_price)}</p>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {gi < childItems.length - 1 && <hr className="mt-4 border-[color:var(--brand-border)]" />}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ul className="mt-4 space-y-3">
+            {items.map((it: Row) => {
+              const thumb = it.products?.thumbnail_url ?? null;
+              return (
+                <li key={it.id} className="flex gap-3 text-sm">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                    {thumb ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={thumb} alt={it.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-neutral-300"><ShoppingBag className="h-5 w-5" /></div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-1 font-medium">{it.name}</p>
+                    <p className="text-xs text-neutral-500">{it.quantity} × {aed(it.unit_price)}{it.notes ? ` · ${it.notes}` : ""}</p>
+                  </div>
+                  <p className="text-sm font-semibold">{aed(it.total_price)}</p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
         <dl className="mt-4 space-y-2 border-t border-[color:var(--brand-border)] pt-4 text-sm">
           <Row label={tco("subtotal")} value={aed(order.subtotal)} />
           {Number(order.coupon_discount) > 0 && <Row label={tco("coupon")} value={`-${aed(order.coupon_discount)}`} valueClass="text-green-600" />}
