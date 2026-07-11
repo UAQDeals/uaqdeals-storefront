@@ -404,7 +404,8 @@ export function CheckoutForm({
 
         <div className="mt-4 flex items-end justify-between border-t border-[color:var(--brand-border)] pt-4">
           <span className="text-sm font-semibold text-neutral-700">{walletApplied > 0 ? t("amountDue") : t("total")}</span>
-          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">{aed(amountDue)}</span>
+          {/* Always format the payable as AED X.XX — never aed(), which renders 0 as "—". */}
+          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">AED {amountDue.toFixed(2)}</span>
         </div>
         <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
 
@@ -414,7 +415,7 @@ export function CheckoutForm({
           </p>
         )}
         <button onClick={placeOrder} disabled={placing || !mapConfirmed} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
-          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · {aed(amountDue)}</>}
+          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · AED {amountDue.toFixed(2)}</>}
         </button>
         <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
           {t("backToCart")}
