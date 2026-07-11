@@ -20,7 +20,7 @@ export default async function CheckoutPage() {
   const [{ data: profile }, { data: wallet }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, phone_number, email, emirate")
+      .select("id, full_name, phone_number, email, emirate, wallet_balance")
       .eq("id", user.id)
       .maybeSingle(),
     supabase
@@ -43,6 +43,7 @@ export default async function CheckoutPage() {
             email: ((profile?.email as string | null) ?? user.email) ?? null,
           }}
           coinBalance={(wallet?.coin_balance as number | null) ?? 0}
+          walletBalance={Number(profile?.wallet_balance ?? 0)}
         />
       </div>
     </div>

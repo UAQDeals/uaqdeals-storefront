@@ -23,13 +23,14 @@ export default async function AccountPage() {
     { data: profile },
     { data: wallet },
     { data: txs },
+    { data: walletTxs },
     { data: orders },
     { data: addresses },
     { data: coupons },
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, phone_number, email, emirate, avatar_url, auth_method, notification_preferences, created_at")
+      .select("id, full_name, phone_number, email, emirate, avatar_url, auth_method, notification_preferences, created_at, wallet_balance")
       .eq("id", user.id)
       .maybeSingle(),
 
@@ -45,6 +46,14 @@ export default async function AccountPage() {
       .eq("customer_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10),
+
+    // AED store-credit wallet (refund-funded; separate from coins).
+    supabase
+      .from("customer_wallet_transactions")
+      .select("id, type, amount, source, description, created_at")
+      .eq("customer_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(20),
 
     supabase
       .from("orders")
@@ -97,6 +106,12 @@ export default async function AccountPage() {
       userId={user.id}
       initialProfile={initialProfile}
       coinBalance={(wallet?.coin_balance as number | null) ?? 0}
+      walletBalance={Number(profile?.wallet_balance ?? 0)}
+      walletTransactions={(walletTxs ?? []).map((w: Row) => ({
+        id: w.id, type: w.type as string, amount: Number(w.amount),
+        source: (w.source as string | null) ?? null,
+        description: (w.description as string | null) ?? null, created_at: w.created_at,
+      }))}
       transactions={(txs ?? []).map((t: Row) => ({
         id: t.id, coins: Number(t.coins), type: t.type ?? "—",
         description: t.description ?? null, created_at: t.created_at,

@@ -27,10 +27,12 @@ export function CheckoutForm({
   userId,
   initialProfile,
   coinBalance,
+  walletBalance,
 }: {
   userId: string;
   initialProfile: InitialProfile;
   coinBalance: number;
+  walletBalance: number;
 }) {
   const t = useTranslations("checkout");
   const tc = useTranslations("common");
@@ -52,6 +54,7 @@ export function CheckoutForm({
   const [couponBusy, setCouponBusy] = useState(false);
 
   const [useCoins, setUseCoins] = useState(false);
+  const [useWallet, setUseWallet] = useState(false);
   const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
@@ -75,6 +78,12 @@ export function CheckoutForm({
   const shipping = subAfterCoupon >= FREE_OVER ? 0 : DELIVERY_FEE;
   const total = Math.max(0, subAfterCoupon - coinDiscount) + shipping;
   const coinsEarned = Math.floor(sub / 10);
+
+  // AED wallet preview — DISPLAY ONLY; the server recomputes authoritatively.
+  // Applied against the payable total (after coupon + coins + delivery fee),
+  // capped at the available balance; partial allowed, COD covers the remainder.
+  const walletApplied = useWallet ? Math.min(walletBalance, total) : 0;
+  const amountDue = Math.max(0, total - walletApplied);
 
   async function applyCoupon() {
     const code = couponInput.trim().toUpperCase();
@@ -144,6 +153,7 @@ export function CheckoutForm({
       const { data: orderId, error } = await supabase.rpc("place_order_v3", {
         p_items: payload,
         p_use_coins: useCoins,
+        p_use_wallet: useWallet,
         p_coupon_code: coupon?.code ?? null,
         p_full_name: fullName.trim(),
         p_phone: phone.trim(),
@@ -334,6 +344,32 @@ export function CheckoutForm({
             </div>
           </section>
         )}
+
+        {walletBalance > 0 && (
+          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("walletBalance")}</h2>
+            <div className="mt-3 flex items-start gap-3">
+              <input
+                id="wallet"
+                type="checkbox"
+                checked={useWallet}
+                onChange={(e) => setUseWallet(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]"
+              />
+              <label htmlFor="wallet" className="text-sm">
+                <p className="font-medium">
+                  {t("useWallet")}
+                  {walletApplied > 0 && (
+                    <span className="ms-2 font-bold text-[color:var(--brand-maroon)]">−{aed(walletApplied)}</span>
+                  )}
+                </p>
+                <p className="mt-0.5 text-xs text-neutral-500">
+                  {t("walletAvailable", { amount: walletBalance.toFixed(2) })}
+                </p>
+              </label>
+            </div>
+          </section>
+        )}
       </div>
 
       <aside className="h-fit rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 lg:sticky lg:top-20">
@@ -363,11 +399,12 @@ export function CheckoutForm({
           {couponDiscount > 0 && <Row label={`${t("coupon")} (${coupon?.code ?? ""})`} value={`-${aed(couponDiscount)}`} valueClass="text-green-600" />}
           {coinDiscount > 0 && <Row label={t("coinDiscount")} value={`-${aed(coinDiscount)}`} valueClass="text-green-600" />}
           <Row label={toc("deliverySection")} value={shipping === 0 ? tc("free") : aed(shipping)} valueClass={shipping === 0 ? "text-green-600 font-semibold" : ""} />
+          {walletApplied > 0 && <Row label={t("walletApplied")} value={`-${aed(walletApplied)}`} valueClass="text-green-600" />}
         </dl>
 
         <div className="mt-4 flex items-end justify-between border-t border-[color:var(--brand-border)] pt-4">
-          <span className="text-sm font-semibold text-neutral-700">{t("total")}</span>
-          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">{aed(total)}</span>
+          <span className="text-sm font-semibold text-neutral-700">{walletApplied > 0 ? t("amountDue") : t("total")}</span>
+          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">{aed(amountDue)}</span>
         </div>
         <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
 
@@ -377,7 +414,7 @@ export function CheckoutForm({
           </p>
         )}
         <button onClick={placeOrder} disabled={placing || !mapConfirmed} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
-          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · {aed(total)}</>}
+          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · {aed(amountDue)}</>}
         </button>
         <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
           {t("backToCart")}

@@ -34,7 +34,7 @@ export default async function OrderConfirmationPage({
 
   const { data: order } = await supabase
     .from("orders")
-    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, order_items(*, products(thumbnail_url, name))")
+    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, wallet_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, order_items(*, products(thumbnail_url, name))")
     .eq("id", id)
     .eq("customer_id", user.id)
     .maybeSingle();
@@ -168,6 +168,7 @@ export default async function OrderConfirmationPage({
           <Row label={tco("subtotal")} value={aed(order.subtotal)} />
           {Number(order.coupon_discount) > 0 && <Row label={tco("coupon")} value={`-${aed(order.coupon_discount)}`} valueClass="text-green-600" />}
           {Number(order.coin_discount) > 0 && <Row label={tco("coinDiscount")} value={`-${aed(order.coin_discount)}`} valueClass="text-green-600" />}
+          {Number(order.wallet_discount) > 0 && <Row label={tco("walletApplied")} value={`-${aed(order.wallet_discount)}`} valueClass="text-green-600" />}
           <Row label={t("deliverySection")} value={Number(order.delivery_fee) === 0 ? tc("free") : aed(order.delivery_fee)} valueClass={Number(order.delivery_fee) === 0 ? "text-green-600 font-semibold" : ""} />
           <div className="flex items-end justify-between border-t border-[color:var(--brand-border)] pt-3">
             <span className="text-sm font-semibold text-neutral-700">{tco("total")}</span>

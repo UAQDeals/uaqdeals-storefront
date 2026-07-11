@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Package, ShoppingBag, ChevronRight } from "lucide-react";
+import { Package, ShoppingBag, ChevronRight, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { aed } from "@/lib/format";
@@ -45,7 +45,7 @@ export default async function OrdersPage() {
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, order_number, status, total, created_at, order_items(id, name, quantity, products(thumbnail_url))")
+    .select("id, order_number, status, total, wallet_discount, created_at, order_items(id, name, quantity, products(thumbnail_url))")
     .eq("customer_id", user.id)
     .order("created_at", { ascending: false })
     .limit(50);
@@ -106,6 +106,11 @@ export default async function OrdersPage() {
                     </div>
                     <p className="mt-0.5 line-clamp-1 text-xs text-neutral-600">{previewNames}{more}</p>
                     <p className="mt-0.5 text-[11px] text-neutral-500">{totalQty} × · {fmtDate(o.created_at)}</p>
+                    {Number(o.wallet_discount) > 0 && (
+                      <p className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-[color:var(--brand-maroon)]">
+                        <Wallet className="h-3 w-3 text-[color:var(--brand-gold)]" /> −{aed(o.wallet_discount)}
+                      </p>
+                    )}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <span className="text-base font-bold text-[color:var(--brand-maroon)]">{aed(o.total)}</span>

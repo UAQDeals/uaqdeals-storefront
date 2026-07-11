@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import {
   ChevronRight, Coins, LogOut, Package, ShoppingCart, Smartphone,
   Bell, Pencil, Check, X, ShieldCheck, MapPin, Plus, Trash2,
-  Tag, Copy, Home, Briefcase,
+  Tag, Copy, Home, Briefcase, Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -29,6 +29,16 @@ type Tx = {
   id: string;
   coins: number;
   type: string;
+  description: string | null;
+  created_at: string;
+};
+
+// AED store-credit wallet transaction (separate from coins).
+type WalletTx = {
+  id: string;
+  type: string; // 'credit' | 'debit'
+  amount: number; // positive magnitude
+  source: string | null; // 'refund' | 'promotional' | 'goodwill' | 'spend'
   description: string | null;
   created_at: string;
 };
@@ -89,6 +99,8 @@ export function AccountView({
   initialProfile,
   coinBalance,
   transactions,
+  walletBalance,
+  walletTransactions,
   initialPrefs,
   recentOrders,
   addresses: initialAddresses,
@@ -98,6 +110,8 @@ export function AccountView({
   initialProfile: InitialProfile;
   coinBalance: number;
   transactions: Tx[];
+  walletBalance: number;
+  walletTransactions: WalletTx[];
   initialPrefs: Prefs;
   recentOrders: Order[];
   addresses: Address[];
@@ -501,6 +515,42 @@ export function AccountView({
 
         {/* Right column */}
         <div className="space-y-5">
+
+          {/* AED wallet — refund-funded store credit; separate from coins */}
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <div className="mb-4 rounded-xl bg-gradient-to-br from-[color:var(--brand-maroon)] to-[#6e122c] p-4 text-white">
+              <div className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-[color:var(--brand-gold)]" />
+                <p className="text-xs font-bold uppercase tracking-wider text-white/80">{t("wallet")}</p>
+              </div>
+              <p className="mt-1.5 text-3xl font-extrabold leading-none">{aed(walletBalance)}</p>
+              <p className="mt-1.5 text-[11px] leading-snug text-white/80">{t("walletRefundFunded")}</p>
+            </div>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t("walletHistoryTitle")}</p>
+            {walletTransactions.length === 0 ? (
+              <p className="py-4 text-center text-xs text-neutral-500">{t("walletEmpty")}</p>
+            ) : (
+              <div>
+                {walletTransactions.slice(0, 8).map((w) => {
+                  const credit = w.type === "credit";
+                  return (
+                    <div key={w.id} className="flex items-center gap-2.5 py-2 border-b border-neutral-50 last:border-0">
+                      <span className={"flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold " + (credit ? "bg-green-50 text-green-700" : "bg-neutral-100 text-neutral-500")}>
+                        {credit ? "+" : "−"}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs line-clamp-1">{w.description?.trim() || (w.source ?? "Wallet")}</p>
+                        <p className="text-[10px] text-neutral-400">{fmtDate(w.created_at)}</p>
+                      </div>
+                      <span className={"text-xs font-bold shrink-0 " + (credit ? "text-green-700" : "text-neutral-500")}>
+                        {credit ? "+" : "−"} {aed(w.amount)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Coin wallet */}
           <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
