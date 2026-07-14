@@ -12,6 +12,7 @@ import {
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { aed } from "@/lib/format";
+import { WalletWithdraw, type Withdrawal } from "@/components/wallet-withdraw";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -101,6 +102,8 @@ export function AccountView({
   transactions,
   walletBalance,
   walletTransactions,
+  withdrawable,
+  withdrawals,
   initialPrefs,
   recentOrders,
   addresses: initialAddresses,
@@ -112,6 +115,8 @@ export function AccountView({
   transactions: Tx[];
   walletBalance: number;
   walletTransactions: WalletTx[];
+  withdrawable: number;
+  withdrawals: Withdrawal[];
   initialPrefs: Prefs;
   recentOrders: Order[];
   addresses: Address[];
@@ -550,6 +555,13 @@ export function AccountView({
                 })}
               </div>
             )}
+
+            {/* Wallet v2 — bank withdrawal (refund-sourced credit only) */}
+            <WalletWithdraw
+              userId={userId}
+              initialWithdrawable={withdrawable}
+              initialWithdrawals={withdrawals}
+            />
           </div>
 
           {/* Coin wallet */}

@@ -27,6 +27,8 @@ export default async function AccountPage() {
     { data: orders },
     { data: addresses },
     { data: coupons },
+    { data: withdrawableRaw },
+    { data: withdrawals },
   ] = await Promise.all([
     supabase
       .from("profiles")
@@ -76,6 +78,16 @@ export default async function AccountPage() {
       .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
       .order("created_at", { ascending: false })
       .limit(6),
+
+    // Wallet v2 — withdrawable (refund-sourced) balance + own withdrawal requests.
+    supabase.rpc("get_withdrawable_balance", { p_customer_id: user.id }),
+
+    supabase
+      .from("wallet_withdrawals")
+      .select("id, amount, iban, account_name, status, transfer_reference, reject_reason, requested_at, paid_at")
+      .eq("customer_id", user.id)
+      .order("requested_at", { ascending: false })
+      .limit(50),
   ]);
 
   const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
@@ -107,6 +119,18 @@ export default async function AccountPage() {
       initialProfile={initialProfile}
       coinBalance={(wallet?.coin_balance as number | null) ?? 0}
       walletBalance={Number(profile?.wallet_balance ?? 0)}
+      withdrawable={Number(withdrawableRaw ?? 0)}
+      withdrawals={(withdrawals ?? []).map((w: Row) => ({
+        id: w.id,
+        amount: Number(w.amount),
+        iban: w.iban ?? "",
+        account_name: (w.account_name as string | null) ?? null,
+        status: (w.status as string) ?? "requested",
+        transfer_reference: (w.transfer_reference as string | null) ?? null,
+        reject_reason: (w.reject_reason as string | null) ?? null,
+        requested_at: w.requested_at,
+        paid_at: (w.paid_at as string | null) ?? null,
+      }))}
       walletTransactions={(walletTxs ?? []).map((w: Row) => ({
         id: w.id, type: w.type as string, amount: Number(w.amount),
         source: (w.source as string | null) ?? null,
