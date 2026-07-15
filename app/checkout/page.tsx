@@ -17,7 +17,7 @@ export default async function CheckoutPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/checkout");
 
-  const [{ data: profile }, { data: wallet }] = await Promise.all([
+  const [{ data: profile }, { data: wallet }, { data: emiratesRaw }, { data: settingsRaw }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, phone_number, email, emirate, wallet_balance")
@@ -28,7 +28,30 @@ export default async function CheckoutPage() {
       .select("coin_balance")
       .eq("customer_id", user.id)
       .maybeSingle(),
+    // Canonical emirates only (active, ordered) — never the emirate_type enum,
+    // which has dead legacy labels.
+    supabase
+      .from("emirates")
+      .select("id, name, is_uaq, is_active, sort_order")
+      .eq("is_active", true)
+      .order("sort_order"),
+    supabase
+      .from("app_settings")
+      .select("key, value")
+      .in("key", ["pickup_enabled", "pickup_location", "service_charge_aed"]),
   ]);
+
+  const emirates = (emiratesRaw ?? []).map((e) => ({
+    name: e.name as string,
+    is_uaq: Boolean(e.is_uaq),
+  }));
+  const settingsMap = new Map((settingsRaw ?? []).map((s) => [s.key as string, (s.value as string | null) ?? ""]));
+  const fulfilment = {
+    pickupEnabled: (settingsMap.get("pickup_enabled") ?? "false") === "true",
+    pickupLocation: settingsMap.get("pickup_location") ?? "",
+    serviceCharge: Number(settingsMap.get("service_charge_aed") ?? "0") || 0,
+  };
+  const defaultEmirate = (profile?.emirate as string | null) ?? null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -44,6 +67,9 @@ export default async function CheckoutPage() {
           }}
           coinBalance={(wallet?.coin_balance as number | null) ?? 0}
           walletBalance={Number(profile?.wallet_balance ?? 0)}
+          emirates={emirates}
+          fulfilment={fulfilment}
+          defaultEmirate={defaultEmirate}
         />
       </div>
     </div>

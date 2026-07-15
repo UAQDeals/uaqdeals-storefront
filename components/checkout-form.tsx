@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ShoppingBag, Tag } from "lucide-react";
+import { Loader2, ShoppingBag, Tag, Truck, Store } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -11,8 +11,6 @@ import { useCart } from "@/lib/cart";
 import { DeliveryMapPicker } from "@/components/delivery-map-picker";
 import { aed } from "@/lib/format";
 
-const FREE_OVER = 100;      // app_settings: free_delivery_threshold
-const DELIVERY_FEE = 10;    // app_settings: delivery_fee
 const COIN_VALUE = 0.1;     // app_settings: coin_value  (10 coins = AED 1)
 const MIN_REDEEM = 1000;    // app_settings: min_redeem_coins
 const MAX_REDEEM_AED = 50;  // app_settings: max_redeem_aed
@@ -23,16 +21,42 @@ type InitialProfile = {
   email: string | null;
 };
 
+type EmirateOpt = { name: string; is_uaq: boolean };
+type Fulfilment = { pickupEnabled: boolean; pickupLocation: string; serviceCharge: number };
+
+// resolve_delivery_fee(p_emirate, p_tier, p_order_value) result.
+type Rate = {
+  is_offered: boolean;
+  fee: number;
+  base_fee: number;
+  free_threshold: number | null;
+  is_free: boolean;
+};
+
+// Human labels for the internal tier keys (used in the blocked-tier warning).
+const TIER_LABELS: Record<string, string> = {
+  quick: "Quick",
+  same_day: "Same-day",
+  scheduled: "Scheduled",
+};
+const tierLabel = (t: string) => TIER_LABELS[t] ?? t;
+
 export function CheckoutForm({
   userId,
   initialProfile,
   coinBalance,
   walletBalance,
+  emirates,
+  fulfilment,
+  defaultEmirate,
 }: {
   userId: string;
   initialProfile: InitialProfile;
   coinBalance: number;
   walletBalance: number;
+  emirates: EmirateOpt[];
+  fulfilment: Fulfilment;
+  defaultEmirate: string | null;
 }) {
   const t = useTranslations("checkout");
   const tc = useTranslations("common");
@@ -40,10 +64,20 @@ export function CheckoutForm({
   const router = useRouter();
   const { items, hydrated, subtotal, clear, coupon: storedCoupon, setCoupon: setStoredCoupon } = useCart();
 
+  // Default emirate: the profile's emirate if it's a valid active one, else the
+  // home (is_uaq) emirate, else the first in the list.
+  const initialEmirate =
+    (defaultEmirate && emirates.some((e) => e.name === defaultEmirate) ? defaultEmirate : null) ??
+    emirates.find((e) => e.is_uaq)?.name ??
+    emirates[0]?.name ??
+    "Umm Al Quwain";
+
   const [fullName, setFullName] = useState(initialProfile.full_name ?? "");
   const [phone, setPhone] = useState(initialProfile.phone_number ?? "");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("Umm Al Quwain");
+  const [emirate, setEmirate] = useState(initialEmirate);
+  const [fulfilmentType, setFulfilmentType] = useState<"delivery" | "pickup">("delivery");
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
   const [mapConfirmed, setMapConfirmed] = useState(false);
@@ -56,6 +90,8 @@ export function CheckoutForm({
   const [useCoins, setUseCoins] = useState(false);
   const [useWallet, setUseWallet] = useState(false);
   const [placing, setPlacing] = useState(false);
+
+  const pickup = fulfilmentType === "pickup";
 
   useEffect(() => {
     if (hydrated && items.length === 0) {
@@ -75,13 +111,94 @@ export function CheckoutForm({
   }, [useCoins, coinBalance, subAfterCoupon]);
   const coinsToRedeem = Math.round(coinDiscount / COIN_VALUE);
 
-  const shipping = subAfterCoupon >= FREE_OVER ? 0 : DELIVERY_FEE;
-  const total = Math.max(0, subAfterCoupon - coinDiscount) + shipping;
+  // ── Delivery-fee preview (per-emirate, per-tier — display only) ────────────
+  // The server recomputes authoritatively. We mirror its logic: resolve each
+  // cart line's tier (vendor override → category → 'scheduled'), then ask
+  // resolve_delivery_fee for each distinct tier at the chosen emirate. The
+  // highest base_fee wins; its fee (0 when the free threshold is met) is shown.
+  const [cartTiers, setCartTiers] = useState<string[]>([]);
+  const [rateByTier, setRateByTier] = useState<Record<string, Rate>>({});
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const productKey = useMemo(
+    () => Array.from(new Set(items.map((i) => i.product_id))).sort().join(","),
+    [items],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const ids = productKey ? productKey.split(",") : [];
+      if (ids.length === 0) { setCartTiers([]); return; }
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("products")
+        .select("id, vendors(delivery_tier_override), categories(delivery_tier)")
+        .in("id", ids);
+      const tiers = new Set<string>();
+      for (const p of data ?? []) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const vt = (p.vendors as any)?.delivery_tier_override?.toString().trim();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ct = (p.categories as any)?.delivery_tier?.toString().trim();
+        tiers.add(vt || ct || "scheduled");
+      }
+      if (!cancelled) setCartTiers(Array.from(tiers));
+    })();
+    return () => { cancelled = true; };
+  }, [productKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (pickup || cartTiers.length === 0) { setRateByTier({}); return; }
+    setRatesLoading(true);
+    (async () => {
+      const supabase = createClient();
+      const entries = await Promise.all(
+        cartTiers.map(async (tier) => {
+          const { data } = await supabase.rpc("resolve_delivery_fee", {
+            p_emirate: emirate,
+            p_tier: tier,
+            p_order_value: subAfterCoupon,
+          });
+          return [tier, (data ?? {}) as Rate] as const;
+        }),
+      );
+      if (!cancelled) {
+        setRateByTier(Object.fromEntries(entries));
+        setRatesLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [emirate, cartTiers, subAfterCoupon, pickup]);
+
+  // Tiers not offered to this emirate → block checkout (mirrors TIER_NOT_AVAILABLE).
+  const blockedTiers = useMemo(
+    () => (pickup ? [] : cartTiers.filter((tier) => rateByTier[tier] && rateByTier[tier].is_offered === false)),
+    [pickup, cartTiers, rateByTier],
+  );
+  const deliveryBlocked = blockedTiers.length > 0;
+
+  // Highest base_fee among the tiers present wins.
+  const winnerRate = useMemo(() => {
+    let best: Rate | null = null;
+    for (const tier of cartTiers) {
+      const r = rateByTier[tier];
+      if (!r) continue;
+      if (!best || Number(r.base_fee ?? 0) > Number(best.base_fee ?? 0)) best = r;
+    }
+    return best;
+  }, [cartTiers, rateByTier]);
+
+  const freeShipCoupon = coupon?.freeShipping ?? false;
+  const feeKnown = pickup || freeShipCoupon || cartTiers.length === 0 || (!ratesLoading && winnerRate != null);
+  const shipping = pickup || freeShipCoupon ? 0 : winnerRate ? Number(winnerRate.fee ?? 0) : 0;
+  const shipIsFree = pickup || freeShipCoupon || (winnerRate ? winnerRate.is_free === true || shipping === 0 : false);
+
+  const serviceCharge = fulfilment.serviceCharge > 0 ? fulfilment.serviceCharge : 0;
+  const total = Math.max(0, subAfterCoupon - coinDiscount) + shipping + serviceCharge;
   const coinsEarned = Math.floor(sub / 10);
 
   // AED wallet preview — DISPLAY ONLY; the server recomputes authoritatively.
-  // Applied against the payable total (after coupon + coins + delivery fee),
-  // capped at the available balance; partial allowed, COD covers the remainder.
   const walletApplied = useWallet ? Math.min(walletBalance, total) : 0;
   const amountDue = Math.max(0, total - walletApplied);
 
@@ -130,13 +247,20 @@ export function CheckoutForm({
   }
 
   async function placeOrder() {
-    if (!fullName.trim() || !phone.trim() || !address.trim()) {
+    if (!fullName.trim() || !phone.trim()) {
       toast.error(t("fillRequired"));
       return;
     }
-    if (mapLat == null || mapLng == null) {
-      toast.error(t("fillRequired"));
-      return;
+    // Delivery needs an address + a pinned location; pickup does not.
+    if (!pickup) {
+      if (!address.trim() || mapLat == null || mapLng == null) {
+        toast.error(t("fillRequired"));
+        return;
+      }
+      if (deliveryBlocked) {
+        toast.error(t("tierNotAvailable", { tier: tierLabel(blockedTiers[0]), emirate }));
+        return;
+      }
     }
     if (items.length === 0) return;
 
@@ -160,15 +284,20 @@ export function CheckoutForm({
         p_coupon_code: coupon?.code ?? null,
         p_full_name: fullName.trim(),
         p_phone: phone.trim(),
-        p_address: `${address.trim()}, ${city.trim()}`,
+        p_address: pickup ? "Store pickup" : `${address.trim()}, ${city.trim()}`,
         p_notes: notes.trim() || null,
-        p_lat: mapLat,
-        p_lng: mapLng,
+        p_lat: pickup ? null : mapLat,
+        p_lng: pickup ? null : mapLng,
+        p_emirate: emirate,
+        p_fulfilment_type: fulfilmentType,
       });
 
       if (error || !orderId) {
         const code = error?.message ?? "";
+        const tierMatch = code.match(/TIER_NOT_AVAILABLE:(\S+) delivery is not available to (.+?)$/);
         const msg =
+          tierMatch ? t("tierNotAvailable", { tier: tierLabel(tierMatch[1]), emirate: tierMatch[2] }) :
+          code.includes("PICKUP_DISABLED")             ? t("pickupUnavailable") :
           code.includes("VARIANT_REQUIRED")            ? t("variantRequired") :
           code.includes("INSUFFICIENT_VARIANT_STOCK")  ? t("variantStock") :
           code.includes("VARIANT_INACTIVE")            ? t("variantInactive") :
@@ -235,8 +364,40 @@ export function CheckoutForm({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
       <div className="space-y-6">
+        {/* ── Fulfilment method (only when store pickup is enabled) ─────── */}
+        {fulfilment.pickupEnabled && (
+          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("deliveryMethod")}</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <MethodCard
+                active={!pickup}
+                onClick={() => setFulfilmentType("delivery")}
+                icon={<Truck className="h-5 w-5" />}
+                title={t("homeDelivery")}
+                sub={t("homeDeliverySub")}
+              />
+              <MethodCard
+                active={pickup}
+                onClick={() => setFulfilmentType("pickup")}
+                icon={<Store className="h-5 w-5" />}
+                title={t("storePickup")}
+                sub={t("storePickupSub")}
+              />
+            </div>
+            {pickup && fulfilment.pickupLocation.trim() !== "" && (
+              <div className="mt-4 flex items-start gap-2 rounded-xl bg-[color:var(--brand-cream)] p-3 text-sm">
+                <Store className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-maroon)]" />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{t("pickupFrom")}</p>
+                  <p className="font-medium text-neutral-800">{fulfilment.pickupLocation}</p>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("deliveryAddress")}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{pickup ? t("contactDetails") : t("deliveryAddress")}</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t("fullName")}>
               <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" />
@@ -245,61 +406,70 @@ export function CheckoutForm({
               <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" className="input" placeholder="+9715XXXXXXXX" />
             </Field>
           </div>
-          {/* ── Delivery Location (required) ─────────────────────────────── */}
-          <div className="mt-4">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-maroon)] text-xs font-bold text-white">3</span>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">Delivery Location</h2>
-              {!mapConfirmed && (
-                <span className="ms-auto rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold text-amber-700">Required</span>
-              )}
-              {mapConfirmed && (
-                <span className="ms-auto rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold text-green-700">✓ Set</span>
-              )}
-            </div>
-            <div className={"rounded-2xl border-2 p-4 transition-colors " + (mapConfirmed ? "border-green-400 bg-green-50/50" : "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]")}>
-              {mapConfirmed ? (
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-lg shrink-0">📍</span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-neutral-900 truncate">{address}</p>
-                      <p className="text-xs text-neutral-500">{city}</p>
-                    </div>
-                  </div>
-                  <button type="button" onClick={() => setMapConfirmed(false)}
-                    className="shrink-0 rounded-full border border-[color:var(--brand-maroon)] px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors">
-                    Change
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <p className="mb-3 text-xs text-neutral-600">
-                    📌 Pin your exact delivery location on the map so our driver can find you easily.
-                  </p>
-                  <DeliveryMapPicker
-                    initialLat={mapLat ?? undefined}
-                    initialLng={mapLng ?? undefined}
-                    onConfirm={(addr, c, la, ln) => {
-                      setAddress(addr);
-                      setCity(c);
-                      setMapLat(la);
-                      setMapLng(ln);
-                      setMapConfirmed(true);
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+
+          {/* Emirate — drives per-emirate delivery pricing (sent as p_emirate). */}
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Field label={t("areaCity")}>
-              <input value={city} readOnly className="input bg-neutral-50 text-neutral-500 cursor-default" />
+            <Field label={t("emirateLabel")}>
+              <select value={emirate} onChange={(e) => setEmirate(e.target.value)} className="input">
+                {emirates.map((e) => (
+                  <option key={e.name} value={e.name}>{e.name}</option>
+                ))}
+              </select>
             </Field>
             <Field label={t("notes")}>
               <input value={notes} onChange={(e) => setNotes(e.target.value)} className="input" placeholder={t("notesPlaceholder")} />
             </Field>
           </div>
+
+          {/* Delivery location (map) — only when delivering. */}
+          {!pickup && (
+            <div className="mt-4">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-maroon)] text-xs font-bold text-white">3</span>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">Delivery Location</h2>
+                {!mapConfirmed && (
+                  <span className="ms-auto rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold text-amber-700">Required</span>
+                )}
+                {mapConfirmed && (
+                  <span className="ms-auto rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold text-green-700">✓ Set</span>
+                )}
+              </div>
+              <div className={"rounded-2xl border-2 p-4 transition-colors " + (mapConfirmed ? "border-green-400 bg-green-50/50" : "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]")}>
+                {mapConfirmed ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-lg shrink-0">📍</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-neutral-900 truncate">{address}</p>
+                        <p className="text-xs text-neutral-500">{city}</p>
+                      </div>
+                    </div>
+                    <button type="button" onClick={() => setMapConfirmed(false)}
+                      className="shrink-0 rounded-full border border-[color:var(--brand-maroon)] px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors">
+                      Change
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="mb-3 text-xs text-neutral-600">
+                      📌 Pin your exact delivery location on the map so our driver can find you easily.
+                    </p>
+                    <DeliveryMapPicker
+                      initialLat={mapLat ?? undefined}
+                      initialLng={mapLng ?? undefined}
+                      onConfirm={(addr, c, la, ln) => {
+                        setAddress(addr);
+                        setCity(c);
+                        setMapLat(la);
+                        setMapLng(ln);
+                        setMapConfirmed(true);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
@@ -405,7 +575,12 @@ export function CheckoutForm({
           <Row label={t("subtotal")} value={aed(sub)} />
           {couponDiscount > 0 && <Row label={`${t("coupon")} (${coupon?.code ?? ""})`} value={`-${aed(couponDiscount)}`} valueClass="text-green-600" />}
           {coinDiscount > 0 && <Row label={t("coinDiscount")} value={`-${aed(coinDiscount)}`} valueClass="text-green-600" />}
-          <Row label={toc("deliverySection")} value={shipping === 0 ? tc("free") : aed(shipping)} valueClass={shipping === 0 ? "text-green-600 font-semibold" : ""} />
+          <Row
+            label={pickup ? t("storePickup") : toc("deliverySection")}
+            value={!feeKnown ? "…" : shipIsFree ? tc("free") : aed(shipping)}
+            valueClass={feeKnown && shipIsFree ? "text-green-600 font-semibold" : ""}
+          />
+          {serviceCharge > 0 && <Row label={t("serviceCharge")} value={aed(serviceCharge)} />}
           {walletApplied > 0 && <Row label={t("walletApplied")} value={`-${aed(walletApplied)}`} valueClass="text-green-600" />}
         </dl>
 
@@ -416,12 +591,17 @@ export function CheckoutForm({
         </div>
         <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
 
-        {!mapConfirmed && (
+        {deliveryBlocked && (
+          <p className="mt-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 text-center font-medium">
+            {t("tierNotAvailable", { tier: tierLabel(blockedTiers[0]), emirate })}
+          </p>
+        )}
+        {!pickup && !mapConfirmed && !deliveryBlocked && (
           <p className="mt-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 text-center font-medium">
             📍 Please set your delivery location above to continue
           </p>
         )}
-        <button onClick={placeOrder} disabled={placing || !mapConfirmed} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+        <button onClick={placeOrder} disabled={placing || deliveryBlocked || (!pickup && !mapConfirmed)} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
           {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · AED {amountDue.toFixed(2)}</>}
         </button>
         <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
@@ -457,5 +637,24 @@ function Row({ label, value, valueClass = "" }: { label: string; value: string; 
       <dt className="text-neutral-600">{label}</dt>
       <dd className={"font-semibold " + valueClass}>{value}</dd>
     </div>
+  );
+}
+
+function MethodCard({ active, onClick, icon, title, sub }: { active: boolean; onClick: () => void; icon: React.ReactNode; title: string; sub: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-colors " +
+        (active ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]" : "border-neutral-200 hover:border-neutral-300")
+      }
+    >
+      <span className={"mt-0.5 " + (active ? "text-[color:var(--brand-maroon)]" : "text-neutral-400")}>{icon}</span>
+      <span>
+        <span className="block text-sm font-semibold">{title}</span>
+        <span className="mt-0.5 block text-xs text-neutral-500">{sub}</span>
+      </span>
+    </button>
   );
 }

@@ -281,7 +281,20 @@
     "variantInactive": "هذا الخيار لم يعد متاحاً",
     "variantReselect": "هذا الخيار لم يعد متاحاً — يرجى إعادة الاختيار",
     "orderPlaced": "تم تأكيد الطلب!",
-    "backToCart": "العودة إلى السلة"
+    "backToCart": "العودة إلى السلة",
+    "emirateLabel": "الإمارة",
+    "deliveryMethod": "طريقة الاستلام",
+    "homeDelivery": "توصيل للمنزل",
+    "homeDeliverySub": "يُسلَّم إلى عنوانك",
+    "storePickup": "استلام من المتجر",
+    "storePickupSub": "استلمه من متجرنا",
+    "pickupFrom": "الاستلام من",
+    "contactDetails": "بيانات التواصل",
+    "serviceCharge": "رسوم الخدمة",
+    "tierNotAvailable": "{tier}: التوصيل غير متاح إلى {emirate}. أزِل تلك المنتجات أو اختر عنواناً آخر.",
+    "pickupUnavailable": "الاستلام من المتجر غير متاح حالياً.",
+    "itemUnavailable": "أحد المنتجات لم يعد متاحاً",
+    "orderFailed": "تعذّر إنشاء الطلب. حاول مرة أخرى"
   },
   "orderConfirm": {
     "title": "تم تأكيد الطلب",

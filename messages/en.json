@@ -281,7 +281,20 @@
     "variantInactive": "That option is no longer available",
     "variantReselect": "That option is no longer available — please re-select",
     "orderPlaced": "Order placed!",
-    "backToCart": "Back to cart"
+    "backToCart": "Back to cart",
+    "emirateLabel": "Emirate",
+    "deliveryMethod": "Delivery method",
+    "homeDelivery": "Home delivery",
+    "homeDeliverySub": "Delivered to your address",
+    "storePickup": "Store pickup",
+    "storePickupSub": "Collect from our store",
+    "pickupFrom": "Pick up from",
+    "contactDetails": "Contact details",
+    "serviceCharge": "Service charge",
+    "tierNotAvailable": "{tier} delivery isn't available to {emirate}. Remove those items or choose a different address.",
+    "pickupUnavailable": "Store pickup isn't available right now.",
+    "itemUnavailable": "One of your items is no longer available",
+    "orderFailed": "Couldn't place your order. Please try again"
   },
   "orderConfirm": {
     "title": "Order placed",
