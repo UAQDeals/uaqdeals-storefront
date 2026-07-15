@@ -276,6 +276,10 @@
     "groceryUnavailable": "Sorry, {department} isn't available for delivery to your address yet.",
     "groceryNoZone": "Grocery delivery isn't available in your area yet.",
     "phoneInUse": "This phone number is linked to another account. Please use a different number.",
+    "variantRequired": "Please select options for this item",
+    "variantStock": "Not enough stock for the selected option",
+    "variantInactive": "That option is no longer available",
+    "variantReselect": "That option is no longer available — please re-select",
     "orderPlaced": "Order placed!",
     "backToCart": "Back to cart"
   },

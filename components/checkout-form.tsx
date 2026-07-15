@@ -148,6 +148,9 @@ export function CheckoutForm({
         product_id: i.product_id,
         qty: i.qty,
         variant: i.variant ?? null,
+        // Relational variant id (null for non-variant products).
+        // place_order_v3 requires it for products with variant options.
+        variant_id: i.variant_id ?? null,
       }));
 
       const { data: orderId, error } = await supabase.rpc("place_order_v3", {
@@ -166,6 +169,10 @@ export function CheckoutForm({
       if (error || !orderId) {
         const code = error?.message ?? "";
         const msg =
+          code.includes("VARIANT_REQUIRED")            ? t("variantRequired") :
+          code.includes("INSUFFICIENT_VARIANT_STOCK")  ? t("variantStock") :
+          code.includes("VARIANT_INACTIVE")            ? t("variantInactive") :
+          code.includes("VARIANT_NOT_FOUND") || code.includes("VARIANT_PRODUCT_MISMATCH") ? t("variantReselect") :
           code.includes("INSUFFICIENT_STOCK") ? t("outOfStock") :
           code.includes("PRODUCT_INACTIVE")   ? t("itemUnavailable") :
           code.includes("EMPTY_CART")         ? t("fillRequired") :
