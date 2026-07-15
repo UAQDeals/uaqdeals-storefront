@@ -7,6 +7,7 @@ import { ProductDetail } from "@/components/product-detail";
 import { showProducts } from "@/lib/emirate";
 import { ProductsUnavailable } from "@/components/products-unavailable";
 import { RelatedProducts } from "@/components/related-products";
+import { normalizeVariantTree } from "@/lib/variants";
 
 export const revalidate = 60;
 
@@ -75,6 +76,12 @@ export default async function ProductDetailPage({
 
   if (!p || p.status !== "active") notFound();
 
+  // Relational variants (get_product_variants). When this returns options we
+  // prefer it and ignore the legacy products.variants jsonb; when empty the PDP
+  // behaves exactly as before.
+  const { data: variantRaw } = await supabase.rpc("get_product_variants", { p_product_id: id });
+  const variantTree = normalizeVariantTree(variantRaw);
+
   let vendor_name: string | null = null;
   let delivery_days: number | null = null;
   if (p.vendor_id) {
@@ -141,6 +148,7 @@ export default async function ProductDetailPage({
 
       <ProductDetail
         product={product}
+        variantTree={variantTree}
         reviews={(reviewsRaw ?? []).map((r: Row) => ({
           id: r.id,
           rating: Number(r.rating),

@@ -10,7 +10,12 @@ export type CartItem = {
   price: number;              // unit price actually charged (sale_price if any)
   original_price: number | null;
   image: string | null;
-  variant: string | null;     // human-readable variant summary, e.g. "Size: M"
+  variant: string | null;     // human-readable variant summary, e.g. "Size: M / Colour: Red"
+  // Relational product_variants.id for the chosen combination, when the product
+  // uses relational variants. Carried through the cart so it's ready for order
+  // creation. TODO(checkout): checkout-form → place_order_v3 does not forward
+  // variant_id yet — wiring that through is the next task (do not touch here).
+  variant_id?: string | null;
   vendor_name: string | null;
   vendor_id?: string | null;
   qty: number;

@@ -10,6 +10,15 @@ import { useTranslations, useLocale } from "next-intl";
 import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { PrescriptionUploadModal } from "@/components/prescription-upload-modal";
+import {
+  type VariantTree,
+  type VOption,
+  type VariantSelection,
+  isColourOption,
+  isValueAvailable,
+  resolveVariant,
+  minVariantPrice,
+} from "@/lib/variants";
 
 type Product = {
   id: string; name: string; name_ar?: string | null; description: string | null; description_ar?: string | null;
@@ -30,28 +39,76 @@ type Review = {
   created_at: string; reviewer_name: string | null; reviewer_avatar: string | null;
 };
 
-export function ProductDetail({ product: p, reviews: initialReviews = [] }: { product: Product; reviews?: Review[] }) {
+export function ProductDetail({
+  product: p,
+  variantTree = { options: [], variants: [] },
+  reviews: initialReviews = [],
+}: {
+  product: Product;
+  variantTree?: VariantTree;
+  reviews?: Review[];
+}) {
   const t = useTranslations("product");
   const tc = useTranslations("common");
   const tr = useTranslations("reviews");
   const locale = useLocale();
-  const dateLocale = locale === "ar" ? "ar-AE" : "en-AE";
+  const isAr = locale === "ar";
+  const dateLocale = isAr ? "ar-AE" : "en-AE";
   // Prefer Arabic product content when viewing in Arabic and it exists.
-  const displayName = locale === "ar" && p.name_ar ? p.name_ar : p.name;
-  const displayDescription = locale === "ar" && p.description_ar ? p.description_ar : p.description;
+  const displayName = isAr && p.name_ar ? p.name_ar : p.name;
+  const displayDescription = isAr && p.description_ar ? p.description_ar : p.description;
 
-  const gallery = useMemo(() => {
+  const baseGallery = useMemo(() => {
     const set: string[] = [];
     if (p.thumbnail_url) set.push(p.thumbnail_url);
     for (const u of p.images) if (u && !set.includes(u)) set.push(u);
     return set;
   }, [p.thumbnail_url, p.images]);
 
-  const [activeImg, setActiveImg] = useState(0);
-  const hasVariants = (p.variants?.length ?? 0) > 0;
-  // null = nothing chosen yet; selection is required when variants exist.
+  // ── Relational variants (get_product_variants) ─────────────────────────────
+  // When the product exposes relational options we use them exclusively and
+  // ignore the legacy products.variants jsonb. When there are none, everything
+  // below falls back to the product-level (or legacy jsonb) behaviour.
+  const relOptions = variantTree.options;
+  const hasRel = relOptions.length > 0;
+  const [selValues, setSelValues] = useState<VariantSelection>({});
+  const relVariant = useMemo(
+    () => (hasRel ? resolveVariant(variantTree, selValues) : null),
+    [hasRel, variantTree, selValues],
+  );
+  const relComplete = hasRel && relOptions.every((o) => !!selValues[o.id]);
+  const relFromPrice = useMemo(() => (hasRel ? minVariantPrice(variantTree) : null), [hasRel, variantTree]);
+
+  function pickValue(optionId: string, valueId: string) {
+    setSelValues((prev) => {
+      const next = { ...prev };
+      if (next[optionId] === valueId) delete next[optionId]; // tap again to clear
+      else next[optionId] = valueId;
+      return next;
+    });
+    setQty(1);
+  }
+
+  // Legacy jsonb variant path — only when there are NO relational options.
+  const hasLegacyVariants = !hasRel && (p.variants?.length ?? 0) > 0;
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number | null>(null);
-  const selectedVariant = selectedVariantIdx != null ? p.variants[selectedVariantIdx] : null;
+  const selectedVariant = !hasRel && selectedVariantIdx != null ? p.variants[selectedVariantIdx] : null;
+
+  // Gallery swaps to the selected variant's images when it has any.
+  const activeGallery = useMemo(() => {
+    if (hasRel && relVariant && relVariant.images.length > 0) {
+      const set: string[] = [];
+      for (const u of relVariant.images) if (u && !set.includes(u)) set.push(u);
+      return set;
+    }
+    return baseGallery;
+  }, [hasRel, relVariant, baseGallery]);
+
+  const [activeImg, setActiveImg] = useState(0);
+  // Reset to the first image whenever the effective gallery changes.
+  useEffect(() => { setActiveImg(0); }, [relVariant?.id]);
+  const safeImg = Math.min(activeImg, Math.max(0, activeGallery.length - 1));
+
   const [qty, setQty] = useState(1);
   const { add } = useCart();
   const router = useRouter();
@@ -101,44 +158,104 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
     }
   }
 
-  // Pricing: when a variant is selected, its price REPLACES the base price.
-  const basePrice = selectedVariant
-    ? (selectedVariant.price ?? p.price)
-    : p.price;
-  const baseSale = selectedVariant ? selectedVariant.sale_price : p.sale_price;
+  // ── Effective price / stock for the current view ───────────────────────────
+  let basePrice: number;
+  let baseSale: number | null;
+  if (hasRel) {
+    if (relVariant) {
+      basePrice = relVariant.price ?? p.price;
+      baseSale = relVariant.sale_price;
+    } else {
+      basePrice = relFromPrice ?? p.price; // "from …" before a complete pick
+      baseSale = null;
+    }
+  } else if (selectedVariant) {
+    basePrice = selectedVariant.price ?? p.price;
+    baseSale = selectedVariant.sale_price;
+  } else {
+    basePrice = p.price;
+    baseSale = p.sale_price;
+  }
   const hasSale = baseSale != null && baseSale > 0 && baseSale < basePrice;
   const unitPrice = hasSale ? (baseSale as number) : basePrice;
   const discountPct = hasSale ? Math.round(((basePrice - (baseSale as number)) / basePrice) * 100) : 0;
   const savings = hasSale ? basePrice - (baseSale as number) : 0;
+  // Show a "from …" price before a complete relational selection is made.
+  const showFromPrice = hasRel && !relComplete && relFromPrice != null;
 
-  // Stock: per-variant when one is selected, else product-level. When the
-  // product has variants, stock lives on each variant (the parent stock is 0),
-  // so we defer to variant selection rather than marking the whole thing OOS.
-  const variantStock = selectedVariant ? selectedVariant.stock_quantity : null;
-  const oos = selectedVariant
-    ? (variantStock == null || variantStock <= 0)
-    : hasVariants
-      ? false
-      : (p.track_stock && (p.stock_quantity == null || p.stock_quantity <= 0));
-  const lowStock = selectedVariant
-    ? (variantStock != null && variantStock > 0 && variantStock <= 5)
-    : (p.track_stock && p.stock_quantity != null && p.stock_quantity > 0 && p.stock_quantity <= 5);
-  const isRx = p.requires_prescription;
-  // Must pick a variant when the product has them.
-  const needsVariant = hasVariants && selectedVariant == null;
-  const canAdd = !oos && !needsVariant && (!isRx || rxUploaded);
-
-  const variantSummary = selectedVariant ? selectedVariant.name : "";
-  const lineId = p.id + (variantSummary ? "::" + variantSummary.replace(/\s+/g, "_") : "");
-
-  // Available units for the current selection — caps the quantity stepper.
-  const availStock = selectedVariant
-    ? selectedVariant.stock_quantity
-    : (p.track_stock ? (p.stock_quantity ?? 0) : Infinity);
+  // ── Stock / availability ───────────────────────────────────────────────────
+  let oos: boolean;
+  let lowStock = false;
+  let stockLeft: number | null = null;
+  let availStock: number;
+  if (hasRel) {
+    if (relVariant) {
+      oos = !relVariant.in_stock || !relVariant.is_active;
+      stockLeft = relVariant.stock_quantity;
+      lowStock = !oos && stockLeft != null && stockLeft > 0 && stockLeft <= 5;
+      availStock = stockLeft != null && stockLeft > 0 ? stockLeft : (oos ? 1 : Infinity);
+    } else {
+      oos = false; // don't flag the whole product OOS before a selection
+      availStock = Infinity;
+    }
+  } else if (selectedVariant) {
+    const sq = selectedVariant.stock_quantity;
+    oos = sq == null || sq <= 0;
+    stockLeft = sq;
+    lowStock = !oos && sq > 0 && sq <= 5;
+    availStock = sq > 0 ? sq : 1;
+  } else if (hasLegacyVariants) {
+    oos = false;
+    availStock = p.track_stock ? (p.stock_quantity ?? 0) : Infinity;
+  } else {
+    oos = p.track_stock && (p.stock_quantity == null || p.stock_quantity <= 0);
+    stockLeft = p.stock_quantity;
+    lowStock = p.track_stock && p.stock_quantity != null && p.stock_quantity > 0 && p.stock_quantity <= 5;
+    availStock = p.track_stock ? (p.stock_quantity ?? 0) : Infinity;
+  }
   const maxQty = availStock > 0 ? availStock : 1;
 
+  const isRx = p.requires_prescription;
+  // Must pick a complete (in-stock) combination before adding.
+  const needsVariant = hasRel ? !relVariant : (hasLegacyVariants && selectedVariant == null);
+  const canAdd = !oos && !needsVariant && (!isRx || rxUploaded);
+
+  // ── Variant identity for the cart line + human-readable summary ────────────
+  const relSummary = hasRel
+    ? relOptions
+        .map((o) => {
+          const val = o.values.find((v) => v.id === selValues[o.id]);
+          if (!val) return "";
+          const oName = isAr && o.name_ar ? o.name_ar : o.name;
+          const vName = isAr && val.value_ar ? val.value_ar : val.value;
+          return `${oName}: ${vName}`;
+        })
+        .filter(Boolean)
+        .join(" / ")
+    : "";
+  const variantSummary = hasRel ? relSummary : (selectedVariant ? selectedVariant.name : "");
+  const variantId = hasRel ? (relVariant?.id ?? null) : null;
+  const lineId =
+    p.id +
+    (variantId ? "::" + variantId : variantSummary ? "::" + variantSummary.replace(/\s+/g, "_") : "");
+
   function pushToCart() {
-    add({ id: lineId, product_id: p.id, name: p.name, price: unitPrice, original_price: hasSale ? p.price : null, image: gallery[0] ?? null, variant: variantSummary || null, vendor_name: p.vendor_name, vendor_id: p.vendor_id }, qty);
+    add(
+      {
+        id: lineId,
+        product_id: p.id,
+        name: p.name,
+        price: unitPrice,
+        original_price: hasSale ? basePrice : null,
+        image: activeGallery[0] ?? baseGallery[0] ?? null,
+        variant: variantSummary || null,
+        // Carried for order creation; checkout does not forward it yet (next task).
+        variant_id: variantId,
+        vendor_name: p.vendor_name,
+        vendor_id: p.vendor_id,
+      },
+      qty,
+    );
   }
 
   function handleAdd() {
@@ -191,23 +308,24 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-      <div>
+      {/* ── Gallery ─────────────────────────────────────────────────────── */}
+      <div className="md:sticky md:top-24 md:self-start">
         <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white">
           <div className="relative aspect-square bg-neutral-100">
-            {gallery[activeImg] ? (
+            {activeGallery[safeImg] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={gallery[activeImg]} alt={p.name} className="h-full w-full object-cover" />
+              <img src={activeGallery[safeImg]} alt={displayName} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-neutral-300"><ShoppingBag className="h-16 w-16" /></div>
             )}
             {discountPct > 0 && <span className="bg-brand-gradient absolute start-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold text-white">-{discountPct}%</span>}
           </div>
         </div>
-        {gallery.length > 1 && (
+        {activeGallery.length > 1 && (
           <div className="mt-3 flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {gallery.map((src, i) => (
+            {activeGallery.map((src, i) => (
               <button key={src + i} onClick={() => setActiveImg(i)}
-                className={"h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition " + (i === activeImg ? "border-[color:var(--brand-maroon)]" : "border-transparent opacity-70 hover:opacity-100")}
+                className={"h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition " + (i === safeImg ? "border-[color:var(--brand-maroon)]" : "border-transparent opacity-70 hover:opacity-100")}
                 aria-label={`Image ${i + 1}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={src} alt="" className="h-full w-full object-cover" />
@@ -217,7 +335,8 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         )}
       </div>
 
-      <div className="flex flex-col">
+      {/* ── Buy box (sticky on desktop) ──────────────────────────────────── */}
+      <div className="flex flex-col md:sticky md:top-24 md:self-start">
         {p.condition === "used" && (
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-black tracking-widest text-amber-700 uppercase">Used Item</span>
@@ -249,8 +368,9 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         )}
 
         <div className="mt-5 flex items-end gap-3">
+          {showFromPrice && <span className="text-sm font-medium text-neutral-500">{t("from")}</span>}
           <span className="text-3xl font-extrabold text-[color:var(--brand-maroon)]">{aed(unitPrice)}</span>
-          {hasSale && <span className="text-base text-neutral-500 line-through">{aed(p.price)}</span>}
+          {hasSale && <span className="text-base text-neutral-500 line-through">{aed(basePrice)}</span>}
           {/* Only show a real unit (e.g. "kg", "piece") — a blank or purely numeric value like "1" is not a unit. */}
           {p.unit && p.unit.trim() !== "" && Number.isNaN(Number(p.unit)) && (
             <span className="text-xs text-neutral-500">/ {p.unit}</span>
@@ -265,8 +385,8 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         <div className="mt-3 flex flex-wrap gap-2">
           {isRx && <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">{t("prescriptionRequired")}</span>}
           {oos && <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-700">{tc("outOfStock")}</span>}
-          {!oos && lowStock && <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">{tc("onlyLeft", { count: p.stock_quantity! })}</span>}
-          {!oos && !isRx && !lowStock && <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">{tc("inStock")}</span>}
+          {!oos && lowStock && stockLeft != null && <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">{tc("onlyLeft", { count: stockLeft })}</span>}
+          {!oos && !isRx && !lowStock && !needsVariant && <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">{tc("inStock")}</span>}
         </div>
 
         {getItByDate && (
@@ -275,7 +395,17 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           </p>
         )}
 
-        {hasVariants && (
+        {/* Variant selector: relational (preferred) or legacy jsonb chips. */}
+        {hasRel ? (
+          <VariantSelector
+            options={relOptions}
+            tree={variantTree}
+            selected={selValues}
+            onPick={pickValue}
+            isAr={isAr}
+            selectHint={t("selectOne")}
+          />
+        ) : hasLegacyVariants ? (
           <div className="mt-6 space-y-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
@@ -301,14 +431,14 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
                       {vPrice != null && (
                         <span className="text-xs text-[color:var(--brand-maroon)] font-bold">{aed(vPrice)}</span>
                       )}
-                      {vOos && <span className="text-[10px] text-neutral-400">Out of stock</span>}
+                      {vOos && <span className="text-[10px] text-neutral-400">{tc("outOfStock")}</span>}
                     </button>
                   );
                 })}
               </div>
             </div>
           </div>
-        )}
+        ) : null}
 
         <div className="mt-7 flex flex-wrap items-stretch gap-3">
           <div className="inline-flex items-center rounded-full border border-neutral-200 bg-white">
@@ -370,9 +500,12 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           onClose={() => setRxOpen(false)}
         />
       )}
+      </div>
 
-      {displayDescription && (
-          <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
+      {/* ── Detail sections (full width, below the buy box) ───────────────── */}
+      <div className="md:col-span-2">
+        {displayDescription && (
+          <div className="mt-2 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
             <div className="prose prose-sm mt-2 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: displayDescription }} />
           </div>
@@ -381,7 +514,7 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
         {specRows.length > 0 && (
           <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("specifications")}</h2>
-            <dl className="mt-3 overflow-hidden rounded-xl border border-[color:var(--brand-border)]">
+            <dl className="mt-3 overflow-hidden rounded-xl border border-[color:var(--brand-border)] md:max-w-2xl">
               {specRows.map(([k, v], i) => (
                 <div key={k} className={"flex text-sm " + (i % 2 ? "bg-white" : "bg-neutral-50/60")}>
                   <dt className="w-2/5 shrink-0 px-4 py-2.5 font-medium capitalize text-neutral-500">{k.replace(/_/g, " ")}</dt>
@@ -502,6 +635,100 @@ export function ProductDetail({ product: p, reviews: initialReviews = [] }: { pr
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── Relational variant selector: one row per option, nested availability ─────
+function VariantSelector({
+  options,
+  tree,
+  selected,
+  onPick,
+  isAr,
+  selectHint,
+}: {
+  options: VOption[];
+  tree: VariantTree;
+  selected: VariantSelection;
+  onPick: (optionId: string, valueId: string) => void;
+  isAr: boolean;
+  selectHint: string;
+}) {
+  return (
+    <div className="mt-6 space-y-5">
+      {options.map((o) => {
+        const colour = isColourOption(o);
+        const oName = isAr && o.name_ar ? o.name_ar : o.name;
+        const chosen = selected[o.id];
+        const chosenVal = o.values.find((v) => v.id === chosen);
+        const chosenLabel = chosenVal ? (isAr && chosenVal.value_ar ? chosenVal.value_ar : chosenVal.value) : null;
+        return (
+          <div key={o.id}>
+            <div className="flex items-baseline gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{oName}</p>
+              {chosenLabel ? (
+                <span className="text-sm font-medium text-neutral-800">{chosenLabel}</span>
+              ) : (
+                <span className="text-xs text-[color:var(--brand-maroon)]">{selectHint}</span>
+              )}
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {o.values.map((v) => {
+                const available = isValueAvailable(tree, selected, o.id, v.id);
+                const active = chosen === v.id;
+                const label = isAr && v.value_ar ? v.value_ar : v.value;
+                if (colour) {
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      disabled={!available}
+                      onClick={() => onPick(o.id, v.id)}
+                      title={label}
+                      aria-label={label}
+                      aria-pressed={active}
+                      className={
+                        "relative h-9 w-9 rounded-full border transition " +
+                        (active
+                          ? "border-transparent ring-2 ring-[color:var(--brand-maroon)] ring-offset-2 "
+                          : "border-neutral-300 hover:border-neutral-500 ") +
+                        (!available ? "cursor-not-allowed opacity-30 " : "")
+                      }
+                      style={{ background: v.swatch_hex || "#e5e5e5" }}
+                    >
+                      {!available && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <span className="h-px w-[120%] rotate-45 bg-neutral-500/70" />
+                        </span>
+                      )}
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    key={v.id}
+                    type="button"
+                    disabled={!available}
+                    onClick={() => onPick(o.id, v.id)}
+                    aria-pressed={active}
+                    className={
+                      "min-w-[2.75rem] rounded-lg border px-3 py-2 text-sm font-medium transition " +
+                      (active
+                        ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-maroon)]/5 text-[color:var(--brand-maroon)] "
+                        : available
+                          ? "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-400 "
+                          : "cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-400 line-through ")
+                    }
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
