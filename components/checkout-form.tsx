@@ -622,21 +622,23 @@ export function CheckoutForm({
           <Row label={t("subtotal")} value={aed(sub)} />
           {couponDiscount > 0 && <Row label={`${t("coupon")} (${coupon?.code ?? ""})`} value={`-${aed(couponDiscount)}`} valueClass="text-green-600" />}
           {coinDiscount > 0 && <Row label={t("coinDiscount")} value={`-${aed(coinDiscount)}`} valueClass="text-green-600" />}
+          {/* When a cart tier isn't offered to the emirate, resolve_delivery_fee
+              still returns the stored (inactive) fee — don't present it. */}
           <Row
             label={pickup ? t("storePickup") : toc("deliverySection")}
-            value={!feeKnown ? "…" : shipIsFree ? tc("free") : aed(shipping)}
-            valueClass={feeKnown && shipIsFree ? "text-green-600 font-semibold" : ""}
+            value={deliveryBlocked ? t("notAvailable") : !feeKnown ? "…" : shipIsFree ? tc("free") : aed(shipping)}
+            valueClass={deliveryBlocked ? "text-[color:var(--brand-maroon)] font-semibold" : feeKnown && shipIsFree ? "text-green-600 font-semibold" : ""}
           />
-          {serviceCharge > 0 && <Row label={t("serviceCharge")} value={aed(serviceCharge)} />}
-          {walletApplied > 0 && <Row label={t("walletApplied")} value={`-${aed(walletApplied)}`} valueClass="text-green-600" />}
+          {!deliveryBlocked && serviceCharge > 0 && <Row label={t("serviceCharge")} value={aed(serviceCharge)} />}
+          {!deliveryBlocked && walletApplied > 0 && <Row label={t("walletApplied")} value={`-${aed(walletApplied)}`} valueClass="text-green-600" />}
         </dl>
 
         <div className="mt-4 flex items-end justify-between border-t border-[color:var(--brand-border)] pt-4">
-          <span className="text-sm font-semibold text-neutral-700">{walletApplied > 0 ? t("amountDue") : t("total")}</span>
-          {/* Always format the payable as AED X.XX — never aed(), which renders 0 as "—". */}
-          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">AED {amountDue.toFixed(2)}</span>
+          <span className="text-sm font-semibold text-neutral-700">{walletApplied > 0 && !deliveryBlocked ? t("amountDue") : t("total")}</span>
+          {/* No valid order exists while a tier is undeliverable — suppress the total. */}
+          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">{deliveryBlocked ? "—" : `AED ${amountDue.toFixed(2)}`}</span>
         </div>
-        <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
+        {!deliveryBlocked && <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>}
 
         {!pickup && !mapConfirmed && !blocker && (
           <p className="mt-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 text-center font-medium">

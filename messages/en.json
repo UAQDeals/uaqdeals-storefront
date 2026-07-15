@@ -302,7 +302,8 @@
     "blockGroceryDeptHeadline": "{department} isn't available for delivery in your area yet",
     "blockGroceryBody": "We can't deliver these to your pinned location yet. Try a different location, or remove those items.",
     "cantDeliverTo": "Can't deliver to {emirate}",
-    "deliveryUnavailableHere": "Delivery unavailable here"
+    "deliveryUnavailableHere": "Delivery unavailable here",
+    "notAvailable": "Not available"
   },
   "orderConfirm": {
     "title": "Order placed",

@@ -302,7 +302,8 @@
     "blockGroceryDeptHeadline": "{department} غير متاح للتوصيل في منطقتك بعد",
     "blockGroceryBody": "لا يمكننا التوصيل إلى موقعك المحدد بعد. جرّب موقعاً آخر أو أزِل تلك المنتجات.",
     "cantDeliverTo": "لا يمكن التوصيل إلى {emirate}",
-    "deliveryUnavailableHere": "التوصيل غير متاح هنا"
+    "deliveryUnavailableHere": "التوصيل غير متاح هنا",
+    "notAvailable": "غير متاح"
   },
   "orderConfirm": {
     "title": "تم تأكيد الطلب",
