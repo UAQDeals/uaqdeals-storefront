@@ -294,7 +294,15 @@
     "tierNotAvailable": "{tier} delivery isn't available to {emirate}. Remove those items or choose a different address.",
     "pickupUnavailable": "Store pickup isn't available right now.",
     "itemUnavailable": "One of your items is no longer available",
-    "orderFailed": "Couldn't place your order. Please try again"
+    "orderFailed": "Couldn't place your order. Please try again",
+    "blockTierHeadline": "{tier} delivery isn't available to {emirate}",
+    "blockItemsIntro": "These items can't be delivered to {emirate}",
+    "blockAction": "Remove them, or choose a different emirate.",
+    "blockGroceryZoneHeadline": "Grocery delivery isn't available in your area yet",
+    "blockGroceryDeptHeadline": "{department} isn't available for delivery in your area yet",
+    "blockGroceryBody": "We can't deliver these to your pinned location yet. Try a different location, or remove those items.",
+    "cantDeliverTo": "Can't deliver to {emirate}",
+    "deliveryUnavailableHere": "Delivery unavailable here"
   },
   "orderConfirm": {
     "title": "Order placed",

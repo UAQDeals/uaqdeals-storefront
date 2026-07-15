@@ -294,7 +294,15 @@
     "tierNotAvailable": "{tier}: التوصيل غير متاح إلى {emirate}. أزِل تلك المنتجات أو اختر عنواناً آخر.",
     "pickupUnavailable": "الاستلام من المتجر غير متاح حالياً.",
     "itemUnavailable": "أحد المنتجات لم يعد متاحاً",
-    "orderFailed": "تعذّر إنشاء الطلب. حاول مرة أخرى"
+    "orderFailed": "تعذّر إنشاء الطلب. حاول مرة أخرى",
+    "blockTierHeadline": "{tier}: التوصيل غير متاح إلى {emirate}",
+    "blockItemsIntro": "هذه المنتجات لا يمكن توصيلها إلى {emirate}",
+    "blockAction": "أزِلها أو اختر إمارة أخرى.",
+    "blockGroceryZoneHeadline": "توصيل البقالة غير متاح في منطقتك بعد",
+    "blockGroceryDeptHeadline": "{department} غير متاح للتوصيل في منطقتك بعد",
+    "blockGroceryBody": "لا يمكننا التوصيل إلى موقعك المحدد بعد. جرّب موقعاً آخر أو أزِل تلك المنتجات.",
+    "cantDeliverTo": "لا يمكن التوصيل إلى {emirate}",
+    "deliveryUnavailableHere": "التوصيل غير متاح هنا"
   },
   "orderConfirm": {
     "title": "تم تأكيد الطلب",

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ShoppingBag, Tag, Truck, Store } from "lucide-react";
+import { Loader2, ShoppingBag, Tag, Truck, Store, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -40,6 +40,13 @@ const TIER_LABELS: Record<string, string> = {
   scheduled: "Scheduled",
 };
 const tierLabel = (t: string) => TIER_LABELS[t] ?? t;
+
+// A blocking condition that stops checkout — rendered as a persistent inline
+// alert (never a transient toast) and reflected in the Place Order button.
+type Blocker =
+  | { kind: "tier"; emirate: string; tier: string; items: string[] }
+  | { kind: "zone" }
+  | { kind: "dept"; department: string };
 
 export function CheckoutForm({
   userId,
@@ -116,7 +123,7 @@ export function CheckoutForm({
   // cart line's tier (vendor override → category → 'scheduled'), then ask
   // resolve_delivery_fee for each distinct tier at the chosen emirate. The
   // highest base_fee wins; its fee (0 when the free threshold is met) is shown.
-  const [cartTiers, setCartTiers] = useState<string[]>([]);
+  const [productTiers, setProductTiers] = useState<Record<string, string>>({});
   const [rateByTier, setRateByTier] = useState<Record<string, Rate>>({});
   const [ratesLoading, setRatesLoading] = useState(false);
   const productKey = useMemo(
@@ -128,18 +135,22 @@ export function CheckoutForm({
     let cancelled = false;
     (async () => {
       const ids = productKey ? productKey.split(",") : [];
-      if (ids.length === 0) { setCartTiers([]); return; }
+      if (ids.length === 0) { setProductTiers({}); return; }
       const supabase = createClient();
       // resolve_product_tiers applies the exact server precedence
       // (vendor delivery_tier_override → category delivery_tier → 'scheduled'),
       // so the preview can't disagree with the charged fee.
       const { data } = await supabase.rpc("resolve_product_tiers", { p_product_ids: ids });
-      const map = (data ?? {}) as Record<string, string>;
-      const tiers = new Set<string>(Object.values(map).filter(Boolean));
-      if (!cancelled) setCartTiers(Array.from(tiers));
+      if (!cancelled) setProductTiers((data ?? {}) as Record<string, string>);
     })();
     return () => { cancelled = true; };
   }, [productKey]);
+
+  // Distinct delivery tiers present in the cart.
+  const cartTiers = useMemo(
+    () => Array.from(new Set(Object.values(productTiers).filter(Boolean))),
+    [productTiers],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -171,6 +182,37 @@ export function CheckoutForm({
     [pickup, cartTiers, rateByTier],
   );
   const deliveryBlocked = blockedTiers.length > 0;
+
+  // Cart items whose tier the chosen emirate can't deliver (for the alert copy).
+  const affectedItems = useMemo(
+    () =>
+      pickup
+        ? []
+        : items.filter((i) => {
+            const tier = productTiers[i.product_id];
+            return tier != null && blockedTiers.includes(tier);
+          }),
+    [pickup, items, productTiers, blockedTiers],
+  );
+
+  // Grocery/zone unavailability is only known after the server rejects the
+  // order. Persist it as an inline alert (not a toast) until an input changes.
+  const [serverBlock, setServerBlock] = useState<
+    { kind: "zone" } | { kind: "dept"; department: string } | null
+  >(null);
+  useEffect(() => {
+    setServerBlock(null);
+  }, [emirate, productKey, mapLat, mapLng, fulfilmentType]);
+
+  // The single active checkout blocker (tier is client-known; grocery is server-known).
+  const blocker: Blocker | null = deliveryBlocked
+    ? { kind: "tier", emirate, tier: blockedTiers[0], items: affectedItems.map((i) => i.name) }
+    : serverBlock;
+  const blockedLabel = !blocker
+    ? null
+    : blocker.kind === "tier"
+      ? t("cantDeliverTo", { emirate })
+      : t("deliveryUnavailableHere");
 
   // Highest base_fee among the tiers present wins.
   const winnerRate = useMemo(() => {
@@ -288,6 +330,18 @@ export function CheckoutForm({
 
       if (error || !orderId) {
         const code = error?.message ?? "";
+        // Grocery/zone rejections become a persistent inline alert, not a toast.
+        const deptMatch = code.match(/^GROCERY_UNAVAILABLE:(.+)/);
+        if (code.includes("GROCERY_NO_ZONE")) {
+          setServerBlock({ kind: "zone" });
+          setPlacing(false);
+          return;
+        }
+        if (deptMatch) {
+          setServerBlock({ kind: "dept", department: deptMatch[1].trim() });
+          setPlacing(false);
+          return;
+        }
         const tierMatch = code.match(/TIER_NOT_AVAILABLE:(\S+) delivery is not available to (.+?)$/);
         const msg =
           tierMatch ? t("tierNotAvailable", { tier: tierLabel(tierMatch[1]), emirate: tierMatch[2] }) :
@@ -299,8 +353,6 @@ export function CheckoutForm({
           code.includes("INSUFFICIENT_STOCK") ? t("outOfStock") :
           code.includes("PRODUCT_INACTIVE")   ? t("itemUnavailable") :
           code.includes("EMPTY_CART")         ? t("fillRequired") :
-          code.match(/^GROCERY_UNAVAILABLE:/) ? t("groceryUnavailable", { department: code.split(":")[1] }) :
-          code.includes("GROCERY_NO_ZONE")     ? t("groceryNoZone") :
           code.includes("PHONE_IN_USE")        ? t("phoneInUse") :
           t("orderFailed");
         throw new Error(msg);
@@ -544,6 +596,7 @@ export function CheckoutForm({
       </div>
 
       <aside className="h-fit rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 lg:sticky lg:top-20">
+        {blocker && <CheckoutBlockAlert blocker={blocker} t={t} />}
         <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("orderSummary")}</h2>
         <ul className="mt-4 max-h-56 space-y-3 overflow-y-auto pe-1">
           {items.map((i) => (
@@ -585,18 +638,13 @@ export function CheckoutForm({
         </div>
         <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>
 
-        {deliveryBlocked && (
-          <p className="mt-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 text-center font-medium">
-            {t("tierNotAvailable", { tier: tierLabel(blockedTiers[0]), emirate })}
-          </p>
-        )}
-        {!pickup && !mapConfirmed && !deliveryBlocked && (
+        {!pickup && !mapConfirmed && !blocker && (
           <p className="mt-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 text-center font-medium">
             📍 Please set your delivery location above to continue
           </p>
         )}
-        <button onClick={placeOrder} disabled={placing || deliveryBlocked || (!pickup && !mapConfirmed)} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
-          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : <>{t("placeOrder")} · AED {amountDue.toFixed(2)}</>}
+        <button onClick={placeOrder} disabled={placing || blocker != null || (!pickup && !mapConfirmed)} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+          {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : blocker ? blockedLabel : <>{t("placeOrder")} · AED {amountDue.toFixed(2)}</>}
         </button>
         <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
           {t("backToCart")}
@@ -612,6 +660,36 @@ export function CheckoutForm({
         }
         :global(.input:focus) { border-color: var(--brand-maroon); }
       `}</style>
+    </div>
+  );
+}
+
+function CheckoutBlockAlert({ blocker, t }: { blocker: Blocker; t: ReturnType<typeof useTranslations> }) {
+  let headline: string;
+  let itemsLine: string | null = null;
+  let action: string;
+  if (blocker.kind === "tier") {
+    headline = t("blockTierHeadline", { tier: tierLabel(blocker.tier), emirate: blocker.emirate });
+    itemsLine =
+      blocker.items.length > 0
+        ? `${t("blockItemsIntro", { emirate: blocker.emirate })}: ${blocker.items.join(", ")}`
+        : null;
+    action = t("blockAction");
+  } else if (blocker.kind === "zone") {
+    headline = t("blockGroceryZoneHeadline");
+    action = t("blockGroceryBody");
+  } else {
+    headline = t("blockGroceryDeptHeadline", { department: blocker.department });
+    action = t("blockGroceryBody");
+  }
+  return (
+    <div className="mb-4 flex gap-3 rounded-2xl border border-red-200 border-s-4 border-s-[color:var(--brand-maroon)] bg-red-50/80 p-4">
+      <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--brand-maroon)]" />
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-[color:var(--brand-maroon)]">{headline}</p>
+        {itemsLine && <p className="mt-1 text-xs font-medium text-neutral-700">{itemsLine}</p>}
+        <p className="mt-1 text-xs text-neutral-600">{action}</p>
+      </div>
     </div>
   );
 }
