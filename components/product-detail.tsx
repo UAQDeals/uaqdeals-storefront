@@ -307,7 +307,11 @@ export function ProductDetail({
     : null;
 
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+    <div>
+      {/* Sticky row: gallery + buy box live in their OWN grid so the sticky
+          columns are contained to this row only. The detail/reviews blocks
+          below are siblings in normal flow — never overlapped by the sticky. */}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
       {/* ── Gallery ─────────────────────────────────────────────────────── */}
       <div className="md:sticky md:top-24 md:self-start">
         <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white">
@@ -501,9 +505,11 @@ export function ProductDetail({
         />
       )}
       </div>
+      </div>
+      {/* end sticky row */}
 
-      {/* ── Detail sections (full width, below the buy box) ───────────────── */}
-      <div className="md:col-span-2">
+      {/* ── Detail sections (full-width block, below the sticky row) ─────── */}
+      <div className="relative z-10 bg-[color:var(--brand-cream)]">
         {displayDescription && (
           <div className="mt-2 border-t border-[color:var(--brand-border)] pt-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
@@ -531,8 +537,8 @@ export function ProductDetail({
         </p>
       </div>
 
-      {/* ── Reviews section ──────────────────────────────────────────── */}
-      <div id="reviews" className="scroll-mt-24 md:col-span-2 border-t border-[color:var(--brand-border)] pt-8 mt-2">
+      {/* ── Reviews section (full-width block) ───────────────────────── */}
+      <div id="reviews" className="relative z-10 scroll-mt-24 border-t border-[color:var(--brand-border)] pt-8 mt-2 bg-[color:var(--brand-cream)]">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-bold tracking-tight">{tr("title")}</h2>
