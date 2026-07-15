@@ -130,18 +130,12 @@ export function CheckoutForm({
       const ids = productKey ? productKey.split(",") : [];
       if (ids.length === 0) { setCartTiers([]); return; }
       const supabase = createClient();
-      const { data } = await supabase
-        .from("products")
-        .select("id, vendors(delivery_tier_override), categories(delivery_tier)")
-        .in("id", ids);
-      const tiers = new Set<string>();
-      for (const p of data ?? []) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const vt = (p.vendors as any)?.delivery_tier_override?.toString().trim();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ct = (p.categories as any)?.delivery_tier?.toString().trim();
-        tiers.add(vt || ct || "scheduled");
-      }
+      // resolve_product_tiers applies the exact server precedence
+      // (vendor delivery_tier_override → category delivery_tier → 'scheduled'),
+      // so the preview can't disagree with the charged fee.
+      const { data } = await supabase.rpc("resolve_product_tiers", { p_product_ids: ids });
+      const map = (data ?? {}) as Record<string, string>;
+      const tiers = new Set<string>(Object.values(map).filter(Boolean));
       if (!cancelled) setCartTiers(Array.from(tiers));
     })();
     return () => { cancelled = true; };
