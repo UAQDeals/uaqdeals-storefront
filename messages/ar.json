@@ -314,7 +314,12 @@
     "payAt": "ادفع {amount} عند استلام الطلب.",
     "items": "المنتجات",
     "earned": "لقد كسبت {count} عملة على هذا الطلب.",
-    "getItBy": "استلمه بحلول {date}"
+    "getItBy": "استلمه بحلول {date}",
+    "courierSection": "شركة التوصيل",
+    "courierName": "الشحن عبر {courier}",
+    "courierArranged": "يتم ترتيب شركة التوصيل",
+    "trackingNumber": "رقم التتبع",
+    "trackShipment": "تتبع الشحنة"
   },
   "orders": {
     "title": "طلباتي",

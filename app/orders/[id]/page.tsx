@@ -34,10 +34,16 @@ export default async function OrderConfirmationPage({
 
   const { data: order } = await supabase
     .from("orders")
-    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, wallet_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, order_items(*, products(thumbnail_url, name))")
+    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, wallet_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, fulfilment_type, courier_id, tracking_number, couriers(name), order_items(*, products(thumbnail_url, name))")
     .eq("id", id)
     .eq("customer_id", user.id)
     .maybeSingle();
+
+  // Courier tracking URL (built server-side from the courier's template).
+  const isCourier = order?.fulfilment_type === "courier";
+  const { data: trackingUrl } = isCourier
+    ? await supabase.rpc("order_tracking_url", { p_order_id: id })
+    : { data: null };
 
   // For split parents: fetch child sub-orders with their items
   const isParent = order && !order.parent_order_id && !order.vendor_id;
@@ -90,6 +96,29 @@ export default async function OrderConfirmationPage({
                 date: new Date(order.expected_delivery_date).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" }),
               })}
             </p>
+          )}
+          {isCourier && (
+            <div className="mt-4 rounded-xl border border-[color:var(--brand-maroon)]/20 bg-[color:var(--brand-maroon)]/[0.04] p-3">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-maroon)]">
+                <Truck className="h-3.5 w-3.5" /> {t("courierSection")}
+              </p>
+              <p className="mt-2 text-sm text-neutral-800">
+                {(order.couriers as Row)?.name
+                  ? t("courierName", { courier: (order.couriers as Row).name })
+                  : t("courierArranged")}
+              </p>
+              {order.tracking_number && (
+                <p className="mt-1 text-xs text-neutral-600">
+                  {t("trackingNumber")}: <span className="font-mono text-neutral-800">{order.tracking_number}</span>
+                </p>
+              )}
+              {trackingUrl && (
+                <a href={trackingUrl as string} target="_blank" rel="noreferrer"
+                  className="bg-brand-gradient mt-3 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white">
+                  <Truck className="h-3.5 w-3.5" /> {t("trackShipment")}
+                </a>
+              )}
+            </div>
           )}
         </section>
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">

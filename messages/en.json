@@ -314,7 +314,12 @@
     "payAt": "Pay {amount} when you receive the order.",
     "items": "Items",
     "earned": "You earned {count} coins on this order.",
-    "getItBy": "Get it by {date}"
+    "getItBy": "Get it by {date}",
+    "courierSection": "Courier",
+    "courierName": "Shipped by {courier}",
+    "courierArranged": "Courier being arranged",
+    "trackingNumber": "Tracking number",
+    "trackShipment": "Track shipment"
   },
   "orders": {
     "title": "My orders",
