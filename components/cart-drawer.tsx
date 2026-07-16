@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight, Plus as PlusIcon, Tag } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight, Plus as PlusIcon, Tag, AlertTriangle } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useCart } from "@/lib/cart";
+import { useCartVariantValidation } from "@/lib/use-cart-validation";
 import { aed } from "@/lib/format";
 
 export type UpsellProduct = {
@@ -23,10 +24,13 @@ export function CartDrawer({ upsells }: { upsells: UpsellProduct[] }) {
   const tc = useTranslations("common");
   const tp = useTranslations("product");
   const tco = useTranslations("checkout");
+  const tcart = useTranslations("cartPage");
   const locale = useLocale();
   const isRTL = locale === "ar";
 
   const { items, drawerOpen, closeDrawer, setQty, remove, subtotal, add, coupon, setCoupon } = useCart();
+  const variantIssues = useCartVariantValidation(items);
+  const hasBlockingIssue = Object.keys(variantIssues).length > 0;
 
   const [couponInput, setCouponInput] = useState("");
   const [couponBusy, setCouponBusy] = useState(false);
@@ -128,6 +132,17 @@ export function CartDrawer({ upsells }: { upsells: UpsellProduct[] }) {
                         <button onClick={() => remove(i.id)} aria-label={tc("remove")} className="shrink-0 text-neutral-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
                       </div>
                       {i.variant && <p className="text-xs text-neutral-500">{i.variant}</p>}
+                      {variantIssues[i.id] && (
+                        <p className="mt-1 flex items-start gap-1 text-[11px] font-medium text-red-600">
+                          <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                          <span>
+                            {variantIssues[i.id] === "oos" ? tcart("variantOOS") : tcart("variantUnavailable")}{" "}
+                            <Link href={`/products/${i.product_id}`} onClick={closeDrawer} className="font-semibold text-[color:var(--brand-maroon)] underline">
+                              {tcart("reselect")}
+                            </Link>
+                          </span>
+                        </p>
+                      )}
                       <div className="mt-1.5 flex items-center justify-between">
                         <div className="inline-flex items-center rounded-full border border-neutral-200">
                           <button onClick={() => setQty(i.id, i.qty - 1)} aria-label="−" className="inline-flex h-7 w-7 items-center justify-center text-neutral-700 hover:bg-neutral-100"><Minus className="h-3.5 w-3.5" /></button>
@@ -221,9 +236,15 @@ export function CartDrawer({ upsells }: { upsells: UpsellProduct[] }) {
                 </div>
               </div>
 
-              <Link href="/checkout" onClick={closeDrawer} className="bg-brand-gradient inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white">
-                {t("checkout")} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-              </Link>
+              {hasBlockingIssue ? (
+                <div className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-neutral-200 px-5 py-3 text-sm font-semibold text-neutral-500">
+                  {t("checkout")}
+                </div>
+              ) : (
+                <Link href="/checkout" onClick={closeDrawer} className="bg-brand-gradient inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white">
+                  {t("checkout")} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                </Link>
+              )}
               <Link href="/cart" onClick={closeDrawer} className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-neutral-200 px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-50">
                 {t("viewCart")}
               </Link>

@@ -121,7 +121,11 @@
     "freeDeliveryHint": "Add {amount} more for free delivery.",
     "total": "Total",
     "vatNote": "Inclusive of VAT where applicable.",
-    "checkout": "Continue to Checkout"
+    "checkout": "Continue to Checkout",
+    "variantUnavailable": "This option is no longer available — please re-select",
+    "variantOOS": "This option is out of stock — please re-select",
+    "reselect": "Re-select",
+    "fixBeforeCheckout": "Update the highlighted items before checkout"
   },
   "deals": {
     "title": "Today's Deals",
