@@ -3,6 +3,7 @@ import { ShoppingBag } from "lucide-react";
 import { aed } from "@/lib/format";
 import { getTranslations } from "next-intl/server";
 import { QuickAddButton } from "@/components/quick-add-button";
+import { rowHasOptions } from "@/lib/variants";
 
 export type ProductCard = {
   id: string;
@@ -12,6 +13,7 @@ export type ProductCard = {
   thumbnail_url: string | null;
   images: string[] | null;
   variants?: Array<{ name: string; options: string[] }> | null;
+  product_options?: Array<unknown> | null;
   requires_prescription?: boolean | null;
   stock_quantity?: number | null;
   track_stock?: boolean | null;
@@ -56,7 +58,7 @@ export async function FeaturedProducts({
             const img = p.thumbnail_url || (Array.isArray(p.images) && p.images.length ? p.images[0] : null);
             const hasSale = p.sale_price != null && Number(p.sale_price) > 0 && p.price != null && Number(p.sale_price) < Number(p.price);
             const display = hasSale ? p.sale_price : p.price;
-            const hasVariants = Array.isArray(p.variants) && p.variants.length > 0;
+            const hasVariants = rowHasOptions(p);
             const oos = Boolean(p.track_stock) && (p.stock_quantity == null || Number(p.stock_quantity) <= 0);
             const salePct = hasSale ? Math.round(((Number(p.price) - Number(p.sale_price)) / Number(p.price)) * 100) : 0;
 

@@ -4,6 +4,7 @@ import { aed } from "@/lib/format";
 import { CategoryRail } from "./category-rail";
 import { QuickAddButton } from "@/components/quick-add-button";
 import type { ProductCard } from "@/components/featured-products";
+import { rowHasOptions } from "@/lib/variants";
 
 type Cat = { id: string; name: string };
 
@@ -72,7 +73,7 @@ export function ShopCategoryDesktop({
               const hasSale =
                 p.sale_price != null && Number(p.sale_price) > 0 && p.price != null && Number(p.sale_price) < Number(p.price);
               const display = hasSale ? p.sale_price : p.price;
-              const hasVariants = Array.isArray(p.variants) && p.variants.length > 0;
+              const hasVariants = rowHasOptions(p);
               const oos = Boolean(p.track_stock) && (p.stock_quantity == null || Number(p.stock_quantity) <= 0);
               const salePct = hasSale ? Math.round(((Number(p.price) - Number(p.sale_price)) / Number(p.price)) * 100) : 0;
 

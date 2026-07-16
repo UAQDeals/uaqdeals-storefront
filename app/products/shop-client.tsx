@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingBag, SlidersHorizontal, X, Search, ChevronDown } from "lucide-react";
 import { QuickAddButton } from "@/components/quick-add-button";
 import { aed } from "@/lib/format";
+import { rowHasOptions } from "@/lib/variants";
 
 type Product = {
   id: string;
@@ -19,6 +20,7 @@ type Product = {
   stock_quantity: number | null;
   requires_prescription: boolean | null;
   variants: Array<{ name: string; options: string[] }> | null;
+  product_options?: Array<unknown> | null;
 };
 
 type Category = { id: string; name: string };
@@ -239,7 +241,7 @@ export function ShopClient({
                 const hasSale = p.sale_price != null && Number(p.sale_price) > 0 && p.price != null && Number(p.sale_price) < Number(p.price);
                 const display = hasSale ? p.sale_price : p.price;
                 const salePct = hasSale ? Math.round(((Number(p.price) - Number(p.sale_price)) / Number(p.price)) * 100) : 0;
-                const hasVariants = Array.isArray(p.variants) && p.variants.length > 0;
+                const hasVariants = rowHasOptions(p);
                 const oos = Boolean(p.track_stock) && (p.stock_quantity == null || Number(p.stock_quantity) <= 0);
 
                 return (

@@ -13,7 +13,7 @@ export default async function FeaturedPage() {
   const supabase = await createClient();
   const { data: raw } = await supabase
     .from("products")
-    .select("id, name, price, sale_price, thumbnail_url, images, variants, requires_prescription, stock_quantity, track_stock, condition")
+    .select("id, name, price, sale_price, thumbnail_url, images, variants, requires_prescription, stock_quantity, track_stock, condition, product_options(id)")
     .eq("status", "active")
     .eq("is_featured", true)
     .order("created_at", { ascending: false })
@@ -27,6 +27,7 @@ export default async function FeaturedPage() {
     thumbnail_url: p.thumbnail_url,
     images: p.images ?? null,
     variants: p.variants ?? null,
+    product_options: p.product_options ?? null,
     requires_prescription: p.requires_prescription ?? false,
     stock_quantity: p.stock_quantity ?? null,
     track_stock: p.track_stock ?? false,

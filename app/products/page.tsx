@@ -74,7 +74,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   // Products query
   let query = supabase
     .from("products")
-    .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id")
+    .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id, product_options(id)")
     .eq("status", "active")
     .in("vendor_id", prodVendorIds);
 

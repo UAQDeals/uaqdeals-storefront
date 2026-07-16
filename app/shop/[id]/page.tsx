@@ -94,7 +94,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
 
   const { data: gridRaw } = await supabase
     .from("products")
-    .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id")
+    .select("id, name, price, sale_price, thumbnail_url, images, condition, track_stock, stock_quantity, requires_prescription, variants, category_id, product_options(id)")
     .in("category_id", subtreeIds)
     .eq("status", "active")
     .order("is_featured", { ascending: false })
@@ -104,6 +104,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   const gridProducts: ProductCard[] = (gridRaw ?? []).map((p: any) => ({
     id: p.id, name: p.name, price: p.price, sale_price: p.sale_price,
     thumbnail_url: p.thumbnail_url, images: p.images ?? null, variants: p.variants ?? null,
+    product_options: p.product_options ?? null,
     requires_prescription: p.requires_prescription ?? false,
     stock_quantity: p.stock_quantity ?? null, track_stock: p.track_stock ?? false,
     condition: p.condition ?? null,

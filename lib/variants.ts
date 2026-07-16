@@ -41,6 +41,16 @@ export type VariantTree = { options: VOption[]; variants: VVariant[] };
 // selection: optionId -> valueId
 export type VariantSelection = Record<string, string>;
 
+// A product "needs options" (→ quick-add must route to the PDP, not add to
+// cart) if it has EITHER legacy products.variants jsonb OR relational
+// product_options rows. Grid queries embed product_options(id) for the second
+// signal; without it, only the legacy signal is used.
+export function rowHasOptions(row: { variants?: unknown; product_options?: unknown }): boolean {
+  const legacy = Array.isArray(row.variants) && row.variants.length > 0;
+  const relational = Array.isArray(row.product_options) && row.product_options.length > 0;
+  return legacy || relational;
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Coerce the raw RPC json (unknown shape) into a typed tree, sorted by position.
