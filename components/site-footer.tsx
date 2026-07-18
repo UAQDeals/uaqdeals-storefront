@@ -183,11 +183,11 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
             {/* Contact */}
             <div className="mt-5 space-y-2.5">
               <a
-                href="tel:+971542205775"
+                href="tel:+971542205885"
                 className="flex items-center gap-2.5 text-[12.5px] text-neutral-400 transition-colors hover:text-white"
               >
                 <Phone className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
-                +971 54 220 5775
+                +971 54 220 5885
               </a>
               <Link
                 href="/contact"

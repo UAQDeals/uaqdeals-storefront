@@ -151,7 +151,10 @@ export default async function CategoriesPage() {
             </div>
             <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
               {(productCats ?? []).map((c) => {
-                const img = CAT_IMAGES[c.name] ?? DEFAULT_IMG;
+                // Prefer the admin-uploaded category image; fall back to curated.
+                const img = (c.image_url && c.image_url.length > 0)
+                  ? c.image_url
+                  : (CAT_IMAGES[c.name] ?? DEFAULT_IMG);
                 return (
                   <Link key={c.id} href={"/shop/" + c.id}
                     className="group relative block overflow-hidden rounded-2xl"

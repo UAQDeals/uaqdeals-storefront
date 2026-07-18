@@ -26,7 +26,7 @@ export async function getEmirate(): Promise<string | null> {
 // derives from this, so the storefront and the mobile app read the same
 // data the same way.
 
-type AvailCategory = { id: string; name: string; emirates: string[] | null };
+type AvailCategory = { id: string; name: string; image_url: string | null; emirates: string[] | null };
 type AvailType = { slug: string; is_product: boolean | null; emirates: string[] | null };
 
 export const getAvailability = cache(
@@ -36,7 +36,7 @@ export const getAvailability = cache(
       const [cats, types] = await Promise.all([
         supabase
           .from("categories")
-          .select("id, name, emirates")
+          .select("id, name, image_url, emirates")
           .filter("parent_id", "is", null)
           .eq("is_active", true)
           .order("sort_order")
@@ -94,13 +94,13 @@ export const isTypeEnabled = cache(async (slug: string): Promise<boolean> => {
 // display order — for the categories page grid and anywhere else that
 // lists shoppable categories.
 export const enabledProductCategories = cache(
-  async (): Promise<{ id: string; name: string }[]> => {
+  async (): Promise<{ id: string; name: string; image_url: string | null }[]> => {
     const em = await getEmirate();
     if (!em) return [];
     const { categories } = await getAvailability();
     return categories
       .filter((c) => inList(c.emirates, em))
-      .map(({ id, name }) => ({ id, name }));
+      .map(({ id, name, image_url }) => ({ id, name, image_url }));
   }
 );
 

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -8,6 +9,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { TopLoader } from "@/components/top-loader";
 import { showProducts as emirateShowProducts, availabilitySnapshot } from "@/lib/emirate";
 import "./globals.css";
 
@@ -57,6 +59,9 @@ export default async function RootLayout({
     <html lang={locale} dir={isRTL ? "rtl" : "ltr"}>
       <body className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <Suspense fallback={null}>
+            <TopLoader />
+          </Suspense>
           <div className="flex min-h-[100dvh] flex-col">
             <SiteHeader showProducts={showProd} availability={availability} />
             <main className="flex-1">{children}</main>
