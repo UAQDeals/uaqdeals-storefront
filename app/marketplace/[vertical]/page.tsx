@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { MarketplaceList } from "./marketplace-list";
+import { MarketplaceNav } from "./marketplace-nav";
 import { CategoryHero } from "@/components/category-hero";
 import Link from "next/link";
 
@@ -68,7 +69,9 @@ export default async function MarketplacePage({
   // Used items: landing page only — items surface in the main shop with USED badge
   if (cfg.landingOnly) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+      <>
+      <MarketplaceNav active={vertical} isRTL={isRTL} />
+      <div className="mx-auto max-w-2xl px-4 pt-10 pb-20 text-center">
         <div className="mb-6 text-6xl">📱</div>
         <h1 className="text-3xl font-extrabold text-neutral-900 mb-3">
           {isRTL ? "بيع أجهزتك الإلكترونية" : "Sell Your Electronic Devices"}
@@ -109,6 +112,7 @@ export default async function MarketplacePage({
           {isRTL ? "أدرج جهازي ←" : "List My Device →"}
         </Link>
       </div>
+      </>
     );
   }
 
@@ -122,6 +126,7 @@ export default async function MarketplacePage({
 
   return (
     <>
+      <MarketplaceNav active={vertical} isRTL={isRTL} />
       <CategoryHero title={isRTL ? cfg.titleAr : cfg.title} />
       <MarketplaceList
         vertical={vertical}
