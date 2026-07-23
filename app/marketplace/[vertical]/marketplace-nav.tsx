@@ -1,39 +1,51 @@
 import Link from "next/link";
+import { Smartphone, Home, Hash, Car } from "lucide-react";
 
-const ITEMS: { key: string; en: string; ar: string; emoji: string; href: string }[] = [
-  { key: "used_items", en: "List Used Gadgets", ar: "أجهزة مستعملة", emoji: "📱", href: "/marketplace/used_items" },
-  { key: "real_estate", en: "Real Estate", ar: "العقارات", emoji: "🏠", href: "/marketplace/real_estate" },
-  { key: "fancy_numbers", en: "VVIP Numbers & Plates", ar: "أرقام ولوحات مميزة", emoji: "🔢", href: "/marketplace/fancy_numbers" },
-  { key: "automotive", en: "Automotive", ar: "السيارات", emoji: "🚗", href: "/marketplace/automotive" },
-];
+const ITEMS = [
+  { key: "used_items", en: "List Used Gadgets", ar: "أجهزة مستعملة", sub: "Sell your devices", subAr: "بِع أجهزتك", Icon: Smartphone, grad: ["#7C3AED", "#9333EA"] },
+  { key: "real_estate", en: "Real Estate", ar: "العقارات", sub: "Property & rentals", subAr: "عقارات وإيجارات", Icon: Home, grad: ["#0D9488", "#0F766E"] },
+  { key: "fancy_numbers", en: "VVIP Numbers & Plates", ar: "أرقام ولوحات مميّزة", sub: "Phone & car plates", subAr: "أرقام هواتف ولوحات", Icon: Hash, grad: ["#2563EB", "#1D4ED8"] },
+  { key: "automotive", en: "Automotive", ar: "السيارات", sub: "Cars & bikes", subAr: "سيارات ودرّاجات", Icon: Car, grad: ["#8E1B3A", "#C72931"] },
+] as const;
 
-/** Category switcher shown at the top of every marketplace vertical page. */
+/** Premium category switcher shown at the top of every marketplace vertical. */
 export function MarketplaceNav({ active, isRTL }: { active: string; isRTL: boolean }) {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-5">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3.5">
         {ITEMS.map((it) => {
           const isActive = it.key === active;
+          const Icon = it.Icon;
+          const gradient = `linear-gradient(135deg, ${it.grad[0]}, ${it.grad[1]})`;
           return (
             <Link
               key={it.key}
-              href={it.href}
+              href={`/marketplace/${it.key}`}
+              style={isActive ? { backgroundImage: gradient } : undefined}
               className={
-                "group flex items-center gap-3 rounded-2xl border p-3.5 transition-all " +
+                "group relative flex items-center gap-3 overflow-hidden rounded-2xl border p-3 transition-all duration-200 sm:p-4 " +
                 (isActive
-                  ? "border-transparent bg-gradient-to-br from-[#8E1B3A] to-[#C72931] text-white shadow-lg"
-                  : "border-neutral-200 bg-white text-neutral-800 hover:border-[#C72931]/40 hover:shadow-md")
+                  ? "border-transparent text-white shadow-lg shadow-black/10"
+                  : "border-neutral-200/80 bg-white hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md")
               }
             >
               <span
+                style={!isActive ? { backgroundImage: gradient } : undefined}
                 className={
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl " +
-                  (isActive ? "bg-white/20" : "bg-neutral-100 group-hover:bg-[#C72931]/10")
+                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-sm " +
+                  (isActive ? "bg-white/20" : "")
                 }
               >
-                {it.emoji}
+                <Icon className="h-5 w-5 text-white" strokeWidth={2.2} />
               </span>
-              <span className="text-sm font-bold leading-tight">{isRTL ? it.ar : it.en}</span>
+              <span className="min-w-0">
+                <span className={"block truncate text-sm font-bold leading-tight " + (isActive ? "text-white" : "text-neutral-900")}>
+                  {isRTL ? it.ar : it.en}
+                </span>
+                <span className={"block truncate text-[11px] " + (isActive ? "text-white/80" : "text-neutral-500")}>
+                  {isRTL ? it.subAr : it.sub}
+                </span>
+              </span>
             </Link>
           );
         })}
