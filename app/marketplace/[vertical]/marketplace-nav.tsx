@@ -11,7 +11,7 @@ const ITEMS = [
 /** Premium category switcher shown at the top of every marketplace vertical. */
 export function MarketplaceNav({ active, isRTL }: { active: string; isRTL: boolean }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-5">
+    <div className="mx-auto max-w-6xl px-4 pt-5 pb-6">
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3.5">
         {ITEMS.map((it) => {
           const isActive = it.key === active;
