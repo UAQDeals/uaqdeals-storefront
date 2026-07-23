@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { dedicatedFor } from "@/lib/service-routes";
 import { getTranslations } from "next-intl/server";
 import { isTypeEnabled } from "@/lib/emirate";
@@ -90,7 +91,7 @@ function ServiceCard({
   return (
     <Link
       href={routeForSlug(slug)}
-      className="group relative block overflow-hidden rounded-2xl"
+      className="group relative block overflow-hidden rounded-[20px] shadow-md ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
       style={{ aspectRatio: "16/9" }}
     >
       {/* Background image */}
@@ -98,24 +99,32 @@ function ServiceCard({
       <img
         src={img}
         alt={name}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      {/* Gradient overlay */}
+      {/* Legibility scrim — darker toward the bottom (mirrors the app tile) */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)",
+            "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.35) 62%, rgba(0,0,0,0.85) 100%)",
         }}
       />
       {/* Hover tint */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{ background: "rgba(142,27,58,0.18)" }}
       />
+      {/* Frosted glass emoji chip */}
+      <div className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-xl border border-white/35 bg-white/20 text-lg backdrop-blur-sm">
+        {emoji}
+      </div>
+      {/* Open affordance */}
+      <div className="absolute bottom-3 right-3 flex h-6 w-6 translate-y-1 items-center justify-center rounded-full bg-white/90 text-neutral-800 opacity-0 shadow transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+      </div>
       {/* Label */}
-      <div className="absolute bottom-0 inset-x-0 p-3.5">
-        <p className="text-white font-semibold text-[13.5px] leading-snug drop-shadow-sm">
+      <div className="absolute inset-x-0 bottom-0 p-3.5">
+        <p className="text-[13.5px] font-semibold leading-snug text-white drop-shadow-sm">
           {name}
         </p>
       </div>
@@ -171,23 +180,25 @@ export default async function ServicesPage() {
       <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10 space-y-10">
         {visibleSections.map((section) => (
           <section key={section.title.en}>
-            {/* Section title */}
-            <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-[15px] font-bold text-neutral-800">
+            {/* Section title — gold accent bar + heading (mirrors the app) */}
+            <div className="mb-4 flex items-center gap-2.5">
+              <span
+                className="h-5 w-1 rounded-full"
+                style={{ background: "linear-gradient(180deg,#E7C56A,#C9A24B)" }}
+              />
+              <h2 className="text-lg font-bold tracking-tight text-neutral-900">
                 {section.title.en}
               </h2>
-              <div className="flex-1 h-px bg-neutral-200" />
             </div>
 
-            {/* Grid */}
+            {/* Grid — 2-up on mobile like the app, wider on desktop */}
             <div
-              className="grid gap-3"
-              style={{
-                gridTemplateColumns:
-                  section.items.length === 2
-                    ? "repeat(2, 1fr)"
-                    : "repeat(auto-fill, minmax(240px, 1fr))",
-              }}
+              className={
+                "grid gap-3 sm:gap-4 " +
+                (section.items.length === 2
+                  ? "grid-cols-2"
+                  : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4")
+              }
             >
               {section.items.map((item) => (
                 <ServiceCard
