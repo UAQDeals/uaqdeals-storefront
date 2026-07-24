@@ -23,7 +23,7 @@ export function MidBanner({ banners }: { banners: BannerItem[] }) {
           <picture>
             {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={b.image_url} alt={b.title ?? ""} className="w-full object-cover max-h-[200px] hover:scale-[1.01] transition-transform duration-500" />
+            <img src={b.image_url} alt={b.title ?? ""} className="aspect-[2/1] w-full object-cover hover:scale-[1.01] transition-transform duration-500 md:aspect-[16/5]" />
           </picture>
         </Link>
       </div>
@@ -37,7 +37,7 @@ export function MidBanner({ banners }: { banners: BannerItem[] }) {
             <picture>
               {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={b.image_url} alt={b.title ?? ""} className="w-full object-cover max-h-[180px] hover:scale-[1.01] transition-transform duration-500" />
+              <img src={b.image_url} alt={b.title ?? ""} className="aspect-[16/9] w-full object-cover hover:scale-[1.01] transition-transform duration-500" />
             </picture>
           </Link>
         ))}
