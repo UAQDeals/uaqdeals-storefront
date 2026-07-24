@@ -127,7 +127,7 @@ export function DealFinderChat({
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
+          className="fixed bottom-6 left-6 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
           style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
         >
           <Sparkles className="h-4 w-4" /> Deals AI
@@ -136,7 +136,7 @@ export function DealFinderChat({
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed inset-x-0 bottom-0 z-50 flex justify-end sm:inset-auto sm:bottom-6 sm:right-6">
+        <div className="fixed inset-x-0 bottom-0 z-50 flex justify-start sm:inset-auto sm:bottom-6 sm:left-6">
           <div className="flex h-[80vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:h-[70vh] sm:w-[380px] sm:rounded-2xl">
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 text-white" style={{ background: "linear-gradient(135deg, #4E0A1A, #8E1B3A, #B4203A)" }}>
