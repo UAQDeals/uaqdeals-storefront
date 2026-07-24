@@ -127,7 +127,7 @@ export function DealFinderChat({
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 left-6 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
+          className="fixed bottom-20 left-4 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-90 sm:bottom-6 sm:left-6"
           style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
         >
           <Sparkles className="h-4 w-4" /> Deals AI
