@@ -90,7 +90,7 @@ export function HotelBookingForm() {
       </div>
 
       <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
-        <div className="rounded-2xl p-4 flex items-center gap-3 text-white" style={{ background: "linear-gradient(135deg, #311B92, #4527A0)" }}>
+        <div className="rounded-2xl p-4 flex items-center gap-3 text-white" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
           <Hotel className="w-7 h-7" />
           <div>
             <p className="text-[16px] font-extrabold">{isRTL ? "اعثر على إقامتك المثالية" : "Find Your Perfect Stay"}</p>
@@ -159,7 +159,7 @@ export function HotelBookingForm() {
 
         <button onClick={submit} disabled={loading}
           className="w-full h-13 rounded-2xl text-white font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ background: "#311B92", height: 52 }}>
+          style={{ background: "#C72931", height: 52 }}>
           {loading ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : <><Hotel className="w-5 h-5" /> {isRTL ? "إرسال الطلب" : "Submit Enquiry"}</>}
         </button>
         <p className="text-center text-[11px] text-neutral-500">{isRTL ? "سيردّ فريق الكونسيرج خلال ساعتين" : "Our concierge will respond within 2 hours"}</p>

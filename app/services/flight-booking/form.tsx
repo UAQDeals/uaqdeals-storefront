@@ -92,7 +92,7 @@ export function FlightBookingForm() {
       </div>
 
       <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
-        <div className="rounded-2xl p-4 flex items-center gap-3 text-white" style={{ background: "linear-gradient(135deg, #01579B, #0277BD)" }}>
+        <div className="rounded-2xl p-4 flex items-center gap-3 text-white" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
           <PlaneTakeoff className="w-7 h-7" />
           <div>
             <p className="text-[16px] font-extrabold">{isRTL ? "احجز رحلتك" : "Book Your Flight"}</p>
@@ -172,7 +172,7 @@ export function FlightBookingForm() {
 
         <button onClick={submit} disabled={loading}
           className="w-full rounded-2xl text-white font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ background: "#01579B", height: 52 }}>
+          style={{ background: "#C72931", height: 52 }}>
           {loading ? (isRTL ? "جاري الإرسال..." : "Submitting...") : <><Plane className="w-5 h-5" /> {isRTL ? "إرسال الطلب" : "Submit Enquiry"}</>}
         </button>
         <p className="text-center text-[11px] text-neutral-500">{isRTL ? "سيرد مكتب السفر لدينا خلال ساعتين" : "Our travel desk will respond within 2 hours"}</p>

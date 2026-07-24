@@ -32,13 +32,15 @@ export default async function SellPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
-      <Link href={`/marketplace/${vertical}`} className="text-sm text-neutral-500 hover:text-[#8E1B3A]">
-        {isRTL ? "← رجوع" : "← Back"}
-      </Link>
-      <h1 className="mt-3 text-2xl font-extrabold text-neutral-900">{isRTL ? meta.titleAr : meta.title}</h1>
-      <p className="mt-1 text-sm text-neutral-500">{isRTL ? "ستتم مراجعة إعلانك من قبل UAQ Deals قبل نشره." : "Your listing will be reviewed by UAQ Deals before going live."}</p>
+      <div className="mb-6 rounded-2xl px-5 py-6 text-white shadow-md" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+        <Link href={`/marketplace/${vertical}`} className="text-sm text-white/70 hover:text-white">
+          {isRTL ? "← رجوع" : "← Back"}
+        </Link>
+        <h1 className="mt-2 text-2xl font-extrabold">{isRTL ? meta.titleAr : meta.title}</h1>
+        <p className="mt-1 text-sm text-white/85">{isRTL ? "ستتم مراجعة إعلانك من قبل UAQ Deals قبل نشره." : "Your listing will be reviewed by UAQ Deals before going live."}</p>
+      </div>
 
-      <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8">
         {vertical === "used_items" ? (
           <SellUsedItemForm userId={auth.user.id} />
         ) : (
