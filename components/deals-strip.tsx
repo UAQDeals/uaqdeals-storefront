@@ -1,8 +1,27 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { aed } from "@/lib/format";
+
+// Perpetual 2-hour flash-deals countdown (mirrors the customer app). Client-only
+// (set after mount) to avoid a hydration mismatch.
+function useFlashCountdown() {
+  const [t, setT] = useState<string>("");
+  useEffect(() => {
+    const epoch = Date.UTC(2026, 0, 1);
+    const cycle = 2 * 60 * 60 * 1000;
+    const two = (n: number) => String(n).padStart(2, "0");
+    const tick = () => {
+      const left = cycle - ((Date.now() - epoch) % cycle);
+      setT(`${two(Math.floor(left / 3600000))}:${two(Math.floor((left % 3600000) / 60000))}:${two(Math.floor((left % 60000) / 1000))}`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return t;
+}
 
 export type DealCard = {
   id: string;
@@ -26,25 +45,33 @@ export function DealsStrip({
   seeAll: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const countdown = useFlashCountdown();
   if (!deals.length) return null;
 
   return (
     <section className="border-t border-neutral-100 py-10">
       <div className="mx-auto max-w-[1320px] px-5 md:px-8">
         {/* Section header — Zalando style */}
-        <div className="mb-5 flex items-end justify-between">
+        <div className="mb-5 flex items-end justify-between gap-3">
           <div>
             <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-[color:var(--brand-maroon)] mb-1">
               {subtitle}
             </p>
             <h2 className="text-[22px] font-extrabold tracking-tight text-neutral-900">{title}</h2>
           </div>
-          <Link
-            href="/deals"
-            className="text-[12px] font-bold text-neutral-900 underline underline-offset-2 hover:text-[color:var(--brand-maroon)] transition-colors"
-          >
-            {seeAll} →
-          </Link>
+          <div className="flex shrink-0 items-center gap-3">
+            {countdown && (
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#c72931]/10 px-2.5 py-1 text-[11px] font-bold tabular-nums text-[#c72931]">
+                🔥 Ends in {countdown}
+              </span>
+            )}
+            <Link
+              href="/deals"
+              className="text-[12px] font-bold text-neutral-900 underline underline-offset-2 hover:text-[color:var(--brand-maroon)] transition-colors"
+            >
+              {seeAll} →
+            </Link>
+          </div>
         </div>
 
         {/* Horizontal scroll */}

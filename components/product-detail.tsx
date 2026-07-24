@@ -10,6 +10,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { PrescriptionUploadModal } from "@/components/prescription-upload-modal";
+import { DealFinderChat } from "@/components/deal-finder-chat";
 import {
   type VariantTree,
   type VOption,
@@ -28,6 +29,7 @@ type Product = {
   stock_quantity: number | null; track_stock: boolean;
   requires_prescription: boolean; vendor_id: string | null; brand: string | null;
   unit: string | null; vendor_name: string | null; condition?: string | null;
+  category_id?: string | null;
   average_rating: number | null; review_count: number;
   specs?: Record<string, string> | null; sku?: string | null;
   is_halal?: boolean; weight_based?: boolean; weight_unit?: string | null;
@@ -308,6 +310,13 @@ export function ProductDetail({
 
   return (
     <div>
+      <DealFinderChat
+        productId={p.id}
+        productName={p.name}
+        price={p.price}
+        salePrice={p.sale_price}
+        categoryId={p.category_id ?? null}
+      />
       {/* Sticky row: gallery + buy box live in their OWN grid so the sticky
           columns are contained to this row only. The detail/reviews blocks
           below are siblings in normal flow — never overlapped by the sticky. */}
