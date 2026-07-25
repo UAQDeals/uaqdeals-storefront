@@ -67,8 +67,12 @@ export function DeliveryMapPicker({ onConfirm, initialLat, initialLng }: Props) 
       });
 
       const map = L.map(containerRef.current, { zoomControl: true }).setView([lat, lng], 14);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "\u00a9 OpenStreetMap contributors",
+      // CARTO Voyager basemap \u2014 clean modern style with English/Latin labels
+      // (raw OSM tiles render Arabic-only labels in the UAE).
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        attribution: "\u00a9 OpenStreetMap contributors \u00a9 CARTO",
+        subdomains: "abcd",
+        maxZoom: 20,
       }).addTo(map);
 
       const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
