@@ -67,12 +67,11 @@ export function DeliveryMapPicker({ onConfirm, initialLat, initialLng }: Props) 
       });
 
       const map = L.map(containerRef.current, { zoomControl: true }).setView([lat, lng], 14);
-      // CARTO Voyager basemap \u2014 clean modern style with English/Latin labels
-      // (raw OSM tiles render Arabic-only labels in the UAE).
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        attribution: "\u00a9 OpenStreetMap contributors \u00a9 CARTO",
-        subdomains: "abcd",
-        maxZoom: 20,
+      // Esri World Street Map \u2014 English labels + strong UAE coverage
+      // (raw OSM/CARTO render Arabic-only local names in the Gulf).
+      L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles \u00a9 Esri",
+        maxZoom: 19,
       }).addTo(map);
 
       const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
