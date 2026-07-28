@@ -16,10 +16,7 @@ export async function ServiceHero() {
     : t("yourArea");
   return (
     <section className="mx-auto max-w-6xl px-4 pt-6">
-      <div
-        className="relative overflow-hidden rounded-3xl px-6 py-10 sm:px-10 sm:py-14"
-        style={{ background: "linear-gradient(135deg, #8E1B3A 0%, #C72931 55%, #F24732 100%)" }}
-      >
+      <div className="bg-brand-gradient relative overflow-hidden rounded-3xl px-6 py-10 sm:px-10 sm:py-14">
         <span className="pointer-events-none absolute -top-10 -end-10 h-40 w-40 rounded-full bg-white/10" aria-hidden />
         <span className="pointer-events-none absolute -bottom-12 -start-8 h-44 w-44 rounded-full bg-white/5" aria-hidden />
         <p className="text-[12px] font-bold uppercase tracking-[3px] text-white/70">{t("serviceHeroEyebrow")}</p>

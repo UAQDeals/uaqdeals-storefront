@@ -27,9 +27,10 @@ export function VendorPortalNav({ vendorName }: { vendorName: string }) {
 
   return (
     <aside className="hidden w-56 shrink-0 sm:block">
-      <div className="rounded-xl border border-neutral-200 bg-white p-4">
-        <p className="text-xs uppercase tracking-wide text-neutral-400">Vendor</p>
-        <p className="mt-0.5 truncate text-sm font-bold text-neutral-900">{vendorName}</p>
+      <div className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 shadow-[var(--shadow-sm)]">
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+        <p className="eyebrow">Vendor</p>
+        <p className="font-display mt-0.5 truncate text-[15px] font-semibold text-[color:var(--ink)]">{vendorName}</p>
       </div>
       <nav className="mt-3 space-y-1">
         {NAV.map((item) => {
@@ -39,19 +40,20 @@ export function VendorPortalNav({ vendorName }: { vendorName: string }) {
               key={item.href}
               href={item.href}
               className={
-                "block rounded-lg px-3 py-2 text-sm font-medium transition-colors " +
+                "relative block rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all " +
                 (active
-                  ? "bg-gradient-to-r from-[#8E1B3A] to-[#C72931] text-white"
-                  : "text-neutral-700 hover:bg-neutral-100")
+                  ? "bg-brand-gradient text-white shadow-[var(--shadow-card)]"
+                  : "text-[color:var(--ink)]/80 hover:bg-[color:var(--paper-2)] hover:text-[color:var(--brand-maroon)]")
               }
             >
+              {active && <span className="absolute inset-y-2 start-0 w-1 rounded-full bg-[color:var(--brand-gold)]" aria-hidden />}
               {item.label}
             </Link>
           );
         })}
         <button
           onClick={signOut}
-          className="mt-2 block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+          className="mt-2 block w-full rounded-xl px-3.5 py-2.5 text-start text-sm font-medium text-[color:var(--brand-muted)] transition-colors hover:bg-[color:var(--paper-2)] hover:text-[color:var(--brand-maroon)]"
         >
           Sign Out
         </button>
@@ -84,10 +86,9 @@ export function VendorPillNav() {
               className={
                 "whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-bold transition-all " +
                 (active
-                  ? "text-white shadow-sm"
-                  : "bg-neutral-100 text-neutral-600")
+                  ? "bg-brand-gradient text-white shadow-[var(--shadow-card)]"
+                  : "border border-[color:var(--brand-border)] bg-white text-[color:var(--brand-muted)]")
               }
-              style={active ? { background: "linear-gradient(135deg, #8E1B3A, #C72931)" } : undefined}
             >
               {item.label}
             </Link>
@@ -95,7 +96,7 @@ export function VendorPillNav() {
         })}
         <button
           onClick={signOut}
-          className="whitespace-nowrap rounded-full border border-neutral-200 px-4 py-2 text-[13px] font-bold text-neutral-500"
+          className="whitespace-nowrap rounded-full border border-[color:var(--brand-border)] bg-white px-4 py-2 text-[13px] font-bold text-[color:var(--brand-muted)]"
         >
           Sign Out
         </button>

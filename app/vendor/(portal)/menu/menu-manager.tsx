@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, X, Loader2, UtensilsCrossed } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 type Dish = Record<string, any>;
 
-const inputCls = "w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
-const labelCls = "block text-xs font-medium text-neutral-600 mb-1";
+const inputCls = "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+const labelCls = "block text-xs font-medium text-[color:var(--brand-muted)] mb-1.5";
 
 export function MenuManager({ vendorId }: { vendorId: string }) {
   const supabase = createClient();
@@ -43,42 +44,54 @@ export function MenuManager({ vendorId }: { vendorId: string }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-neutral-900">Menu</h1>
-        <button onClick={() => { setEditing(null); setDialogOpen(true); }} className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-sm font-semibold text-white">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div className="flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <div>
+            <p className="eyebrow">UAQ Deals</p>
+            <h1 className="font-display mt-0.5 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">Menu</h1>
+          </div>
+        </div>
+        <button onClick={() => { setEditing(null); setDialogOpen(true); }} className="bg-brand-gradient flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
           <Plus size={16} /> Add Item
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#8E1B3A]" size={24} /></div>
+        <div className="flex justify-center py-16"><Loader2 className="animate-spin text-[color:var(--brand-maroon)]" size={26} /></div>
       ) : dishes.length === 0 ? (
-        <div className="mt-6 rounded-xl border border-dashed border-neutral-300 bg-white p-12 text-center text-sm text-neutral-500">
-          No menu items yet. Add your first dish to get started.
+        <div className="premium-card mt-6 p-14 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)]">
+            <UtensilsCrossed className="h-8 w-8 text-[color:var(--brand-maroon)]" />
+          </div>
+          <p className="font-display text-lg font-semibold text-[color:var(--ink)]">No menu items yet.</p>
+          <p className="mt-1 text-sm text-[color:var(--brand-muted)]">Add your first dish to get started.</p>
         </div>
       ) : (
-        <div className="mt-4 space-y-2">
-          {dishes.map(dish => (
-            <div key={dish.id} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3">
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
-                {dish.thumbnail_url ? <img src={dish.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <UtensilsCrossed size={20} className="m-auto mt-3 text-neutral-300" />}
+        <div className="mt-4 space-y-2.5">
+          {dishes.map((dish, i) => (
+            <Reveal key={dish.id} delay={Math.min(i, 8) * 40}>
+            <div className="premium-card flex items-center gap-3 p-3">
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[color:var(--paper-2)]">
+                {dish.thumbnail_url ? <img src={dish.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <UtensilsCrossed size={20} className="m-auto mt-3.5 text-neutral-300" />}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-neutral-900">{dish.name}</p>
-                <p className="text-xs text-neutral-500">
-                  AED {Number(dish.price).toFixed(2)}
+                <p className="truncate text-sm font-semibold text-[color:var(--ink)]">{dish.name}</p>
+                <p className="text-xs text-[color:var(--brand-muted)]">
+                  <span className="font-bold text-[color:var(--brand-maroon)]">AED {Number(dish.price).toFixed(2)}</span>
                   {dish.sale_price ? ` · Sale AED ${Number(dish.sale_price).toFixed(2)}` : ""}
                 </p>
               </div>
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${dish.status === "active" ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"}`}>
+              <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${dish.status === "active" ? "bg-green-50 text-green-700 ring-1 ring-green-200" : "bg-[color:var(--paper-2)] text-[color:var(--brand-muted)] ring-1 ring-[color:var(--brand-border)]"}`}>
                 {dish.status === "active" ? "Available" : "Unavailable"}
               </span>
-              <button onClick={() => toggleStatus(dish)} className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold">
+              <button onClick={() => toggleStatus(dish)} className="rounded-full border border-[color:var(--brand-border)] px-3 py-1.5 text-xs font-semibold text-[color:var(--ink)] transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]">
                 {dish.status === "active" ? "Hide" : "Show"}
               </button>
-              <button onClick={() => { setEditing(dish); setDialogOpen(true); }} className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold"><Pencil size={12} /></button>
-              <button onClick={() => remove(dish)} className="rounded-md border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600"><Trash2 size={12} /></button>
+              <button onClick={() => { setEditing(dish); setDialogOpen(true); }} className="flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--brand-border)] text-[color:var(--ink)] transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]"><Pencil size={13} /></button>
+              <button onClick={() => remove(dish)} className="flex h-8 w-8 items-center justify-center rounded-full border border-red-200 text-[color:var(--brand-red)] transition hover:bg-red-50"><Trash2 size={13} /></button>
             </div>
+            </Reveal>
           ))}
         </div>
       )}
@@ -163,25 +176,26 @@ function DishDialog({ vendorId, dish, onClose, onSaved }: {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">{dish ? "Edit item" : "Add menu item"}</h2>
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-700"><X size={20} /></button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="premium-card relative max-h-[90vh] w-full max-w-md overflow-y-auto p-6 shadow-[var(--shadow-premium)]">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-display text-lg font-semibold text-[color:var(--ink)]">{dish ? "Edit item" : "Add menu item"}</h2>
+          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--brand-border)] text-[color:var(--brand-muted)] transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]"><X size={18} /></button>
         </div>
 
         <div className="mb-4 flex items-center gap-4">
-          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border bg-neutral-50 flex items-center justify-center cursor-pointer" onClick={() => fileRef.current?.click()}>
+          <div className="flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] transition hover:border-[color:var(--brand-gold)]" onClick={() => fileRef.current?.click()}>
             {imagePreview ? <img src={imagePreview} alt="" className="h-full w-full object-cover" /> : <Plus size={20} className="text-neutral-300" />}
           </div>
           <div>
-            <p className="text-sm font-medium">Dish photo</p>
-            <button onClick={() => fileRef.current?.click()} className="mt-1 text-xs text-[#8E1B3A] font-medium">Upload photo</button>
+            <p className="text-sm font-semibold text-[color:var(--ink)]">Dish photo</p>
+            <button onClick={() => fileRef.current?.click()} className="mt-1 text-xs font-semibold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]">Upload photo</button>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           <div><label className={labelCls}>Name *</label><input className={inputCls} value={form.name} onChange={e => set("name", e.target.value)} placeholder="e.g. Chicken Shawarma" /></div>
           <div><label className={labelCls}>Description</label><textarea className={inputCls} rows={2} value={form.description} onChange={e => set("description", e.target.value)} placeholder="Ingredients, allergens, etc." /></div>
           <div className="grid grid-cols-2 gap-3">
@@ -197,9 +211,9 @@ function DishDialog({ vendorId, dish, onClose, onSaved }: {
           </div>
         </div>
 
-        <div className="mt-5 flex gap-2">
-          <button onClick={onClose} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-medium text-neutral-700">Cancel</button>
-          <button onClick={submit} disabled={saving} className="flex-1 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-2.5 text-sm font-semibold text-white disabled:opacity-60 flex items-center justify-center gap-2">
+        <div className="mt-5 flex gap-3">
+          <button onClick={onClose} className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-[color:var(--ink)] transition hover:bg-[color:var(--paper-2)]">Cancel</button>
+          <button onClick={submit} disabled={saving} className="bg-brand-gradient flex flex-1 items-center justify-center gap-2 rounded-full py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
             {saving && <Loader2 size={14} className="animate-spin" />}{dish ? "Save changes" : "Add item"}
           </button>
         </div>

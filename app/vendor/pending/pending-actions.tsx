@@ -17,10 +17,10 @@ export function PendingActions() {
 
   return (
     <div className="flex gap-3">
-      <button onClick={refresh} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50">
+      <button onClick={refresh} className="bg-brand-gradient flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
         Check Status
       </button>
-      <button onClick={signOut} className="flex-1 rounded-lg bg-neutral-100 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-200">
+      <button onClick={signOut} className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-[color:var(--brand-muted)] transition hover:bg-[color:var(--paper-2)]">
         Sign Out
       </button>
     </div>

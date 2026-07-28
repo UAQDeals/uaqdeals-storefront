@@ -69,7 +69,7 @@ export function CatalogSearch({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-[#8E1B3A] px-4 py-2 text-sm font-semibold text-[#8E1B3A] hover:bg-[#8E1B3A]/[0.04]"
+        className="flex items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)]/[0.06]"
       >
         <PackagePlus size={16} />
         Add from Catalog
@@ -78,69 +78,72 @@ export function CatalogSearch({
       {open && (
         <div className="fixed inset-0 z-50 flex">
           {/* backdrop */}
-          <div className="absolute inset-0 bg-black/40" onClick={closeAll} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeAll} />
 
           {/* panel */}
-          <div className="ml-auto h-full w-full max-w-md bg-white shadow-xl flex flex-col relative">
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h2 className="text-base font-semibold">Add from Catalog</h2>
-              <button onClick={closeAll} className="p-1 text-gray-500 hover:text-gray-800">
+          <div className="ms-auto h-full w-full max-w-md bg-[color:var(--paper)] shadow-[var(--shadow-premium)] flex flex-col relative border-s border-[color:var(--brand-border)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[color:var(--brand-border)] bg-white">
+              <div className="flex items-center gap-3">
+                <span className="accent-bar h-7 w-1.5 rounded-full" />
+                <h2 className="font-display text-lg font-semibold text-[color:var(--ink)]">Add from Catalog</h2>
+              </div>
+              <button onClick={closeAll} className="rounded-full p-1.5 text-[color:var(--brand-muted)] transition hover:bg-[color:var(--paper-2)] hover:text-[color:var(--ink)]">
                 <X size={20} />
               </button>
             </div>
 
-            <div className="p-4 border-b">
+            <div className="p-4 border-b border-[color:var(--brand-border)] bg-white">
               <div className="relative">
-                <SearchIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <SearchIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[color:var(--brand-muted)]" />
                 <input
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search by name, brand or barcode"
-                  className="w-full rounded-lg border border-gray-300 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/30 focus:border-[#8E1B3A]"
+                  className="w-full rounded-full border border-[color:var(--brand-border)] bg-white pl-10 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]"
                 />
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto">
               {searching && (
-                <div className="flex items-center justify-center py-8 text-gray-400">
+                <div className="flex items-center justify-center py-10 text-[color:var(--brand-muted)]">
                   <Loader2 size={18} className="animate-spin" />
                 </div>
               )}
 
               {!searching && query && results.length === 0 && (
-                <div className="text-center text-sm text-gray-400 py-8">No matches found</div>
+                <div className="text-center text-sm text-[color:var(--brand-muted)] py-10">No matches found</div>
               )}
 
               {!searching && !query && (
-                <div className="text-center text-sm text-gray-400 py-8 px-6">
+                <div className="text-center text-sm text-[color:var(--brand-muted)] py-10 px-6">
                   Search the catalog to add a product to your store
                 </div>
               )}
 
-              <ul className="divide-y">
+              <ul className="divide-y divide-[color:var(--brand-border)]">
                 {results.map((item) => (
                   <li
                     key={item.id}
                     onClick={() => setPicked(item)}
-                    className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50"
+                    className="group flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-[color:var(--brand-gold)]/[0.07]"
                   >
-                    <div className="w-12 h-12 shrink-0 rounded border bg-white flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 shrink-0 rounded-xl border border-[color:var(--brand-border)] bg-white flex items-center justify-center overflow-hidden">
                       {item.main_image_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={item.main_image_url} alt="" className="w-full h-full object-contain" />
                       ) : (
-                        <PackagePlus size={16} className="text-gray-300" />
+                        <PackagePlus size={16} className="text-[color:var(--brand-muted)]/50" />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 line-clamp-2">{item.title}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-medium text-[color:var(--ink)] line-clamp-2">{item.title}</p>
+                      <p className="text-xs text-[color:var(--brand-muted)]">
                         {[item.brand, item.icecat_category].filter(Boolean).join(" · ")}
                       </p>
                     </div>
-                    <span className="text-xs font-semibold text-[#8E1B3A]">ADD</span>
+                    <span className="rounded-full bg-[color:var(--brand-maroon)]/[0.08] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[color:var(--brand-maroon)] transition group-hover:bg-[color:var(--brand-maroon)] group-hover:text-white">ADD</span>
                   </li>
                 ))}
               </ul>
@@ -209,56 +212,56 @@ function AddToStoreSheet({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-sm p-5">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="premium-card relative w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-5 shadow-[var(--shadow-premium)]">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 shrink-0 rounded border bg-white flex items-center justify-center overflow-hidden">
+          <div className="w-12 h-12 shrink-0 rounded-xl border border-[color:var(--brand-border)] bg-white flex items-center justify-center overflow-hidden">
             {item.main_image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={item.main_image_url} alt="" className="w-full h-full object-contain" />
             ) : null}
           </div>
-          <p className="text-sm font-semibold line-clamp-2">{item.title}</p>
+          <p className="text-sm font-semibold text-[color:var(--ink)] line-clamp-2">{item.title}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Price (AED) *</label>
+            <label className="block text-xs font-medium text-[color:var(--brand-muted)] mb-1">Price (AED) *</label>
             <input
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               inputMode="decimal"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/30"
+              className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Sale price</label>
+            <label className="block text-xs font-medium text-[color:var(--brand-muted)] mb-1">Sale price</label>
             <input
               value={salePrice}
               onChange={(e) => setSalePrice(e.target.value)}
               inputMode="decimal"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/30"
+              className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Stock</label>
+            <label className="block text-xs font-medium text-[color:var(--brand-muted)] mb-1">Stock</label>
             <input
               value={stock}
               onChange={(e) => setStock(e.target.value)}
               inputMode="numeric"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/30"
+              className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Condition</label>
+            <label className="block text-xs font-medium text-[color:var(--brand-muted)] mb-1">Condition</label>
             <select
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/30"
+              className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]"
             >
               <option value="new">New</option>
               <option value="used">Used</option>
@@ -270,14 +273,14 @@ function AddToStoreSheet({
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={saving}
-            className="flex-1 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] text-white py-2.5 text-sm font-semibold hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2"
+            className="bg-brand-gradient flex-1 rounded-full text-white py-2.5 text-sm font-semibold shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {saving && <Loader2 size={14} className="animate-spin" />}
             Add to my store

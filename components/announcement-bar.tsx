@@ -10,14 +10,18 @@ const ITEMS = [
 
 export function AnnouncementBar() {
   return (
-    <div className="w-full overflow-hidden py-2"
-      style={{ background: "linear-gradient(90deg, #8E1B3A 0%, #C72931 50%, #8E1B3A 100%)" }}>
+    <div
+      className="bg-maroon-radial relative w-full overflow-hidden py-2"
+    >
+      {/* Gold hairline top + bottom accents */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/40 to-transparent" aria-hidden />
       <div className="flex animate-marquee whitespace-nowrap gap-0">
         {[...ITEMS, ...ITEMS].map((item, i) => (
           <Link key={i} href={item.href}
-            className="inline-flex items-center gap-6 px-8 text-[12px] font-semibold text-white hover:text-white/80 transition-colors">
+            className="inline-flex items-center gap-6 px-8 text-[12px] font-semibold tracking-tight text-white/95 transition-colors hover:text-white">
             {item.text}
-            <span className="text-white/40">•</span>
+            <span className="text-[color:var(--brand-gold)]/70">•</span>
           </Link>
         ))}
       </div>

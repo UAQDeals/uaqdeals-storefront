@@ -97,30 +97,31 @@ export function VendorLoginForm() {
   }
 
   const inputCls =
-    "w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
+    "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm text-[color:var(--ink)] outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+  const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]";
 
   if (resetMode) {
     return (
       <div className="space-y-4">
         {resetSent ? (
-          <div className="rounded-lg bg-green-50 px-4 py-4 text-sm text-green-800">
+          <div className="rounded-xl border border-green-100 bg-green-50 px-4 py-4 text-sm text-green-800">
             <p className="font-semibold">Check your inbox</p>
             <p className="mt-1 text-green-700">We sent a password reset link to <span className="font-medium">{email}</span>. Open it to set a new password.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-neutral-600">Enter the email you registered with and we will send you a reset link.</p>
-            {error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+            <p className="text-sm text-[color:var(--brand-muted)]">Enter the email you registered with and we will send you a reset link.</p>
+            {error && <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>}
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">Email</label>
+              <label className={labelCls}>Email</label>
               <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleReset()} placeholder="you@business.com" />
             </div>
-            <button onClick={handleReset} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+            <button onClick={handleReset} disabled={submitting} className="bg-brand-gradient w-full rounded-full py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
               {submitting ? "Sending…" : "Send Reset Link"}
             </button>
           </>
         )}
-        <button type="button" onClick={() => { setResetMode(false); setError(null); setResetSent(false); }} className="w-full text-center text-xs font-semibold text-neutral-500 hover:text-[#8E1B3A]">
+        <button type="button" onClick={() => { setResetMode(false); setError(null); setResetSent(false); }} className="w-full text-center text-xs font-semibold text-[color:var(--brand-muted)] transition-colors hover:text-[color:var(--brand-maroon)]">
           ← Back to sign in
         </button>
       </div>
@@ -130,56 +131,56 @@ export function VendorLoginForm() {
   return (
     <div className="space-y-4">
       {/* Mode toggle */}
-      <div className="grid grid-cols-2 gap-2 rounded-lg bg-neutral-100 p-1">
+      <div className="grid grid-cols-2 gap-1 rounded-full border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] p-1">
         <button
           type="button"
           onClick={() => { setMode("email"); setError(null); }}
-          className={"rounded-md py-2 text-xs font-bold transition " + (mode === "email" ? "bg-white text-[#8E1B3A] shadow-sm" : "text-neutral-500")}
+          className={"rounded-full py-2 text-xs font-bold transition " + (mode === "email" ? "bg-white text-[color:var(--brand-maroon)] shadow-[var(--shadow-sm)] ring-1 ring-[color:var(--brand-gold)]/25" : "text-[color:var(--brand-muted)]")}
         >
           Email
         </button>
         <button
           type="button"
           onClick={() => { setMode("phone"); setError(null); }}
-          className={"rounded-md py-2 text-xs font-bold transition " + (mode === "phone" ? "bg-white text-[#8E1B3A] shadow-sm" : "text-neutral-500")}
+          className={"rounded-full py-2 text-xs font-bold transition " + (mode === "phone" ? "bg-white text-[color:var(--brand-maroon)] shadow-[var(--shadow-sm)] ring-1 ring-[color:var(--brand-gold)]/25" : "text-[color:var(--brand-muted)]")}
         >
           Phone
         </button>
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>
       )}
 
       {mode === "email" ? (
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">Email</label>
+          <label className={labelCls}>Email</label>
           <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} placeholder="you@business.com" />
         </div>
       ) : (
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">Phone Number</label>
+          <label className={labelCls}>Phone Number</label>
           <input className={inputCls} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} placeholder="05X XXX XXXX" />
-          <p className="mt-1 text-[11px] text-neutral-400">Use the same number you registered with in the app.</p>
+          <p className="mt-1.5 text-[11px] text-[color:var(--brand-muted)]">Use the same number you registered with in the app.</p>
         </div>
       )}
 
       <div>
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">Password</label>
+        <label className={labelCls}>Password</label>
         <input className={inputCls} type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} placeholder="Your password" />
       </div>
 
       <div className="flex justify-end -mt-1">
-        <button type="button" onClick={() => { setResetMode(true); setError(null); setResetSent(false); }} className="text-xs font-semibold text-[#8E1B3A] hover:underline">
+        <button type="button" onClick={() => { setResetMode(true); setError(null); setResetSent(false); }} className="text-xs font-semibold text-[color:var(--brand-maroon)] hover:underline">
           Forgot password?
         </button>
       </div>
 
-      <button onClick={handleLogin} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+      <button onClick={handleLogin} disabled={submitting} className="bg-brand-gradient w-full rounded-full py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
         {submitting ? "Signing in…" : "Sign In"}
       </button>
-      <p className="text-center text-xs text-neutral-500">
-        New vendor? <a href="/vendor/signup" className="font-semibold text-[#8E1B3A] underline">Apply here</a>
+      <p className="text-center text-xs text-[color:var(--brand-muted)]">
+        New vendor? <a href="/vendor/signup" className="font-semibold text-[color:var(--brand-maroon)] underline decoration-[color:var(--brand-gold)]/50 underline-offset-2">Apply here</a>
       </p>
     </div>
   );

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, ChevronRight, Check, Search as SearchIcon, X } from "lucide-react";
 import { CatalogSearch } from "./catalog-search";
+import { Reveal } from "@/components/reveal";
 
 type Product = Record<string, any>;
 type Category = { id: string; name: string; is_approved: boolean | null; parent_id: string | null };
@@ -73,50 +74,53 @@ function CategoryPicker({
       <button
         type="button"
         onClick={() => { setOpen(true); setDrillParent(null); setQuery(""); }}
-        className="flex w-full items-center justify-between rounded-lg border border-neutral-300 px-3 py-2.5 text-left text-sm outline-none focus:border-[#8E1B3A]"
+        className="flex w-full items-center justify-between rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-left text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40"
       >
-        <span className={selectedPath.length ? "text-neutral-900" : "text-neutral-400"}>{selectedLabel}</span>
-        <ChevronRight className="h-4 w-4 text-neutral-400" />
+        <span className={selectedPath.length ? "text-[color:var(--ink)]" : "text-[color:var(--brand-muted)]"}>{selectedLabel}</span>
+        <ChevronRight className="h-4 w-4 text-[color:var(--brand-muted)] rtl:rotate-180" />
       </button>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" onClick={() => setOpen(false)}>
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
           <div
-            className="relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl" style={{ maxHeight: "90dvh", height: "auto" }}
+            className="premium-card relative z-10 flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl shadow-[var(--shadow-premium)]" style={{ maxHeight: "90dvh", height: "auto" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
-              <p className="text-sm font-bold text-neutral-900">Select Category</p>
-              <button onClick={() => setOpen(false)} className="rounded-lg p-1 hover:bg-neutral-100">
-                <X className="h-4 w-4 text-neutral-500" />
+            <div className="flex items-center justify-between border-b border-[color:var(--brand-border)] px-4 py-3.5">
+              <div className="flex items-center gap-2.5">
+                <span className="accent-bar h-6 w-1.5 rounded-full" />
+                <p className="font-display text-base font-semibold text-[color:var(--ink)]">Select Category</p>
+              </div>
+              <button onClick={() => setOpen(false)} className="rounded-full p-1.5 text-[color:var(--brand-muted)] transition hover:bg-[color:var(--paper-2)] hover:text-[color:var(--ink)]">
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Search */}
-            <div className="border-b border-neutral-100 p-3">
+            <div className="border-b border-[color:var(--brand-border)] p-3">
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <SearchIcon className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-muted)]" />
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search all categories..."
-                  className="w-full rounded-lg border border-neutral-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-[#8E1B3A]"
+                  className="w-full rounded-full border border-[color:var(--brand-border)] bg-white py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40"
                 />
               </div>
             </div>
 
             {/* Breadcrumb (drill mode) */}
             {!query && drillPath.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1 border-b border-neutral-50 px-4 py-2 text-xs text-neutral-500">
-                <button onClick={() => setDrillParent(null)} className="font-semibold text-[#8E1B3A]">All</button>
+              <div className="flex flex-wrap items-center gap-1 border-b border-[color:var(--brand-border)] px-4 py-2 text-xs text-[color:var(--brand-muted)]">
+                <button onClick={() => setDrillParent(null)} className="font-semibold text-[color:var(--brand-maroon)]">All</button>
                 {drillPath.map((c, i) => (
                   <span key={c.id} className="flex items-center gap-1">
-                    <ChevronRight className="h-3 w-3" />
+                    <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                     {i === drillPath.length - 1
-                      ? <span className="font-semibold text-neutral-800">{c.name}</span>
-                      : <button onClick={() => setDrillParent(c.id)} className="hover:text-[#8E1B3A]">{c.name}</button>}
+                      ? <span className="font-semibold text-[color:var(--ink)]">{c.name}</span>
+                      : <button onClick={() => setDrillParent(c.id)} className="hover:text-[color:var(--brand-maroon)]">{c.name}</button>}
                   </span>
                 ))}
               </div>
@@ -126,7 +130,7 @@ function CategoryPicker({
             <div className="flex-1 overflow-y-auto overscroll-contain" style={{ minHeight: "200px" }}>
               {query ? (
                 searchResults.length === 0 ? (
-                  <p className="px-4 py-6 text-center text-sm text-neutral-400">No matching categories</p>
+                  <p className="px-4 py-6 text-center text-sm text-[color:var(--brand-muted)]">No matching categories</p>
                 ) : (
                   searchResults.map((c) => {
                     const path = buildPath(categories, c.id);
@@ -134,13 +138,13 @@ function CategoryPicker({
                       <button
                         key={c.id}
                         onClick={() => pick(c)}
-                        className="flex w-full items-center justify-between border-b border-neutral-50 px-4 py-3 text-left hover:bg-neutral-50"
+                        className="flex w-full items-center justify-between border-b border-[color:var(--brand-border)] px-4 py-3 text-left transition hover:bg-[color:var(--brand-gold)]/[0.07]"
                       >
                         <div>
-                          <p className="text-sm font-medium text-neutral-900">{c.name}</p>
-                          <p className="text-[11px] text-neutral-400">{path.slice(0, -1).map((x) => x.name).join(" › ")}</p>
+                          <p className="text-sm font-medium text-[color:var(--ink)]">{c.name}</p>
+                          <p className="text-[11px] text-[color:var(--brand-muted)]">{path.slice(0, -1).map((x) => x.name).join(" › ")}</p>
                         </div>
-                        {value === c.id && <Check className="h-4 w-4 text-[#8E1B3A]" />}
+                        {value === c.id && <Check className="h-4 w-4 text-[color:var(--brand-maroon)]" />}
                       </button>
                     );
                   })
@@ -153,15 +157,15 @@ function CategoryPicker({
                     <button
                       key={c.id}
                       onClick={() => pick(c)}
-                      className={"flex w-full items-center justify-between border-b border-neutral-50 px-4 py-3 text-left hover:bg-neutral-50 " + (isHighlight ? "bg-amber-50" : "")}
+                      className={"flex w-full items-center justify-between border-b border-[color:var(--brand-border)] px-4 py-3 text-left transition hover:bg-[color:var(--brand-gold)]/[0.07] " + (isHighlight ? "bg-amber-50" : "")}
                     >
-                      <span className="text-sm font-medium text-neutral-900">
+                      <span className="text-sm font-medium text-[color:var(--ink)]">
                         {c.name}
                         {isHighlight && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">AI suggested</span>}
                       </span>
                       {leaf
-                        ? (value === c.id ? <Check className="h-4 w-4 text-[#8E1B3A]" /> : null)
-                        : <ChevronRight className="h-4 w-4 text-neutral-300" />}
+                        ? (value === c.id ? <Check className="h-4 w-4 text-[color:var(--brand-maroon)]" /> : null)
+                        : <ChevronRight className="h-4 w-4 text-[color:var(--brand-muted)]/50 rtl:rotate-180" />}
                     </button>
                   );
                 })
@@ -482,12 +486,18 @@ export function VendorProductsManager({
     } finally { setImporting(false); }
   }
 
-  const inputCls = "w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
+  const inputCls = "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-neutral-900">Products</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--brand-border)] pb-5">
+        <div className="flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <div>
+            <p className="eyebrow">Catalog</p>
+            <h1 className="font-display mt-0.5 text-[26px] font-semibold tracking-tight text-[color:var(--ink)]">Products</h1>
+          </div>
+        </div>
         <div className="flex gap-2">
           <CatalogSearch
             vendorId={vendorId}
@@ -496,95 +506,103 @@ export function VendorProductsManager({
               if (data) setProducts(data);
             }}
           />
-          <button onClick={openCreate} className="rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-sm font-semibold text-white">
+          <button onClick={openCreate} className="bg-brand-gradient rounded-full px-5 py-2 text-sm font-semibold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
             + Add Product
           </button>
         </div>
       </div>
 
       {/* Bulk */}
-      <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-[#8E1B3A]/15 bg-[#8E1B3A]/[0.04] p-3">
-        <span className="text-xs font-bold uppercase tracking-wide text-[#8E1B3A]">Bulk Import &amp; Export</span>
-        <div className="ml-auto flex gap-2">
-          <button onClick={downloadTemplate} className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold">Template (CSV)</button>
-          <button onClick={exportProducts} className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold">Export</button>
-          <button onClick={() => importRef.current?.click()} disabled={importing} className="rounded-md bg-[#8E1B3A] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">
+      <div className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-[color:var(--brand-gold)]/25 bg-[color:var(--brand-gold)]/[0.06] p-3.5">
+        <span className="eyebrow">Bulk Import &amp; Export</span>
+        <div className="ms-auto flex gap-2">
+          <button onClick={downloadTemplate} className="rounded-full border border-[color:var(--brand-border)] bg-white px-3.5 py-1.5 text-xs font-semibold text-neutral-700 transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]">Template (CSV)</button>
+          <button onClick={exportProducts} className="rounded-full border border-[color:var(--brand-border)] bg-white px-3.5 py-1.5 text-xs font-semibold text-neutral-700 transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]">Export</button>
+          <button onClick={() => importRef.current?.click()} disabled={importing} className="bg-brand-gradient rounded-full px-3.5 py-1.5 text-xs font-semibold text-white shadow-[var(--shadow-sm)] transition hover:brightness-110 disabled:opacity-60">
             {importing ? "Importing…" : "Import"}
           </button>
           <input ref={importRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
         </div>
       </div>
 
-      <input className={inputCls + " mt-4 max-w-xs"} placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
+      <div className="relative mt-5 max-w-xs">
+        <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-muted)]" />
+        <input className="w-full rounded-full border border-[color:var(--brand-border)] bg-white py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
 
       {/* List */}
       <div className="mt-4 space-y-2">
         {filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-neutral-300 bg-white p-12 text-center text-sm text-neutral-500">
-            No products yet. Tap “Add Product” or import a CSV.
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)]/40 p-12 text-center">
+            <span className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-2xl">📦</span>
+            <p className="text-sm text-[color:var(--brand-muted)]">No products yet. Tap “Add Product” or import a CSV.</p>
           </div>
-        ) : filtered.map((p) => (
-          <div key={p.id} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+        ) : filtered.map((p, i) => (
+          <Reveal key={p.id} delay={Math.min(i, 8) * 45}>
+          <div className="premium-card flex items-center gap-3 p-3">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[color:var(--paper-2)]">
               {p.thumbnail_url ? <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" /> : null}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-neutral-900">{p.name}</p>
-              <p className="text-xs text-neutral-500">
-                AED {Number(p.price).toFixed(2)}
+              <p className="truncate text-sm font-semibold text-[color:var(--ink)]">{p.name}</p>
+              <p className="text-xs text-[color:var(--brand-muted)]">
+                <span className="font-bold text-[color:var(--brand-maroon)]">AED {Number(p.price).toFixed(2)}</span>
                 {p.sale_price ? ` · Sale AED ${Number(p.sale_price).toFixed(2)}` : ""}
                 {p.categories?.name ? ` · ${p.categories.name}` : ""}
               </p>
             </div>
-            <span className={"rounded-full px-2 py-0.5 text-[10px] font-bold " + (p.status === "active" ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500")}>
+            <span className={"rounded-full px-2.5 py-0.5 text-[10px] font-bold " + (p.status === "active" ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500")}>
               {p.status === "active" ? "Active" : "Inactive"}
             </span>
-            <button onClick={() => openEdit(p)} className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold">Edit</button>
-            <button onClick={() => toggleActive(p)} className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold">{p.status === "active" ? "Hide" : "Show"}</button>
-            <button onClick={() => remove(p)} className="rounded-md border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600">Delete</button>
+            <button onClick={() => openEdit(p)} className="rounded-full border border-[color:var(--brand-border)] px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]">Edit</button>
+            <button onClick={() => toggleActive(p)} className="rounded-full border border-[color:var(--brand-border)] px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]">{p.status === "active" ? "Hide" : "Show"}</button>
+            <button onClick={() => remove(p)} className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-50">Delete</button>
           </div>
+          </Reveal>
         ))}
       </div>
 
       {/* Dialog */}
       {dialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" onClick={() => setDialogOpen(false)}>
-          <div className="my-8 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-neutral-900">{editing ? "Edit Product" : "New Product"}</h2>
-            <div className="mt-4 space-y-3">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm" onClick={() => setDialogOpen(false)}>
+          <div className="premium-card my-8 w-full max-w-lg p-6 shadow-[var(--shadow-premium)]" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3">
+              <span className="accent-bar h-7 w-1.5 rounded-full" />
+              <h2 className="font-display text-xl font-semibold text-[color:var(--ink)]">{editing ? "Edit Product" : "New Product"}</h2>
+            </div>
+            <div className="mt-5 space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Name *</label>
+                <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Name *</label>
                 <input className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-neutral-600">Price (AED) *</label>
+                  <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Price (AED) *</label>
                   <input className={inputCls} type="number" value={form.price ?? ""} onChange={(e) => setForm({ ...form, price: e.target.value })} />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-neutral-600">Sale Price</label>
+                  <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Sale Price</label>
                   <input className={inputCls} type="number" value={form.sale_price ?? ""} onChange={(e) => setForm({ ...form, sale_price: e.target.value })} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-neutral-600">Stock</label>
+                  <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Stock</label>
                   <input className={inputCls} type="number" value={form.stock_quantity ?? ""} onChange={(e) => setForm({ ...form, stock_quantity: e.target.value })} />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-neutral-600">Unit</label>
+                  <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Unit</label>
                   <input className={inputCls} value={form.unit ?? ""} onChange={(e) => setForm({ ...form, unit: e.target.value })} placeholder="piece" />
                 </div>
               </div>
               <div>
                 <div className="mb-1 flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-neutral-600">Description</label>
+                  <label className="block text-xs font-semibold text-[color:var(--brand-muted)]">Description</label>
                   <button
                     type="button"
                     onClick={generateDescription}
                     disabled={aiBusy}
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold text-white disabled:opacity-60"
-                    style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
+                    className="bg-brand-gradient inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold text-white shadow-[var(--shadow-sm)] transition hover:brightness-110 disabled:opacity-60"
                   >
                     <Sparkles className="h-3 w-3" />
                     {aiBusy ? "Generating..." : "Generate with AI"}
@@ -595,7 +613,7 @@ export function VendorProductsManager({
 
               {/* Category */}
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Category</label>
+                <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Category</label>
                 {!addingCat ? (
                   <div className="space-y-2">
                     <CategoryPicker
@@ -607,7 +625,7 @@ export function VendorProductsManager({
                     <button
                       type="button"
                       onClick={() => setAddingCat(true)}
-                      className="text-[11px] font-semibold text-[#8E1B3A] hover:underline"
+                      className="text-[11px] font-semibold text-[color:var(--brand-maroon)] hover:underline"
                     >
                       + Add a new category instead
                     </button>
@@ -615,23 +633,23 @@ export function VendorProductsManager({
                 ) : (
                   <div className="flex gap-2">
                     <input className={inputCls} autoFocus value={newCatName} onChange={(e) => setNewCatName(e.target.value)} placeholder="New category name" />
-                    <button onClick={addCategory} className="rounded-lg bg-[#8E1B3A] px-3 text-xs font-semibold text-white">Save</button>
-                    <button onClick={() => { setAddingCat(false); setNewCatName(""); }} className="rounded-lg border border-neutral-300 px-3 text-xs">Cancel</button>
+                    <button onClick={addCategory} className="bg-brand-gradient rounded-full px-4 text-xs font-semibold text-white shadow-[var(--shadow-sm)] transition hover:brightness-110">Save</button>
+                    <button onClick={() => { setAddingCat(false); setNewCatName(""); }} className="rounded-full border border-[color:var(--brand-border)] px-4 text-xs font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]">Cancel</button>
                   </div>
                 )}
               </div>
 
               {/* Image */}
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Main Photo</label>
-                <input type="file" accept="image/*" onChange={(e) => setThumbFile(e.target.files?.[0] ?? null)} className="block w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-xs" />
+                <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Main Photo</label>
+                <input type="file" accept="image/*" onChange={(e) => setThumbFile(e.target.files?.[0] ?? null)} className="block w-full text-xs text-[color:var(--brand-muted)] file:me-3 file:rounded-full file:border-0 file:bg-[color:var(--paper-2)] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[color:var(--brand-maroon)]" />
                 {(thumbFile || form.thumbnail_url) && (
-                  <img src={thumbFile ? URL.createObjectURL(thumbFile) : form.thumbnail_url} alt="" className="mt-2 h-20 w-20 rounded-lg object-cover" />
+                  <img src={thumbFile ? URL.createObjectURL(thumbFile) : form.thumbnail_url} alt="" className="mt-2 h-20 w-20 rounded-xl object-cover" />
                 )}
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">Status</label>
+                <label className="mb-1 block text-xs font-semibold text-[color:var(--brand-muted)]">Status</label>
                 <select className={inputCls} value={form.status ?? "active"} onChange={(e) => setForm({ ...form, status: e.target.value })}>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -641,8 +659,8 @@ export function VendorProductsManager({
             </div>
 
             <div className="mt-6 flex gap-3">
-              <button onClick={() => setDialogOpen(false)} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold">Cancel</button>
-              <button onClick={save} disabled={saving} className="flex-1 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+              <button onClick={() => setDialogOpen(false)} className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]">Cancel</button>
+              <button onClick={save} disabled={saving} className="bg-brand-gradient flex-1 rounded-full py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
                 {saving ? "Saving…" : editing ? "Update" : "Create"}
               </button>
             </div>

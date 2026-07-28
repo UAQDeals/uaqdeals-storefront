@@ -12,7 +12,7 @@ export function FloatingContact() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] p-3 text-white shadow-lg transition-transform hover:scale-110"
+        className="flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] p-3 text-white shadow-[var(--shadow-card)] ring-1 ring-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:scale-110 hover:shadow-[var(--shadow-card-hover)]"
         style={{ height: 52, width: 52 }}
       >
         <svg viewBox="0 0 32 32" className="h-6 w-6 fill-current">
@@ -23,7 +23,7 @@ export function FloatingContact() {
       <Link
         href={`tel:${PHONE}`}
         aria-label="Call UAQ Deals"
-        className="flex items-center justify-center rounded-full bg-gradient-to-br from-[#8E1B3A] to-[#C72931] p-3 text-white shadow-lg transition-transform hover:scale-110"
+        className="bg-brand-gradient flex items-center justify-center rounded-full p-3 text-white shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-gold)]/40 transition-all duration-300 hover:-translate-y-0.5 hover:scale-110 hover:shadow-[var(--shadow-card-hover)] hover:brightness-110"
         style={{ height: 52, width: 52 }}
       >
         <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current">

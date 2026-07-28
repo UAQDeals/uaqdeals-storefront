@@ -4,14 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Loader2, MapPin, Clock, FileText, Building2 } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 const DAYS = ["mon","tue","wed","thu","fri","sat","sun"];
 const DAY_LABELS: Record<string,string> = { mon:"Monday", tue:"Tuesday", wed:"Wednesday", thu:"Thursday", fri:"Friday", sat:"Saturday", sun:"Sunday" };
 
 const defaultHours = () => Object.fromEntries(DAYS.map(d => [d, { open: "09:00", close: "18:00", closed: false }]));
 
-const inputCls = "w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
-const labelCls = "block text-xs font-medium text-neutral-600 mb-1";
+const inputCls = "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+const labelCls = "block text-xs font-medium text-[color:var(--brand-muted)] mb-1.5";
 
 type Section = "storefront" | "contact" | "hours" | "documents";
 
@@ -112,29 +113,35 @@ export function BusinessProfileManager({ vendorId }: { vendorId: string }) {
     { id: "documents", label: "Documents", icon: FileText },
   ];
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[#8E1B3A]" size={24} /></div>;
+  if (loading) return <div className="flex justify-center py-16"><Loader2 className="animate-spin text-[color:var(--brand-maroon)]" size={26} /></div>;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Business Profile</h1>
-        <button onClick={save} disabled={saving} className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div className="flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <div>
+            <p className="eyebrow">UAQ Deals</p>
+            <h1 className="font-display mt-0.5 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">Business Profile</h1>
+          </div>
+        </div>
+        <button onClick={save} disabled={saving} className="bg-brand-gradient flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
           {saving && <Loader2 size={14} className="animate-spin" />}Save changes
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 mb-6">
+      <div className="mb-6 flex gap-1 rounded-full bg-[color:var(--paper-2)] p-1">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setSection(t.id)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition ${section === t.id ? "bg-white text-[#8E1B3A] shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-xs font-semibold transition ${section === t.id ? "bg-white text-[color:var(--brand-maroon)] shadow-sm" : "text-[color:var(--brand-muted)] hover:text-[color:var(--ink)]"}`}>
             <t.icon size={14} />{t.label}
           </button>
         ))}
       </div>
 
       {section === "storefront" && (
-        <div className="space-y-4">
+        <Reveal className="premium-card space-y-5 p-5 md:p-6">
           <div>
             <label className={labelCls}>Store name</label>
             <input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Your business name" />
@@ -142,59 +149,61 @@ export function BusinessProfileManager({ vendorId }: { vendorId: string }) {
           <div>
             <label className={labelCls}>Logo</label>
             <div className="flex items-center gap-4">
-              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border bg-neutral-50 cursor-pointer flex items-center justify-center" onClick={() => logoRef.current?.click()}>
+              <div className="flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] transition hover:border-[color:var(--brand-gold)]" onClick={() => logoRef.current?.click()}>
                 {logoPreview ? <img src={logoPreview} alt="Logo" className="h-full w-full object-cover" /> : <Building2 size={24} className="text-neutral-300" />}
               </div>
-              <button onClick={() => logoRef.current?.click()} className="text-sm text-[#8E1B3A] font-medium">Upload logo</button>
+              <button onClick={() => logoRef.current?.click()} className="text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]">Upload logo</button>
               <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setLogoPreview(URL.createObjectURL(f)); }}} />
             </div>
           </div>
           <div>
             <label className={labelCls}>Cover image</label>
-            <div className="relative h-36 w-full overflow-hidden rounded-xl border bg-neutral-50 cursor-pointer flex items-center justify-center" onClick={() => coverRef.current?.click()}>
-              {coverPreview ? <img src={coverPreview} alt="Cover" className="h-full w-full object-cover" /> : <span className="text-sm text-neutral-400">Click to upload cover</span>}
+            <div className="relative flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] transition hover:border-[color:var(--brand-gold)]" onClick={() => coverRef.current?.click()}>
+              {coverPreview ? <img src={coverPreview} alt="Cover" className="h-full w-full object-cover" /> : <span className="text-sm text-[color:var(--brand-muted)]">Click to upload cover</span>}
             </div>
             <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)); }}} />
           </div>
-        </div>
+        </Reveal>
       )}
 
       {section === "contact" && (
-        <div className="space-y-4">
+        <Reveal className="premium-card space-y-5 p-5 md:p-6">
           <div><label className={labelCls}>Address</label><input className={inputCls} value={address} onChange={e => setAddress(e.target.value)} placeholder="Full business address" /></div>
           <div><label className={labelCls}>Owner phone</label><input className={inputCls} value={ownerPhone} onChange={e => setOwnerPhone(e.target.value)} placeholder="+971 50 000 0000" /></div>
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs text-neutral-500 mb-2">📍 Map location pin</p>
-            <p className="text-sm text-neutral-700">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] p-4">
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]"><MapPin size={13} className="text-[color:var(--brand-gold-deep)]" /> Map location pin</p>
+            <p className="text-sm text-[color:var(--ink)]">
               {vendor?.location_lat && vendor?.location_lng
                 ? `Lat: ${vendor.location_lat.toFixed(6)}, Lng: ${vendor.location_lng.toFixed(6)}`
                 : "No location set"}
             </p>
-            <p className="text-xs text-neutral-400 mt-1">Use the vendor mobile app to update the map pin (tap "Edit location").</p>
+            <p className="mt-1 text-xs text-[color:var(--brand-muted)]">Use the vendor mobile app to update the map pin (tap "Edit location").</p>
           </div>
-        </div>
+        </Reveal>
       )}
 
       {section === "hours" && (
         <div className="space-y-2">
-          {DAYS.map(day => (
-            <div key={day} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3">
-              <span className="w-24 text-sm font-medium text-neutral-700">{DAY_LABELS[day]}</span>
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" checked={!hours[day]?.closed} onChange={e => setHour(day, "closed", !e.target.checked)} className="accent-[#8E1B3A]" />
-                <span className="text-xs text-neutral-600">Open</span>
+          {DAYS.map((day, i) => (
+            <Reveal key={day} delay={Math.min(i, 6) * 40}>
+            <div className="premium-card flex items-center gap-3 px-4 py-3">
+              <span className="w-24 text-sm font-semibold text-[color:var(--ink)]">{DAY_LABELS[day]}</span>
+              <label className="flex cursor-pointer items-center gap-1.5">
+                <input type="checkbox" checked={!hours[day]?.closed} onChange={e => setHour(day, "closed", !e.target.checked)} className="accent-[color:var(--brand-maroon)]" />
+                <span className="text-xs text-[color:var(--brand-muted)]">Open</span>
               </label>
               {!hours[day]?.closed && (
                 <>
                   <input type="time" value={hours[day]?.open ?? "09:00"} onChange={e => setHour(day, "open", e.target.value)}
-                    className="rounded-lg border border-neutral-300 px-2 py-1 text-sm outline-none focus:border-[#8E1B3A]" />
-                  <span className="text-xs text-neutral-400">to</span>
+                    className="rounded-lg border border-[color:var(--brand-border)] px-2 py-1 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" />
+                  <span className="text-xs text-[color:var(--brand-muted)]">to</span>
                   <input type="time" value={hours[day]?.close ?? "18:00"} onChange={e => setHour(day, "close", e.target.value)}
-                    className="rounded-lg border border-neutral-300 px-2 py-1 text-sm outline-none focus:border-[#8E1B3A]" />
+                    className="rounded-lg border border-[color:var(--brand-border)] px-2 py-1 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" />
                 </>
               )}
-              {hours[day]?.closed && <span className="text-xs text-neutral-400">Closed</span>}
+              {hours[day]?.closed && <span className="text-xs text-[color:var(--brand-muted)]">Closed</span>}
             </div>
+            </Reveal>
           ))}
         </div>
       )}
@@ -202,18 +211,20 @@ export function BusinessProfileManager({ vendorId }: { vendorId: string }) {
       {section === "documents" && (
         <div className="space-y-4">
           <div className="space-y-2">
-            {documents.length === 0 && <p className="text-sm text-neutral-400">No documents uploaded yet.</p>}
+            {documents.length === 0 && <p className="text-sm text-[color:var(--brand-muted)]">No documents uploaded yet.</p>}
             {documents.map((url, i) => (
-              <div key={i} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3">
-                <FileText size={16} className="text-[#8E1B3A] shrink-0" />
-                <a href={url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate text-sm text-blue-600 hover:underline">Document {i + 1}</a>
-                <button onClick={() => setDocuments(d => d.filter((_, j) => j !== i))} className="text-xs text-red-500 font-medium">Remove</button>
+              <div key={i} className="premium-card flex items-center gap-3 px-4 py-3">
+                <FileText size={16} className="shrink-0 text-[color:var(--brand-maroon)]" />
+                <a href={url} target="_blank" rel="noopener noreferrer" className="flex-1 truncate text-sm font-medium text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)] hover:underline">Document {i + 1}</a>
+                <button onClick={() => setDocuments(d => d.filter((_, j) => j !== i))} className="text-xs font-semibold text-[color:var(--brand-red)]">Remove</button>
               </div>
             ))}
           </div>
-          <div className="rounded-xl border-2 border-dashed border-neutral-300 p-6 text-center cursor-pointer" onClick={() => docRef.current?.click()}>
-            <FileText size={24} className="mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm text-neutral-500">{docFile ? docFile.name : "Click to upload a document (PDF, image)"}</p>
+          <div className="cursor-pointer rounded-2xl border-2 border-dashed border-[color:var(--brand-gold)]/45 bg-[color:var(--paper-2)]/40 p-8 text-center transition hover:bg-[color:var(--paper-2)]" onClick={() => docRef.current?.click()}>
+            <span className="mx-auto mb-2.5 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+              <FileText size={22} className="text-[color:var(--brand-maroon)]" />
+            </span>
+            <p className="text-sm text-[color:var(--brand-muted)]">{docFile ? docFile.name : "Click to upload a document (PDF, image)"}</p>
             <input ref={docRef} type="file" accept="image/*,.pdf" className="hidden" onChange={e => setDocFile(e.target.files?.[0] ?? null)} />
           </div>
         </div>

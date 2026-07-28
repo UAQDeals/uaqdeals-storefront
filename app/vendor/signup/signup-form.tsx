@@ -103,13 +103,13 @@ export function VendorSignupForm() {
   }
 
   const inputCls =
-    "w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
-  const labelCls = "mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600";
+    "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm text-[color:var(--ink)] outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+  const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]";
 
   return (
     <div className="space-y-5">
       {error && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>
       )}
 
       <div>
@@ -162,32 +162,32 @@ export function VendorSignupForm() {
         <textarea className={inputCls} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What do you sell or offer?" />
       </div>
 
-      <div className="rounded-lg border border-dashed border-neutral-300 p-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-600">Documents</p>
+      <div className="rounded-2xl border border-dashed border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)]/50 p-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]">Documents</p>
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-xs text-neutral-600">Trade License * (PDF or image)</label>
-            <input type="file" accept="image/*,application/pdf" onChange={(e) => setTradeLicense(e.target.files?.[0] ?? null)} className="block w-full text-xs text-neutral-600 file:mr-3 file:rounded-md file:border-0 file:bg-[#8E1B3A] file:px-3 file:py-1.5 file:text-xs file:text-white" />
+            <label className="mb-1.5 block text-xs text-[color:var(--brand-muted)]">Trade License * (PDF or image)</label>
+            <input type="file" accept="image/*,application/pdf" onChange={(e) => setTradeLicense(e.target.files?.[0] ?? null)} className="block w-full text-xs text-[color:var(--brand-muted)] file:mr-3 file:rounded-full file:border-0 file:bg-brand-gradient file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white" />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs text-neutral-600">Emirates ID — Front</label>
-              <input type="file" accept="image/*" onChange={(e) => setEmiratesIdFront(e.target.files?.[0] ?? null)} className="block w-full text-xs text-neutral-600 file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-xs" />
+              <label className="mb-1.5 block text-xs text-[color:var(--brand-muted)]">Emirates ID — Front</label>
+              <input type="file" accept="image/*" onChange={(e) => setEmiratesIdFront(e.target.files?.[0] ?? null)} className="block w-full text-xs text-[color:var(--brand-muted)] file:mr-3 file:rounded-full file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[color:var(--brand-maroon)] file:ring-1 file:ring-[color:var(--brand-border)]" />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-neutral-600">Emirates ID — Back</label>
-              <input type="file" accept="image/*" onChange={(e) => setEmiratesIdBack(e.target.files?.[0] ?? null)} className="block w-full text-xs text-neutral-600 file:mr-3 file:rounded-md file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-xs" />
+              <label className="mb-1.5 block text-xs text-[color:var(--brand-muted)]">Emirates ID — Back</label>
+              <input type="file" accept="image/*" onChange={(e) => setEmiratesIdBack(e.target.files?.[0] ?? null)} className="block w-full text-xs text-[color:var(--brand-muted)] file:mr-3 file:rounded-full file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[color:var(--brand-maroon)] file:ring-1 file:ring-[color:var(--brand-border)]" />
             </div>
           </div>
         </div>
       </div>
 
-      <button onClick={handleSubmit} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+      <button onClick={handleSubmit} disabled={submitting} className="bg-brand-gradient w-full rounded-full py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
         {submitting ? "Submitting application…" : "Submit Vendor Application"}
       </button>
 
-      <p className="text-center text-xs text-neutral-500">
-        Already a vendor? <a href="/vendor/login" className="font-semibold text-[#8E1B3A] underline">Sign in</a>
+      <p className="text-center text-xs text-[color:var(--brand-muted)]">
+        Already a vendor? <a href="/vendor/login" className="font-semibold text-[color:var(--brand-maroon)] underline decoration-[color:var(--brand-gold)]/50 underline-offset-2">Sign in</a>
       </p>
     </div>
   );

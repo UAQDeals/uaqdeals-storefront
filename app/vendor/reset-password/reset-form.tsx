@@ -88,11 +88,12 @@ export function ResetPasswordForm() {
   }
 
   const inputCls =
-    "w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
+    "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm text-[color:var(--ink)] outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+  const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]";
 
   if (done) {
     return (
-      <div className="rounded-lg bg-green-50 px-4 py-4 text-sm text-green-800">
+      <div className="rounded-xl border border-green-100 bg-green-50 px-4 py-4 text-sm text-green-800">
         <p className="font-semibold">Password updated</p>
         <p className="mt-1 text-green-700">Redirecting you to sign in…</p>
       </div>
@@ -102,25 +103,25 @@ export function ResetPasswordForm() {
   if (!ready) {
     return (
       <div className="space-y-3 text-center">
-        <p className="text-sm text-neutral-600">Verifying your reset link…</p>
-        <p className="text-xs text-neutral-400">If this doesn't load, the link may have expired. Request a new one from the sign-in page.</p>
-        <a href="/vendor/login" className="inline-block text-xs font-semibold text-[#8E1B3A] underline">Back to sign in</a>
+        <p className="text-sm text-[color:var(--brand-muted)]">Verifying your reset link…</p>
+        <p className="text-xs text-[color:var(--brand-muted)]">If this doesn't load, the link may have expired. Request a new one from the sign-in page.</p>
+        <a href="/vendor/login" className="inline-block text-xs font-semibold text-[color:var(--brand-maroon)] underline decoration-[color:var(--brand-gold)]/50 underline-offset-2">Back to sign in</a>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+      {error && <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>}
       <div>
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">New Password</label>
+        <label className={labelCls}>New Password</label>
         <input className={inputCls} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600">Confirm Password</label>
+        <label className={labelCls}>Confirm Password</label>
         <input className={inputCls} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleUpdate()} placeholder="Re-enter password" />
       </div>
-      <button onClick={handleUpdate} disabled={submitting} className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+      <button onClick={handleUpdate} disabled={submitting} className="bg-brand-gradient w-full rounded-full py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
         {submitting ? "Updating…" : "Update Password"}
       </button>
     </div>

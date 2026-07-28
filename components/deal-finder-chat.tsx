@@ -127,41 +127,43 @@ export function DealFinderChat({
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-20 left-4 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-90 sm:bottom-6 sm:left-6"
-          style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
+          className="bg-brand-gradient fixed bottom-20 left-4 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-gold)]/40 transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[var(--shadow-card-hover)] sm:bottom-6 sm:left-6"
         >
-          <Sparkles className="h-4 w-4" /> Deals AI
+          <Sparkles className="h-4 w-4 text-[color:var(--brand-gold)]" /> Deals AI
         </button>
       )}
 
       {/* Chat panel */}
       {open && (
         <div className="fixed inset-x-0 bottom-0 z-50 flex justify-start sm:inset-auto sm:bottom-6 sm:left-6">
-          <div className="flex h-[80vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:h-[70vh] sm:w-[380px] sm:rounded-2xl">
+          <div className="flex h-[80vh] w-full flex-col overflow-hidden rounded-t-3xl border border-[color:var(--brand-border)] bg-white shadow-[var(--shadow-premium)] sm:h-[70vh] sm:w-[380px] sm:rounded-3xl">
             {/* Header */}
-            <div className="flex items-center gap-3 px-4 py-3 text-white" style={{ background: "linear-gradient(135deg, #4E0A1A, #8E1B3A, #B4203A)" }}>
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
-                <Sparkles className="h-4.5 w-4.5" />
+            <div className="bg-maroon-radial relative flex items-center gap-3 px-4 py-3.5 text-white">
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--brand-gold)]/30 bg-white/10 backdrop-blur-sm">
+                <Sparkles className="h-4.5 w-4.5 text-[color:var(--brand-gold)]" />
               </span>
               <div className="flex-1">
-                <p className="text-[15px] font-bold leading-tight">Deal Finder</p>
-                <p className="text-[11px] text-white/80">Ask me to find anything</p>
+                <p className="font-display text-[15px] font-semibold leading-tight">Deal Finder</p>
+                <p className="text-[11px] text-white/70">Ask me to find anything</p>
               </div>
-              <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-white/15">
+              <button onClick={() => setOpen(false)} className="rounded-full p-1 text-white/80 transition-colors hover:bg-white/15 hover:text-white">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-[#F7F5F6] p-3">
+            <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-[color:var(--paper)] p-3">
               {msgs.map((m, i) => (
                 <div key={i} className={m.role === "user" ? "flex justify-end" : ""}>
                   <div className="max-w-[85%]">
                     {m.text && (
                       <div
                         className={
-                          "rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-snug shadow-sm " +
-                          (m.role === "user" ? "bg-[#C72931] text-white" : "bg-white text-neutral-800")
+                          "rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-snug shadow-[var(--shadow-sm)] " +
+                          (m.role === "user"
+                            ? "bg-brand-gradient text-white"
+                            : "border border-[color:var(--brand-border)] bg-white text-[color:var(--ink)]")
                         }
                       >
                         {m.text}
@@ -176,19 +178,19 @@ export function DealFinderChat({
                               key={c.id}
                               href={`/products/${c.id}`}
                               onClick={() => setOpen(false)}
-                              className="w-[130px] shrink-0 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5"
+                              className="group/card w-[130px] shrink-0 overflow-hidden rounded-xl border border-[color:var(--brand-border)] bg-white shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-gold)]/60 hover:shadow-[var(--shadow-card)]"
                             >
-                              <div className="aspect-square bg-neutral-100">
+                              <div className="aspect-square overflow-hidden bg-[color:var(--paper-2)]">
                                 {img ? (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={img} alt={c.name} className="h-full w-full object-cover" />
+                                  <img src={img} alt={c.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/card:scale-110" />
                                 ) : (
                                   <div className="flex h-full items-center justify-center text-neutral-300">🛍️</div>
                                 )}
                               </div>
                               <div className="p-2">
-                                <p className="line-clamp-2 text-[11.5px] font-semibold text-neutral-800">{c.name}</p>
-                                <p className="mt-0.5 text-[12.5px] font-bold text-[#C72931]">{aed(c.sale_price ?? c.price)}</p>
+                                <p className="line-clamp-2 text-[11.5px] font-semibold text-[color:var(--ink)]">{c.name}</p>
+                                <p className="mt-0.5 text-[12.5px] font-bold text-[color:var(--brand-maroon)]">{aed(c.sale_price ?? c.price)}</p>
                               </div>
                             </Link>
                           );
@@ -199,18 +201,18 @@ export function DealFinderChat({
                 </div>
               ))}
               {sending && (
-                <div className="w-max rounded-2xl bg-white px-4 py-3 text-sm text-neutral-400 shadow-sm">…</div>
+                <div className="w-max rounded-2xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm text-neutral-400 shadow-[var(--shadow-sm)]">…</div>
               )}
             </div>
 
             {/* Suggestion chips */}
             {msgs.length <= 1 && (
-              <div className="flex flex-wrap gap-2 px-3 pb-1 pt-2">
+              <div className="flex flex-wrap gap-2 bg-[color:var(--paper)] px-3 pb-1 pt-2">
                 {["Show similar items", "Cheaper options", "What pairs well with this?"].map((c) => (
                   <button
                     key={c}
                     onClick={() => send(c)}
-                    className="rounded-full border border-[#C72931]/25 bg-[#C72931]/5 px-3 py-1.5 text-[12px] font-semibold text-[#C72931]"
+                    className="rounded-full border border-[color:var(--brand-gold)]/30 bg-white px-3 py-1.5 text-[12px] font-semibold text-[color:var(--brand-maroon)] transition-colors hover:border-[color:var(--brand-gold)]/60 hover:bg-[color:var(--paper-2)]"
                   >
                     {c}
                   </button>
@@ -219,19 +221,18 @@ export function DealFinderChat({
             )}
 
             {/* Composer */}
-            <div className="flex items-center gap-2 border-t bg-white p-2.5">
+            <div className="flex items-center gap-2 border-t border-[color:var(--brand-border)] bg-white p-2.5">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") send(input); }}
                 placeholder="Ask about products…"
-                className="flex-1 rounded-full bg-neutral-100 px-4 py-2.5 text-sm outline-none"
+                className="flex-1 rounded-full border border-[color:var(--brand-border)] bg-[color:var(--paper)] px-4 py-2.5 text-sm text-[color:var(--ink)] outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40"
               />
               <button
                 onClick={() => send(input)}
                 disabled={sending}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white disabled:opacity-50"
-                style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
+                className="bg-brand-gradient flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-[var(--shadow-sm)] ring-1 ring-[color:var(--brand-gold)]/40 transition hover:brightness-110 disabled:opacity-50"
               >
                 <ArrowUp className="h-5 w-5" />
               </button>

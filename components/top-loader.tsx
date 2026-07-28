@@ -120,8 +120,9 @@ export function TopLoader() {
           height: "100%",
           width: `${progress}%`,
           background:
-            "linear-gradient(90deg, #8e1b3a 0%, #c72931 55%, #c9a24b 100%)",
-          boxShadow: "0 0 10px rgba(199, 41, 49, 0.7), 0 0 5px rgba(201, 162, 75, 0.5)",
+            "linear-gradient(90deg, var(--brand-maroon-deep) 0%, var(--brand-maroon) 55%, var(--brand-gold) 100%)",
+          boxShadow:
+            "0 0 10px color-mix(in srgb, var(--brand-maroon) 65%, transparent), 0 0 5px color-mix(in srgb, var(--brand-gold) 55%, transparent)",
           transition: "width 0.2s ease",
           borderTopRightRadius: 2,
           borderBottomRightRadius: 2,

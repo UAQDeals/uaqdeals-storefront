@@ -31,9 +31,19 @@ export function MobileBottomNav({ showProducts = true }: { showProducts?: boolea
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-neutral-200"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)", boxShadow: "0 -4px 20px rgba(0,0,0,0.12)" }}
+      className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[color:var(--brand-border)]"
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        background: "color-mix(in srgb, var(--paper) 82%, white)",
+        backdropFilter: "saturate(1.1) blur(8px)",
+        boxShadow: "0 -6px 24px rgba(27,22,20,0.10)",
+      }}
     >
+      {/* Gold hairline */}
+      <span
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent"
+        aria-hidden
+      />
       <div className={showProducts ? "grid grid-cols-5" : "grid grid-cols-4"}>
         {ITEMS.map(({ label, href, icon: Icon }) => {
           const active = isActive(href);
@@ -42,13 +52,17 @@ export function MobileBottomNav({ showProducts = true }: { showProducts?: boolea
             <Link
               key={href}
               href={href}
-              className="relative flex flex-col items-center justify-center gap-0.5 py-2"
+              className="group relative flex flex-col items-center justify-center gap-0.5 py-2"
             >
+              {/* Active pill top marker */}
+              {active && !isDeals && (
+                <span className="accent-bar absolute top-0 h-[2.5px] w-7 rounded-full" aria-hidden />
+              )}
               <div className="relative">
                 {isDeals ? (
                   <div
-                    className="flex items-center justify-center w-9 h-9 rounded-full"
-                    style={{ background: "rgba(199,41,49,0.12)" }}
+                    className="flex items-center justify-center w-9 h-9 rounded-full ring-1 ring-[color:var(--brand-gold)]/30 transition-transform duration-300 group-active:scale-95"
+                    style={{ background: "color-mix(in srgb, var(--brand-maroon) 12%, transparent)" }}
                   >
                     {/* Colourful flame — mirrors the customer app's Deals icon */}
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -67,19 +81,28 @@ export function MobileBottomNav({ showProducts = true }: { showProducts?: boolea
                   </div>
                 ) : (
                   <Icon
-                    className="w-5 h-5"
-                    style={{ color: active ? "#8E1B3A" : "#9ca3af" }}
+                    className={
+                      "w-5 h-5 transition-colors duration-200 " +
+                      (active
+                        ? "text-[color:var(--brand-maroon)]"
+                        : "text-neutral-400 group-hover:text-[color:var(--brand-maroon)]/70")
+                    }
+                    strokeWidth={active ? 2.4 : 2}
                   />
                 )}
                 {label === "Cart" && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-[#C72931] text-white text-[9px] font-bold">
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-[color:var(--brand-maroon)] text-white text-[9px] font-bold ring-1 ring-[color:var(--brand-gold)]/40">
                     {cartCount}
                   </span>
                 )}
               </div>
               <span
-                className="text-[9.5px] font-semibold"
-                style={{ color: active ? "#8E1B3A" : "#9ca3af" }}
+                className={
+                  "text-[9.5px] font-semibold tracking-tight transition-colors duration-200 " +
+                  (active
+                    ? "text-[color:var(--brand-maroon)]"
+                    : "text-neutral-400 group-hover:text-neutral-600")
+                }
               >
                 {label}
               </span>
