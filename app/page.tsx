@@ -16,6 +16,7 @@ import { ServiceHero } from "@/components/service-hero";
 import { ServiceQuickAccess } from "@/components/service-quick-access";
 import { ServiceRail, TravelButtons, SellGadgetsBanner } from "@/components/home-service-blocks";
 import { GamesSpotlight } from "@/components/games-spotlight";
+import { QuickNav, type QuickNavItem } from "@/components/quick-nav";
 import { dedicatedFor } from "@/lib/service-routes";
 import { getHomeTilesBySection, getQuickAccessImages, getEnabledGames } from "@/lib/home-data";
 import { type QuickTile } from "@/components/quick-access-strip";
@@ -227,6 +228,16 @@ export default async function HomePage() {
     badge: QA_META[k]?.badge ?? null,
   }));
 
+  // The customer app's 4 quick-nav tiles (Shop / Services / Order Food / Games),
+  // gated to what this emirate offers. Rendered right under the hero.
+  const restaurantsOn = await isTypeEnabled("restaurant");
+  const quickNavItems: QuickNavItem[] = [
+    { key: "shop", label: "Shop", href: "/products" },
+    { key: "services", label: "Services", href: "/services" },
+    ...(restaurantsOn ? [{ key: "food", label: "Order Food", href: "/categories/restaurant" }] : []),
+    ...(games.length ? [{ key: "games", label: "Games", href: "/games" }] : []),
+  ];
+
   // ── Render sections in the admin-defined order ──
   const out: ReactNode[] = [];
   let travelDone = false;
@@ -244,6 +255,7 @@ export default async function HomePage() {
 
     if (key === "banner_top") {
       out.push(<HomeHero key={key} banners={pos1Banners} emirate={emirate} chips={heroChips} />);
+      out.push(<QuickNav key="quicknav" items={quickNavItems} />);
     } else if (type === "banner_pos") {
       const b = bannersAt(Number(cfg.pos) || 0);
       if (b.length) out.push(<MidBanner key={`bp-${cfg.pos}`} banners={b} />);
