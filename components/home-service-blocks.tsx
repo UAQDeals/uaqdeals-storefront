@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 
 /** A titled "service" section with a brand CTA card — the web counterpart of the
  *  app's service carousels (config-driven from home_sections). */
-export function ServiceRail({
+export async function ServiceRail({
   title,
   href,
   emoji = "🧩",
@@ -15,6 +16,7 @@ export function ServiceRail({
   emoji?: string;
   subtitle?: string;
 }) {
+  const t = await getTranslations("home");
   return (
     <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-8 md:py-10">
       <Reveal className="mb-4 flex items-center gap-3.5">
@@ -33,10 +35,10 @@ export function ServiceRail({
           </span>
           <span className="min-w-0 flex-1">
             <span className="font-display block text-[17px] font-semibold leading-tight">{title}</span>
-            <span className="mt-0.5 block text-[12.5px] text-white/80">{subtitle ?? `Browse ${title} in Umm Al Quwain`}</span>
+            <span className="mt-0.5 block text-[12.5px] text-white/80">{subtitle ?? t("browseInUaq", { name: title })}</span>
           </span>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[color:var(--brand-gold)]/40 bg-white/10 px-4 py-2 text-[12.5px] font-bold backdrop-blur-sm transition group-hover:bg-white/20">
-            Browse
+            {t("browse")}
             <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
           </span>
         </Link>
@@ -46,18 +48,19 @@ export function ServiceRail({
 }
 
 /** Flight + Hotel booking button pair (web mirror of the app travel buttons). */
-export function TravelButtons({ showFlight = true, showHotel = true }: { showFlight?: boolean; showHotel?: boolean }) {
+export async function TravelButtons({ showFlight = true, showHotel = true }: { showFlight?: boolean; showHotel?: boolean }) {
+  const t = await getTranslations("home");
   const cards = [
     showFlight && {
-      label: "Book Flight",
-      sub: "Flights worldwide",
+      label: t("bookFlight"),
+      sub: t("flightsWorldwide"),
       emoji: "✈️",
       href: "/services/flight-booking",
       grad: ["#2E7DF6", "#1B4FC4"],
     },
     showHotel && {
-      label: "Hotels & Resorts",
-      sub: "Stay & unwind",
+      label: t("hotelsResorts"),
+      sub: t("stayUnwind"),
       emoji: "🏨",
       href: "/services/hotel-booking",
       grad: ["#14B8A6", "#0D8A7C"],
@@ -93,7 +96,8 @@ export function TravelButtons({ showFlight = true, showHotel = true }: { showFli
 }
 
 /** "List your Used gadgets" CTA banner (web mirror of the app banner). */
-export function SellGadgetsBanner() {
+export async function SellGadgetsBanner() {
+  const t = await getTranslations("home");
   return (
     <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-8 md:py-10">
       <Reveal>
@@ -105,10 +109,10 @@ export function SellGadgetsBanner() {
           <span className="pointer-events-none absolute -start-10 -bottom-10 h-44 w-44 rounded-full bg-[color:var(--brand-gold)]/15 blur-3xl" aria-hidden />
           <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
           <span className="min-w-0 flex-1">
-            <span className="font-display block text-[20px] font-semibold leading-tight">List your Used gadgets!</span>
-            <span className="mt-1 block text-[13px] text-white/85">Turn old phones &amp; devices into cash</span>
+            <span className="font-display block text-[20px] font-semibold leading-tight">{t("sellGadgetsTitle")}</span>
+            <span className="mt-1 block text-[13px] text-white/85">{t("sellGadgetsSub")}</span>
             <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] px-4 py-2 text-[12.5px] font-extrabold text-[#3B1F63] shadow-lg">
-              List Now
+              {t("listNow")}
               <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
             </span>
           </span>

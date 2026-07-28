@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Flame } from "lucide-react";
 import { aed } from "@/lib/format";
 import { Reveal } from "@/components/reveal";
@@ -46,6 +47,8 @@ export function DealsStrip({
   subtitle: string;
   seeAll: string;
 }) {
+  const t = useTranslations("home");
+  const tc = useTranslations("common");
   const ref = useRef<HTMLDivElement>(null);
   const countdown = useFlashCountdown();
   if (!deals.length) return null;
@@ -68,7 +71,7 @@ export function DealsStrip({
             {countdown && (
               <span className="hidden items-center gap-1.5 rounded-full border border-[color:var(--brand-gold)]/40 bg-[color:var(--brand-gold)]/10 px-3 py-1.5 text-[11.5px] font-bold tabular-nums text-[color:var(--brand-maroon)] shadow-sm sm:inline-flex">
                 <Flame className="h-3.5 w-3.5 text-[color:var(--brand-red)]" />
-                Ends in {countdown}
+                {t("endsIn", { time: countdown })}
               </span>
             )}
             <Link
@@ -115,7 +118,7 @@ export function DealsStrip({
                   </div>
                   {/* Info */}
                   <div className="p-3">
-                    <p className="eyebrow truncate text-[9.5px]">UAQ Deals</p>
+                    <p className="eyebrow truncate text-[9.5px]">{tc("appName")}</p>
                     <p className="mt-1 min-h-[32px] text-[12.5px] leading-snug text-neutral-700 line-clamp-2">{d.title}</p>
                     <div className="mt-2 flex items-baseline gap-2">
                       <span className="text-[15px] font-extrabold text-[color:var(--brand-maroon)]">{aed(d.deal_price)}</span>

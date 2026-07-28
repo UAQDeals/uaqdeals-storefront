@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { aed } from "@/lib/format";
 
@@ -15,11 +16,13 @@ export type CarouselProduct = {
 };
 
 export function ProductCarousel({
-  title, eyebrow, emoji, products, viewMoreHref, viewMoreLabel = "View all",
+  title, eyebrow, emoji, products, viewMoreHref, viewMoreLabel,
 }: {
   title: string; eyebrow?: string; emoji?: string;
   products: CarouselProduct[]; viewMoreHref: string; viewMoreLabel?: string;
 }) {
+  const t = useTranslations("home");
+  const label = viewMoreLabel ?? t("viewAll");
   const ref = useRef<HTMLDivElement>(null);
   function scroll(dir: "left" | "right") {
     if (!ref.current) return;
@@ -33,7 +36,7 @@ export function ProductCarousel({
           <div className="flex items-center gap-3.5">
             <span className="accent-bar h-9 w-1.5 rounded-full" />
             <div>
-              <p className="eyebrow">{eyebrow ?? "Curated for you"}</p>
+              <p className="eyebrow">{eyebrow ?? t("curatedForYou")}</p>
               <h2 className="font-display mt-0.5 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">{emoji && <span className="me-2">{emoji}</span>}{title}</h2>
             </div>
           </div>
@@ -44,7 +47,7 @@ export function ProductCarousel({
             <button onClick={() => scroll("right")} className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--brand-border)] bg-white text-neutral-600 shadow-sm transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] hover:shadow-md">
               <ChevronRight className="h-4 w-4 rtl:rotate-180" />
             </button>
-            <Link href={viewMoreHref} className="ms-1 text-[12.5px] font-bold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]">{viewMoreLabel} →</Link>
+            <Link href={viewMoreHref} className="ms-1 text-[12.5px] font-bold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]">{label} →</Link>
           </div>
         </div>
         <div ref={ref} className="flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -81,7 +84,7 @@ export function ProductCarousel({
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm transition group-hover:scale-110">
               <ChevronRight className="h-5 w-5 rtl:rotate-180" />
             </span>
-            <span className="text-[12px] font-bold">{viewMoreLabel}</span>
+            <span className="text-[12px] font-bold">{label}</span>
           </Link>
         </div>
       </div>

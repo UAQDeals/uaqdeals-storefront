@@ -1,7 +1,14 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/reveal";
 
-export function AppDownloadCta() {
+export async function AppDownloadCta() {
+  const t = await getTranslations("home");
+  const stats = [
+    { num: "10K+", label: t("statDownloads") },
+    { num: "4.8★", label: t("statRating") },
+    { num: "32+", label: t("statVendorTypes") },
+  ];
   return (
     <section id="get-app" className="bg-maroon-radial relative overflow-hidden">
       {/* Gold hairline top divider */}
@@ -44,14 +51,13 @@ export function AppDownloadCta() {
           {/* Right: text + CTAs */}
           <div className="flex-1 text-center md:text-start">
             <Reveal>
-              <p className="eyebrow text-[color:var(--brand-gold)]">UAQ Deals App</p>
+              <p className="eyebrow text-[color:var(--brand-gold)]">{t("appEyebrow")}</p>
               <h2 className="font-display mt-3 text-[32px] font-semibold leading-[1.08] tracking-[-0.01em] text-white md:text-[46px]">
-                Shop smarter.<br />
-                <span className="text-gold-gradient">Earn while you shop.</span>
+                {t("appHeadline1")}<br />
+                <span className="text-gold-gradient">{t("appHeadline2")}</span>
               </h2>
               <p className="mx-auto mt-5 max-w-md text-[14.5px] leading-relaxed text-white/70 md:mx-0">
-                Groceries, food, services, real estate — everything UAQ in one app.
-                Earn coins on every order and redeem for discounts.
+                {t("appSubcopy")}
               </p>
             </Reveal>
 
@@ -63,7 +69,7 @@ export function AppDownloadCta() {
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                   </svg>
                   <div className="text-start">
-                    <p className="text-[10px] leading-none text-white/60">Download on the</p>
+                    <p className="text-[10px] leading-none text-white/60">{t("downloadOnThe")}</p>
                     <p className="text-[15px] font-bold leading-tight">App Store</p>
                   </div>
                 </Link>
@@ -76,7 +82,7 @@ export function AppDownloadCta() {
                     <path fill="#37474F" d="M1.22 24c-.33 0-.62-.25-.62-.67V.67C.6.25.89 0 1.22 0l.09.01L.6 12l.71 12-.09-.01z"/>
                   </svg>
                   <div className="text-start">
-                    <p className="text-[10px] leading-none text-white/60">Get it on</p>
+                    <p className="text-[10px] leading-none text-white/60">{t("getItOn")}</p>
                     <p className="text-[15px] font-bold leading-tight">Google Play</p>
                   </div>
                 </Link>
@@ -86,11 +92,7 @@ export function AppDownloadCta() {
             {/* Stats strip */}
             <Reveal delay={220}>
               <div className="mt-9 flex justify-center gap-8 md:justify-start">
-                {[
-                  { num: "10K+", label: "Downloads" },
-                  { num: "4.8★", label: "App Rating" },
-                  { num: "32+", label: "Vendor Types" },
-                ].map(({ num, label }) => (
+                {stats.map(({ num, label }) => (
                   <div key={label} className="text-center md:text-start">
                     <p className="font-display text-[24px] font-semibold text-white">{num}</p>
                     <p className="mt-0.5 text-[11px] text-white/55">{label}</p>

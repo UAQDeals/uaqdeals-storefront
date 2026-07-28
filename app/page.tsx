@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getEmirate, showProducts as emirateShowProducts, enabledProductCategories, isTypeEnabled } from "@/lib/emirate";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { type BannerCard } from "@/components/home-banners";
 import { HomeHero } from "@/components/home-hero";
@@ -43,6 +43,10 @@ function serviceHref(slug: string): string {
 
 export default async function HomePage() {
   const showProducts = await emirateShowProducts();
+  const th = await getTranslations("home");
+  const tc = await getTranslations("common");
+  const locale = await getLocale();
+  const isAr = locale === "ar";
 
   // ── Services-only emirates: a distinct services home. ──
   if (!showProducts) {
@@ -57,20 +61,20 @@ export default async function HomePage() {
         <ServiceHero />
         <ServiceQuickAccess tiles={svcQuickTiles} />
         <EditorialBand
-          eyebrow="Book in seconds"
-          title={"Trusted services,\nright at your doorstep."}
-          body="Cleaning, pest control, home repairs, mobile fix, tailoring, business setup and more — browse verified service providers across the UAE."
-          ctaLabel="Browse services"
+          eyebrow={th("edBook1Eyebrow")}
+          title={th("edBook1Title")}
+          body={th("edBook1Body")}
+          ctaLabel={th("edBook1Cta")}
           ctaHref="/services"
           emoji="🔧"
           dark={false}
           flip={true}
         />
         <EditorialBand
-          eyebrow="Featured listings"
-          title={"Real estate, cars & more —\nfind it locally."}
-          body="Browse verified listings for apartments, villas, used cars, fancy numbers and pre-owned items from trusted local sellers."
-          ctaLabel="Browse listings"
+          eyebrow={th("edList2Eyebrow")}
+          title={th("edList2Title")}
+          body={th("edList2Body")}
+          ctaLabel={th("edList2Cta")}
           ctaHref="/marketplace/real_estate"
           emoji="🏠"
           dark={true}
@@ -101,14 +105,19 @@ export default async function HomePage() {
     .order("sort_order", { ascending: true });
   const sections = (sectionsRaw ?? []) as Row[];
 
-  // Root categories: name -> { id, slug }
+  // Root categories: name -> { id, slug, name_ar }
   const { data: catsRaw } = await supabase
     .from("categories")
-    .select("id, name, slug")
+    .select("id, name, name_ar, slug")
     .is("parent_id", null)
     .eq("is_active", true);
-  const catByName = new Map<string, { id: string; slug: string }>();
-  for (const c of (catsRaw ?? []) as Row[]) catByName.set(c.name, { id: c.id, slug: c.slug });
+  const catByName = new Map<string, { id: string; slug: string; nameAr: string | null }>();
+  for (const c of (catsRaw ?? []) as Row[]) catByName.set(c.name, { id: c.id, slug: c.slug, nameAr: c.name_ar ?? null });
+
+  // vendor_type slug -> Arabic name (for service rails)
+  const { data: vtRaw } = await supabase.from("vendor_types").select("slug, name_ar");
+  const vtNameAr = new Map<string, string>();
+  for (const v of (vtRaw ?? []) as Row[]) if (v.name_ar) vtNameAr.set(v.slug, v.name_ar);
 
   // Category names the config needs (enabled for this emirate)
   const neededCats = Array.from(
@@ -211,10 +220,10 @@ export default async function HomePage() {
   // gated to what this emirate offers. Rendered right under the hero.
   const restaurantsOn = await isTypeEnabled("restaurant");
   const quickNavItems: QuickNavItem[] = [
-    { key: "shop", label: "Shop", href: "/products" },
-    { key: "services", label: "Services", href: "/services" },
-    ...(restaurantsOn ? [{ key: "food", label: "Order Food", href: "/categories/restaurant" }] : []),
-    ...(games.length ? [{ key: "games", label: "Games", href: "/games" }] : []),
+    { key: "shop", label: tc("shop"), href: "/products" },
+    { key: "services", label: tc("services"), href: "/services" },
+    ...(restaurantsOn ? [{ key: "food", label: th("orderFood"), href: "/categories/restaurant" }] : []),
+    ...(games.length ? [{ key: "games", label: th("games"), href: "/games" }] : []),
   ];
 
   // ── Render sections in the admin-defined order ──
@@ -254,13 +263,14 @@ export default async function HomePage() {
         const prods = catProducts.get(name) ?? [];
         if (prods.length) {
           const cat = catByName.get(name);
+          const displayName = isAr ? (cat?.nameAr ?? name) : name;
           out.push(
             <ProductCarousel
               key={`cc-${name}`}
-              title={name}
+              title={displayName}
               products={prods}
               viewMoreHref={cat ? `/shop/${cat.slug}` : "/products"}
-              viewMoreLabel={`View all ${name}`}
+              viewMoreLabel={th("viewAllX", { name: displayName })}
             />
           );
         }
@@ -281,7 +291,8 @@ export default async function HomePage() {
         if (slug === "used_items") {
           out.push(<SellGadgetsBanner key="sell" />);
         } else {
-          out.push(<ServiceRail key={`svc-${slug}`} title={name} href={serviceHref(slug)} emoji={SLUG_EMOJI[slug] ?? "🧩"} />);
+          const railTitle = isAr ? (vtNameAr.get(slug) ?? name) : name;
+          out.push(<ServiceRail key={`svc-${slug}`} title={railTitle} href={serviceHref(slug)} emoji={SLUG_EMOJI[slug] ?? "🧩"} />);
         }
       }
     }
