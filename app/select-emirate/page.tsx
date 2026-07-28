@@ -1,38 +1,40 @@
 import { ALL_EMIRATES } from "@/lib/emirate";
 import { EmirateGrid } from "./grid";
+import { Reveal } from "@/components/reveal";
 
 export const metadata = { title: "Choose Your Emirate — UAQ Deals" };
 
 export default function SelectEmiratePage() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1600&h=1000&fit=crop&auto=format"
-          alt="UAE"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0"
-          style={{ background: "linear-gradient(135deg, rgba(142,27,58,0.92) 0%, rgba(199,41,49,0.88) 55%, rgba(242,71,50,0.85) 100%)" }} />
-      </div>
+    <section className="bg-maroon-radial relative min-h-screen w-full overflow-hidden">
+      {/* gold hairline + soft decorative glows */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+      <span className="pointer-events-none absolute -top-24 -end-24 h-72 w-72 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+      <span className="pointer-events-none absolute -bottom-28 -start-24 h-96 w-96 rounded-full bg-black/15 blur-2xl" aria-hidden />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-4 py-12 sm:py-16">
-        <div className="text-center text-white mb-10">
-          <p className="text-[12px] font-bold tracking-[3px] uppercase text-white/60 mb-2">UAQ Deals</p>
-          <h1 className="text-[30px] sm:text-[40px] font-extrabold leading-tight">
-            Welcome to Umm Al Quwain&apos;s<br className="hidden sm:block" /> hyperlocal super-app
-          </h1>
-          <p className="text-white/75 text-[14px] sm:text-[16px] mt-3">Which emirate would you like to explore?</p>
-        </div>
+      <div className="relative z-10 mx-auto max-w-5xl px-5 py-14 md:px-8 sm:py-20">
+        <Reveal>
+          <div className="mb-11 text-center text-white">
+            <p className="eyebrow">UAQ Deals</p>
+            <h1 className="font-display mt-3 text-[32px] font-semibold leading-[1.08] tracking-tight sm:text-[44px]">
+              Welcome to Umm Al Quwain&apos;s<br className="hidden sm:block" /> hyperlocal super-app
+            </h1>
+            <span className="mx-auto mt-5 block h-px w-24 bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/80 to-transparent" aria-hidden />
+            <p className="mt-5 text-[14px] text-white/75 sm:text-[16px]">
+              Which emirate would you like to explore?
+            </p>
+          </div>
+        </Reveal>
 
-        <EmirateGrid emirates={ALL_EMIRATES} />
+        <Reveal delay={120}>
+          <EmirateGrid emirates={ALL_EMIRATES} />
+        </Reveal>
 
-        <p className="text-center text-white/55 text-[12px] mt-8">
+        <p className="mt-9 text-center text-[12px] leading-relaxed text-white/60">
           Shop &amp; Classifieds available in Umm Al Quwain &amp; Al Hamriyah · Services available everywhere
         </p>
       </div>
-    </div>
+    </section>
   );
 }

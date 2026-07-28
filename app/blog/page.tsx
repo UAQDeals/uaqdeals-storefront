@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, Tag, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, FileText } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 export const revalidate = 60;
 export const metadata = { title: "Blog — UAQ Deals" };
@@ -22,56 +22,68 @@ export default async function BlogListPage() {
   const rows = posts ?? [];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <nav className="mb-6 flex items-center gap-1 text-xs text-neutral-500">
-        <Link href="/" className="hover:text-[color:var(--brand-maroon)]">Home</Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-neutral-700">Blog</span>
+    <div className="mx-auto max-w-[1320px] px-5 py-10 md:px-8 md:py-12">
+      <nav className="mb-6 flex items-center gap-1.5 text-[12.5px] text-[color:var(--brand-muted)]">
+        <Link href="/" className="transition hover:text-[color:var(--brand-maroon)]">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" />
+        <span className="text-[color:var(--ink)]">Blog</span>
       </nav>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900">UAQ Deals Blog</h1>
-        <p className="mt-2 text-neutral-500">News, tips and stories from Umm Al Quwain</p>
-      </div>
+      <Reveal>
+        <div className="mb-8">
+          <h1 className="font-display text-[30px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[38px]">UAQ Deals Blog</h1>
+          <p className="mt-2 text-[15px] text-[color:var(--brand-muted)]">News, tips and stories from Umm Al Quwain</p>
+          <div className="gold-rule mt-7" />
+        </div>
+      </Reveal>
 
       {rows.length === 0 ? (
-        <div className="py-20 text-center text-neutral-400">No posts published yet.</div>
+        <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
+            <FileText className="h-7 w-7" />
+          </span>
+          <p className="font-display text-[18px] font-semibold text-[color:var(--ink)]">No posts published yet.</p>
+        </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map((p) => (
-            <Link key={p.id} href={`/blog/${p.slug}`}
-              className="group flex flex-col border border-neutral-200 bg-white hover:border-neutral-400 transition-colors">
-              <div className="aspect-[16/9] overflow-hidden bg-neutral-100">
-                {p.cover_image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.cover_image} alt={p.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-neutral-300 text-4xl">📝</div>
-                )}
-              </div>
-              <div className="flex flex-1 flex-col p-4">
-                {p.category && (
-                  <span className="mb-2 text-[10.5px] font-bold uppercase tracking-widest text-[color:var(--brand-maroon)]">
-                    {p.category}
-                  </span>
-                )}
-                <h2 className="text-[15px] font-bold leading-snug text-neutral-900 group-hover:text-[color:var(--brand-maroon)] transition-colors line-clamp-2">
-                  {p.title}
-                </h2>
-                {p.excerpt && (
-                  <p className="mt-2 text-[13px] text-neutral-500 leading-relaxed line-clamp-2">{p.excerpt}</p>
-                )}
-                <div className="mt-auto pt-3 flex items-center gap-3 text-[11px] text-neutral-400">
-                  {p.published_at && (
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" /> {fmtDate(p.published_at)}
-                    </span>
+          {rows.map((p, i) => (
+            <Reveal key={p.id} delay={(i % 3) * 70}>
+              <Link href={`/blog/${p.slug}`} className="group premium-card flex h-full flex-col overflow-hidden">
+                <div className="aspect-[16/9] overflow-hidden bg-[color:var(--paper-2)]">
+                  {p.cover_image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.cover_image} alt={p.title}
+                      className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-4xl text-neutral-300">📝</div>
                   )}
-                  {p.author && <span>by {p.author}</span>}
                 </div>
-              </div>
-            </Link>
+                <div className="flex flex-1 flex-col p-5">
+                  {p.category && (
+                    <span className="eyebrow mb-2">{p.category}</span>
+                  )}
+                  <h2 className="font-display text-[17px] font-semibold leading-snug text-[color:var(--ink)] transition-colors line-clamp-2 group-hover:text-[color:var(--brand-maroon)]">
+                    {p.title}
+                  </h2>
+                  {p.excerpt && (
+                    <p className="mt-2 text-[13px] leading-relaxed text-neutral-600 line-clamp-2">{p.excerpt}</p>
+                  )}
+                  <div className="mt-auto flex items-center justify-between pt-4">
+                    <div className="flex items-center gap-3 text-[11.5px] text-[color:var(--brand-muted)]">
+                      {p.published_at && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" /> {fmtDate(p.published_at)}
+                        </span>
+                      )}
+                      {p.author && <span>by {p.author}</span>}
+                    </div>
+                    <span className="text-[12.5px] font-bold text-[color:var(--brand-maroon)] transition group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5">
+                      Read more →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </Reveal>
           ))}
         </div>
       )}

@@ -100,14 +100,14 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
     }
   }
 
-  const inputCls = "w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
-  const labelCls = "mb-1 block text-xs font-semibold uppercase tracking-wide text-neutral-600";
+  const inputCls = "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
+  const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]";
 
   if (uploading) {
     return (
       <div className="flex flex-col items-center py-12">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-[#8E1B3A]" />
-        <p className="mt-3 text-sm text-neutral-500">{isRTL ? "جارٍ رفع إعلانك…" : "Uploading your listing…"}</p>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[color:var(--paper-2)] border-t-[color:var(--brand-maroon)]" />
+        <p className="mt-3 text-sm text-[color:var(--brand-muted)]">{isRTL ? "جارٍ رفع إعلانك…" : "Uploading your listing…"}</p>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         </div>
         <div className="flex items-end">
           <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={negotiable} onChange={(e) => setNegotiable(e.target.checked)} className="h-4 w-4 accent-[#8E1B3A]" />
+            <input type="checkbox" checked={negotiable} onChange={(e) => setNegotiable(e.target.checked)} className="h-4 w-4 accent-[color:var(--brand-maroon)]" />
             <span className="font-semibold text-neutral-700">{isRTL ? "قابل للتفاوض" : "Negotiable"}</span>
           </label>
         </div>
@@ -157,18 +157,18 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
         {images.length > 0 && (
           <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {images.map((f, i) => (
-              <div key={i} className="relative aspect-square overflow-hidden rounded-lg bg-neutral-100">
+              <div key={i} className="relative aspect-square overflow-hidden rounded-xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)]">
                 <img src={URL.createObjectURL(f)} alt="" className="h-full w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(i)}
-                  className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+                  className="bg-brand-gradient absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-xs text-white shadow-sm"
                 >×</button>
               </div>
             ))}
           </div>
         )}
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#8E1B3A] px-4 py-2 text-sm font-semibold text-[#8E1B3A]">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--paper-2)]">
           <input type="file" accept="image/*" multiple onChange={addImages} className="hidden" />
           {isRTL ? "+ إضافة صور" : "+ Add Photos"}
         </label>
@@ -177,12 +177,12 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
       <div>
         <label className={labelCls}>{isRTL ? "فيديو (اختياري)" : "Video (optional)"}</label>
         {video && (
-          <div className="mb-2 flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm">
+          <div className="mb-2 flex items-center gap-2 rounded-xl border border-[color:var(--brand-border)] px-3 py-2 text-sm">
             <span className="flex-1 truncate">🎥 {video.name}</span>
-            <button type="button" onClick={() => setVideo(null)} className="text-red-500">×</button>
+            <button type="button" onClick={() => setVideo(null)} className="text-[color:var(--brand-maroon)]">×</button>
           </div>
         )}
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#8E1B3A] px-4 py-2 text-sm font-semibold text-[#8E1B3A]">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--paper-2)]">
           <input type="file" accept="video/*" onChange={(e) => setVideo(e.target.files?.[0] ?? null)} className="hidden" />
           {video ? (isRTL ? "تغيير الفيديو" : "Change Video") : (isRTL ? "+ إضافة فيديو" : "+ Add Video")}
         </label>
@@ -190,7 +190,7 @@ export function SellUsedItemForm({ userId }: { userId: string }) {
 
       <button
         onClick={submit}
-        className="w-full rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-3 text-sm font-bold text-white"
+        className="bg-brand-gradient w-full rounded-full py-3.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110"
       >
         {isRTL ? "إرسال للمراجعة" : "Submit for Review"}
       </button>

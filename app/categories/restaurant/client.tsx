@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, Star, MapPin, Clock, ChevronRight, UtensilsCrossed, Bike, X } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 type Vendor = {
   id: string; name: string; description: string;
@@ -43,30 +44,29 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
 
       {/* ── Header ── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-neutral-100 shadow-sm">
+      <div className="sticky top-0 z-20 border-b border-[color:var(--brand-border)] bg-white/80 backdrop-blur-md shadow-[var(--shadow-sm)]">
         <div className="mx-auto max-w-3xl px-4 pt-4 pb-0">
           {/* Title */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl text-xl"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            <div className="bg-brand-gradient flex h-10 w-10 items-center justify-center rounded-xl text-xl shadow-[var(--shadow-card)]">
               🍕
             </div>
             <div>
-              <h1 className="text-lg font-extrabold text-neutral-900 leading-tight">UAQ Food</h1>
-              <p className="text-[11px] text-neutral-500">Order from top restaurants in UAQ</p>
+              <h1 className="font-display text-[20px] font-semibold text-[color:var(--ink)] leading-tight">UAQ Food</h1>
+              <p className="text-[11px] text-[color:var(--brand-muted)]">Order from top restaurants in UAQ</p>
             </div>
           </div>
 
           {/* Search */}
           <div className="relative mb-3">
-            <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <input
               value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search for dishes or restaurants..."
-              className="w-full h-10 rounded-xl bg-neutral-100 ps-9 pe-9 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:ring-2 focus:ring-[color:var(--brand-maroon)]/20"
+              className="w-full h-11 rounded-full border border-[color:var(--brand-border)] bg-white ps-10 pe-9 text-sm text-[color:var(--ink)] placeholder:text-neutral-400 outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40"
             />
             {search && (
               <button onClick={() => setSearch("")} className="absolute end-3 top-1/2 -translate-y-1/2">
@@ -80,10 +80,10 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
             {filters.map((f) => (
               <button key={f.key}
                 onClick={() => setFilter(filter === f.key ? null : f.key)}
-                className={"inline-flex items-center gap-1.5 shrink-0 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition-colors " +
+                className={"inline-flex items-center gap-1.5 shrink-0 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition " +
                   (filter === f.key
-                    ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-maroon)] text-white"
-                    : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300")}>
+                    ? "bg-brand-gradient border-transparent text-white shadow-[var(--shadow-card)]"
+                    : "border-[color:var(--brand-border)] bg-white text-neutral-600 hover:border-[color:var(--brand-gold)] hover:text-[color:var(--brand-maroon)]")}>
                 {f.key === "top_rated" && <Star className="h-3 w-3" />}
                 {f.label}
               </button>
@@ -95,29 +95,32 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
       {/* ── Restaurant list ── */}
       <div className="mx-auto max-w-3xl px-4 py-5 space-y-5">
         {filtered.length === 0 ? (
-          <div className="py-16 text-center">
-            <UtensilsCrossed className="h-12 w-12 mx-auto mb-3 text-neutral-200" />
-            <p className="text-neutral-500 text-sm">
+          <div className="premium-card py-16 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)]">
+              <UtensilsCrossed className="h-8 w-8 text-[color:var(--brand-maroon)]" />
+            </div>
+            <p className="font-display text-[15px] text-[color:var(--brand-muted)]">
               {search ? `No results for "${search}"` : "No restaurants available for delivery"}
             </p>
           </div>
         ) : (
-          filtered.map((v) => (
-            <Link key={v.id} href={`/vendors/${v.id}`}
-              className="group block rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-neutral-100">
+          filtered.map((v, i) => (
+            <Reveal key={v.id} delay={Math.min(i, 8) * 45}>
+            <Link href={`/vendors/${v.id}`}
+              className="group premium-card block overflow-hidden">
 
               {/* Hero image */}
               <div className="relative h-[180px] w-full overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={v.logo_url ?? v.hero_url} alt={v.name}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 {/* Bookmark */}
-                <button className="absolute top-3 end-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90">
+                <button className="absolute top-3 end-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur transition hover:bg-white">
                   <Star className="h-4 w-4 text-neutral-400" />
                 </button>
                 {/* Delivery time */}
-                <div className="absolute bottom-3 start-3 flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[11px] font-bold text-neutral-800">
+                <div className="absolute bottom-3 start-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[11px] font-bold text-neutral-800 shadow-sm">
                   <Clock className="h-3 w-3" /> 25-35 min
                 </div>
               </div>
@@ -125,11 +128,11 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-[17px] font-extrabold text-neutral-900 leading-tight">{v.name}</h3>
+                  <h3 className="font-display text-[18px] font-semibold text-[color:var(--ink)] leading-tight">{v.name}</h3>
                   <RatingBadge rating={v.rating} />
                 </div>
                 {v.description && (
-                  <p className="mt-1 text-[12px] text-neutral-500 line-clamp-1">{v.description}</p>
+                  <p className="mt-1 text-[12px] text-[color:var(--brand-muted)] line-clamp-1">{v.description}</p>
                 )}
                 <div className="mt-2.5 flex items-center gap-3 text-[11px] text-neutral-400">
                   <span className="flex items-center gap-1">
@@ -141,10 +144,11 @@ export function RestaurantClient({ vendors }: { vendors: Vendor[] }) {
                   </span>
                   <span className="h-1 w-1 rounded-full bg-neutral-300" />
                   <span className="font-semibold text-neutral-500">AED 30 for two</span>
-                  <ChevronRight className="h-3.5 w-3.5 ms-auto text-neutral-300" />
+                  <ChevronRight className="h-3.5 w-3.5 ms-auto text-neutral-300 rtl:rotate-180" />
                 </div>
               </div>
             </Link>
+            </Reveal>
           ))
         )}
       </div>

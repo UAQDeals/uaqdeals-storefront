@@ -4,6 +4,7 @@ import { Package, ShoppingBag, ChevronRight, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { aed } from "@/lib/format";
+import { Reveal } from "@/components/reveal";
 
 export async function generateMetadata() {
   const t = await getTranslations("orders");
@@ -53,31 +54,35 @@ export default async function OrdersPage() {
   const rows = (orders ?? []) as Row[];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto max-w-3xl px-5 py-10 md:px-8">
       <div className="mb-6 flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("title")}</h1>
-          <p className="text-sm text-neutral-600">{t("count", { count: rows.length })}</p>
+        <div className="flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <div>
+            <p className="eyebrow">{tc("account")}</p>
+            <h1 className="font-display mt-0.5 text-[26px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[32px]">{t("title")}</h1>
+            <p className="mt-0.5 text-sm text-[color:var(--brand-muted)]">{t("count", { count: rows.length })}</p>
+          </div>
         </div>
-        <Link href="/account" className="text-sm font-semibold text-neutral-600 hover:text-[color:var(--brand-maroon)]">
+        <Link href="/account" className="text-sm font-semibold text-[color:var(--brand-muted)] transition hover:text-[color:var(--brand-maroon)]">
           {tc("backTo", { page: tc("account") })}
         </Link>
       </div>
 
       {rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[color:var(--brand-border)] bg-white p-10 text-center">
-          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
-            <Package className="h-5 w-5" />
+        <Reveal className="rounded-3xl border border-dashed border-[color:var(--brand-border)] bg-white p-12 text-center">
+          <div className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
+            <Package className="h-6 w-6" />
           </div>
-          <p className="mt-4 text-base font-semibold text-neutral-800">{t("noOrders")}</p>
-          <p className="mt-1 text-sm text-neutral-500">{t("noOrdersDesc")}</p>
-          <Link href="/categories" className="bg-brand-gradient mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white">
+          <p className="font-display mt-5 text-[20px] font-semibold text-[color:var(--ink)]">{t("noOrders")}</p>
+          <p className="mt-1 text-sm text-[color:var(--brand-muted)]">{t("noOrdersDesc")}</p>
+          <Link href="/categories" className="bg-brand-gradient mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
             {t("startShopping")}
           </Link>
-        </div>
+        </Reveal>
       ) : (
         <ul className="space-y-3">
-          {rows.map((o) => {
+          {rows.map((o, idx) => {
             const items = (o.order_items ?? []) as Row[];
             const totalQty = items.reduce((s: number, it: Row) => s + Number(it.quantity ?? 0), 0);
             const thumb = items.find((it: Row) => it.products?.thumbnail_url)?.products?.thumbnail_url ?? null;
@@ -87,9 +92,9 @@ export default async function OrdersPage() {
             const ref = o.order_number ?? `${String(o.id).slice(0, 8).toUpperCase()}`;
 
             return (
-              <li key={o.id}>
-                <Link href={`/orders/${o.id}`} className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 transition hover:border-[color:var(--brand-maroon)] hover:shadow-sm">
-                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
+              <Reveal key={o.id} as="li" delay={Math.min(idx * 50, 300)}>
+                <Link href={`/orders/${o.id}`} className="premium-card flex items-center gap-3 p-4">
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-[color:var(--paper-2)]">
                     {thumb ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={thumb} alt="" className="h-full w-full object-cover" />
@@ -117,7 +122,7 @@ export default async function OrdersPage() {
                     <ChevronRight className="h-4 w-4 text-neutral-400 rtl:rotate-180" />
                   </div>
                 </Link>
-              </li>
+              </Reveal>
             );
           })}
         </ul>

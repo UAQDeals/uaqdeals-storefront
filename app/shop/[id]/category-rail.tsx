@@ -53,7 +53,7 @@ export function CategoryRail({
       <button
         onClick={() => scroll(-1)}
         aria-label="Scroll left"
-        className="absolute -start-3 top-[44px] z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-md transition hover:text-[color:var(--brand-maroon)]"
+        className="absolute -start-3 top-[44px] z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[color:var(--brand-border)] bg-white text-neutral-600 shadow-md transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]"
       >
         <ChevronLeft className="h-5 w-5 rtl:rotate-180" />
       </button>
@@ -68,17 +68,17 @@ export function CategoryRail({
               href={"/shop/" + c.id}
               className="group flex w-[92px] shrink-0 flex-col items-center gap-2.5 text-center"
             >
-              <span className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-[#8E1B3A]/40 group-hover:shadow-md">
+              <span className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-[color:var(--brand-gold)] group-hover:shadow-md">
                 {img ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={img} alt={c.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <img src={img} alt={c.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : icon.kind === "emoji" ? (
                   <span className="text-[34px] leading-none">{icon.value}</span>
                 ) : (
                   <span className="text-brand-gradient text-[26px] font-extrabold tracking-tight">{icon.value}</span>
                 )}
               </span>
-              <span className="line-clamp-2 text-[12px] font-semibold leading-tight text-neutral-700 transition-colors group-hover:text-[color:var(--brand-maroon)]">
+              <span className="line-clamp-2 text-[12px] font-semibold leading-tight text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--brand-maroon)]">
                 {c.name}
               </span>
             </Link>
@@ -89,7 +89,7 @@ export function CategoryRail({
       <button
         onClick={() => scroll(1)}
         aria-label="Scroll right"
-        className="absolute -end-3 top-[44px] z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-md transition hover:text-[color:var(--brand-maroon)]"
+        className="absolute -end-3 top-[44px] z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[color:var(--brand-border)] bg-white text-neutral-600 shadow-md transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]"
       >
         <ChevronRight className="h-5 w-5 rtl:rotate-180" />
       </button>

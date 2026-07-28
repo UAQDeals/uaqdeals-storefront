@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import { Reveal } from "@/components/reveal";
+
 export const metadata = {
   title: "Privacy Policy",
   description: "How UAQ Deals collects, uses, and protects your information.",
@@ -5,13 +9,22 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-extrabold tracking-tight text-[color:var(--brand-maroon)] sm:text-4xl">
-        Privacy Policy
-      </h1>
-      <p className="mt-2 text-sm text-neutral-500">Last updated: June 2026</p>
+    <div className="mx-auto max-w-[760px] px-5 py-12 md:px-8 md:py-16">
+      <nav className="mb-6 flex items-center gap-1.5 text-[12.5px] text-[color:var(--brand-muted)]">
+        <Link href="/" className="transition hover:text-[color:var(--brand-maroon)]">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" />
+        <span className="text-[color:var(--ink)]">Privacy Policy</span>
+      </nav>
 
-      <div className="mt-8 space-y-7 text-sm leading-relaxed text-neutral-700">
+      <Reveal>
+        <h1 className="font-display text-[30px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[38px]">
+          Privacy Policy
+        </h1>
+        <p className="mt-2 text-[13.5px] text-[color:var(--brand-muted)]">Last updated: June 2026</p>
+        <div className="gold-rule mt-7" />
+      </Reveal>
+
+      <div className="mt-9 space-y-8 text-[15px] leading-[1.75] text-neutral-700">
         <Section title="1. Overview">
           <p>
             This Privacy Policy explains how UAQ Deals collects, uses, and
@@ -99,8 +112,8 @@ export default function PrivacyPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-base font-bold text-neutral-900">{title}</h2>
-      <div className="mt-1.5">{children}</div>
+      <h2 className="font-display text-[19px] font-semibold text-[color:var(--ink)]">{title}</h2>
+      <div className="mt-2">{children}</div>
     </section>
   );
 }

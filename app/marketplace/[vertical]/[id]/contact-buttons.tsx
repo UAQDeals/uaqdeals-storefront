@@ -22,7 +22,7 @@ export function ContactButtons({
   const isRTL = useLocale() === "ar";
   if (isSold) {
     return (
-      <div className="rounded-xl border-2 border-neutral-200 bg-neutral-50 py-4 text-center text-sm font-semibold text-neutral-500">
+      <div className="rounded-xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] py-4 text-center text-sm font-semibold text-[color:var(--brand-muted)]">
         {isRTL ? "هذا العنصر لم يعد متاحاً" : "This item is no longer available"}
       </div>
     );
@@ -69,15 +69,15 @@ export function ContactButtons({
     }
   }
 
-  const btnBase = "flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-opacity hover:opacity-90";
-  const inputCls = "w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm outline-none focus:border-[#8E1B3A] focus:ring-1 focus:ring-[#8E1B3A]";
+  const btnBase = "flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-sm font-bold transition";
+  const inputCls = "w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40";
 
   return (
     <>
       <div className="flex gap-2">
         <a
           href={`tel:${PHONE}`}
-          className={btnBase + " bg-gradient-to-r from-[#8E1B3A] to-[#C72931] text-white"}
+          className={btnBase + " bg-brand-gradient text-white shadow-[var(--shadow-card)] hover:brightness-110"}
         >
           📞 {isRTL ? "اتصال" : "Call"}
         </a>
@@ -85,44 +85,45 @@ export function ContactButtons({
           href={`https://wa.me/${WA_PHONE}?text=${encodeURIComponent(waMsg)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={btnBase + " border-2 border-[#25D366] text-[#25D366]"}
+          className={btnBase + " border border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10"}
         >
           💬 {isRTL ? "واتساب" : "WhatsApp"}
         </a>
         <button
           onClick={() => setModalOpen(true)}
-          className={btnBase + " border-2 border-[#8E1B3A] text-[#8E1B3A]"}
+          className={btnBase + " border border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)] hover:bg-[color:var(--paper-2)]"}
         >
           ✉️ {isRTL ? "استفسار" : "Enquire"}
         </button>
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" onClick={() => setModalOpen(false)}>
-          <div className="my-12 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-neutral-900">{isRTL ? "إرسال استفسار" : "Send Enquiry"}</h2>
-            <p className="mt-1 truncate text-xs text-neutral-500">{isRTL ? "بخصوص: " : "About: "}{listingTitle}</p>
-            <div className="mt-4 space-y-3">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
+          <div className="premium-card my-12 w-full max-w-md p-6 shadow-[var(--shadow-premium)]" onClick={(e) => e.stopPropagation()}>
+            <h2 className="font-display text-xl font-semibold text-[color:var(--ink)]">{isRTL ? "إرسال استفسار" : "Send Enquiry"}</h2>
+            <p className="mt-1 truncate text-xs text-[color:var(--brand-muted)]">{isRTL ? "بخصوص: " : "About: "}{listingTitle}</p>
+            <span className="gold-rule my-4 block" />
+            <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "اسمك *" : "Your Name *"}</label>
+                <label className="mb-1.5 block text-xs font-semibold text-[color:var(--brand-muted)]">{isRTL ? "اسمك *" : "Your Name *"}</label>
                 <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل" : "Full name"} />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "الهاتف *" : "Phone *"}</label>
+                <label className="mb-1.5 block text-xs font-semibold text-[color:var(--brand-muted)]">{isRTL ? "الهاتف *" : "Phone *"}</label>
                 <input className={inputCls} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"}</label>
+                <label className="mb-1.5 block text-xs font-semibold text-[color:var(--brand-muted)]">{isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"}</label>
                 <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-neutral-600">{isRTL ? "الرسالة" : "Message"}</label>
+                <label className="mb-1.5 block text-xs font-semibold text-[color:var(--brand-muted)]">{isRTL ? "الرسالة" : "Message"}</label>
                 <textarea className={inputCls} rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={isRTL ? "أنا مهتم. هل يمكنك مشاركة المزيد من التفاصيل؟" : "I'm interested. Can you share more details?"} />
               </div>
             </div>
             <div className="mt-5 flex gap-3">
-              <button onClick={() => setModalOpen(false)} className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold">{isRTL ? "إلغاء" : "Cancel"}</button>
-              <button onClick={submitEnquiry} disabled={submitting} className="flex-1 rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] py-2.5 text-sm font-bold text-white disabled:opacity-60">
+              <button onClick={() => setModalOpen(false)} className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]">{isRTL ? "إلغاء" : "Cancel"}</button>
+              <button onClick={submitEnquiry} disabled={submitting} className="bg-brand-gradient flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
                 {submitting ? (isRTL ? "جارٍ الإرسال…" : "Sending…") : (isRTL ? "إرسال الاستفسار" : "Send Enquiry")}
               </button>
             </div>

@@ -70,11 +70,11 @@ export function ShopCategoryGrid({
       {/* Subcategory grid */}
       <div className="mx-auto max-w-[1320px] px-5 py-8 md:px-8 md:py-10">
         <div className="mb-5 flex items-center gap-3">
-          <span className="h-6 w-1.5 rounded-full bg-brand-gradient" />
-          <h2 className="text-[17px] font-extrabold tracking-tight text-neutral-900">
+          <span className="accent-bar h-6 w-1.5 rounded-full" />
+          <h2 className="font-display text-[19px] font-semibold tracking-tight text-[color:var(--ink)]">
             Browse {category.name}
           </h2>
-          <span className="text-[12.5px] text-neutral-400">{children.length} categories</span>
+          <span className="text-[12.5px] text-[color:var(--brand-muted)]">{children.length} categories</span>
         </div>
 
         <div className="grid grid-cols-3 gap-3 lg:grid-cols-4 lg:gap-4 xl:grid-cols-5">
@@ -84,16 +84,14 @@ export function ShopCategoryGrid({
               <Link
                 key={c.id}
                 href={"/shop/" + c.id}
-                className="group relative flex flex-col items-center gap-3.5 overflow-hidden rounded-2xl border border-neutral-200 bg-white p-6 text-center transition-all duration-200 hover:-translate-y-1 hover:border-[#8E1B3A]/30 hover:shadow-xl"
+                className="premium-card group relative flex flex-col items-center gap-3.5 overflow-hidden p-6 text-center transition-all duration-300 hover:-translate-y-1"
               >
                 <span
-                  className="pointer-events-none absolute -end-8 -top-8 h-20 w-20 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  style={{ background: "radial-gradient(circle, rgba(199,41,49,0.10), transparent 70%)" }}
+                  className="bg-maroon-radial pointer-events-none absolute -end-8 -top-8 h-20 w-20 rounded-full opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-15"
                   aria-hidden
                 />
                 <span
-                  className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: "linear-gradient(135deg, #C72931 0%, #8E1B3A 100%)" }}
+                  className="bg-brand-gradient flex h-16 w-16 items-center justify-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-110"
                 >
                   {icon.kind === "emoji" ? (
                     <span className="text-3xl leading-none">{icon.value}</span>
@@ -101,10 +99,10 @@ export function ShopCategoryGrid({
                     <span className="text-[20px] font-extrabold tracking-tight text-white">{icon.value}</span>
                   )}
                 </span>
-                <p className="text-[14px] font-bold leading-snug text-neutral-900 transition-colors group-hover:text-[color:var(--brand-maroon)]">
+                <p className="text-[14px] font-bold leading-snug text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--brand-maroon)]">
                   {c.name}
                 </p>
-                <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-neutral-400 transition-colors group-hover:text-[color:var(--brand-maroon)]">
+                <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[color:var(--brand-muted)] transition-colors group-hover:text-[color:var(--brand-maroon)]">
                   Browse
                   <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
                 </span>

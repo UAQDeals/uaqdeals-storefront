@@ -133,17 +133,17 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <nav className="mb-4 flex items-center gap-1 text-xs text-neutral-500">
-        <Link href="/" className="hover:text-[color:var(--brand-maroon)]">
+    <div className="mx-auto max-w-6xl px-5 py-8 md:px-8">
+      <nav className="mb-5 flex items-center gap-1.5 text-xs text-[color:var(--brand-muted)]">
+        <Link href="/" className="transition-colors hover:text-[color:var(--brand-maroon)]">
           {tc("home")}
         </Link>
         <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-        <Link href="/categories" className="hover:text-[color:var(--brand-maroon)]">
+        <Link href="/categories" className="transition-colors hover:text-[color:var(--brand-maroon)]">
           {tc("categories")}
         </Link>
         <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-        <span className="line-clamp-1 text-neutral-700">{product.name}</span>
+        <span className="line-clamp-1 text-[color:var(--ink)]">{product.name}</span>
       </nav>
 
       <ProductDetail

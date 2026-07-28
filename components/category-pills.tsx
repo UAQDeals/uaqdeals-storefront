@@ -28,14 +28,14 @@ export function CategoryPills({ locale }: { locale: string }) {
   const pills = isAR ? PILLS_AR : PILLS;
 
   return (
-    <div className="border-b border-neutral-200 bg-white">
+    <div className="border-b border-[color:var(--brand-border)] bg-[color:var(--paper)]">
       <div className="mx-auto max-w-[1320px] px-5 md:px-8">
-        <div className="flex gap-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {pills.map((p) => (
             <Link
               key={p.href}
               href={p.href}
-              className="flex shrink-0 items-center gap-1.5 border-b-2 border-transparent px-4 py-3.5 text-[12.5px] font-semibold text-neutral-600 hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] transition-colors whitespace-nowrap"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[color:var(--brand-border)] bg-white px-4 py-2 text-[12.5px] font-semibold text-neutral-700 shadow-[var(--shadow-sm)] transition hover:-translate-y-0.5 hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] hover:shadow-[var(--shadow-card)]"
             >
               <span className="text-sm">{p.emoji}</span>
               {p.label}

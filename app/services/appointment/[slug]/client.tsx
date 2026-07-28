@@ -4,11 +4,12 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import {
-  ChevronLeft, Clock, ChevronRight, X, Calendar, User, Phone,
+  ChevronLeft, Clock, ChevronRight, Calendar, User, Phone,
   MapPin, CheckCircle, CreditCard, ArrowLeft,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 type Service = {
   id: string;
@@ -156,70 +157,72 @@ export function AppointmentClient({
     }
   }
 
-  const inputCls = "w-full h-12 rounded-xl border border-neutral-300 px-4 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50";
+  const inputCls = "w-full h-12 rounded-xl border border-[color:var(--brand-border)] px-4 text-[14px] text-[color:var(--ink)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] bg-white transition";
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       {/* Header */}
-      <div className="sticky top-0 z-30" style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
+      <div className="bg-maroon-radial sticky top-0 z-30">
         <div className="mx-auto max-w-3xl px-4 h-14 flex items-center gap-3">
           <button onClick={() => step === "list" ? router.back() : setStep(step === "payment" ? "book" : "list")}
-            className="p-1.5 rounded-lg bg-white/10">
-            <ChevronLeft className="w-5 h-5 text-white" />
+            className="p-1.5 rounded-full bg-white/10 ring-1 ring-[color:var(--brand-gold)]/30">
+            <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
           </button>
-          <h1 className="text-[16px] font-bold text-white flex-1">{meta.title}</h1>
+          <h1 className="font-display text-[16px] font-semibold text-white flex-1">{meta.title}</h1>
         </div>
       </div>
 
       {/* ── STEP: SERVICE LIST ── */}
       {step === "list" && (
         <div className="mx-auto max-w-3xl px-4 py-6">
-          <div className="rounded-2xl p-5 text-white mb-5" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{meta.emoji}</span>
-              <div>
-                <h2 className="text-[20px] font-extrabold leading-tight">{meta.title}</h2>
-                <p className="text-white/80 text-[13px]">{meta.tagline}</p>
+          <Reveal>
+            <div className="bg-maroon-radial relative overflow-hidden rounded-3xl p-5 text-white mb-5 shadow-[var(--shadow-premium)]">
+              <span className="pointer-events-none absolute -top-16 -end-12 h-40 w-40 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+              <div className="relative flex items-center gap-3">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-[color:var(--brand-gold)]/40 text-3xl">{meta.emoji}</span>
+                <div>
+                  <h2 className="font-display text-[20px] font-semibold leading-tight">{meta.title}</h2>
+                  <p className="text-white/75 text-[13px]">{meta.tagline}</p>
+                </div>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {services.length === 0 ? (
             <div className="text-center py-16">
-              <span className="text-5xl">{meta.emoji}</span>
-              <p className="text-neutral-500 mt-3">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريباً." : "No services available yet. Please check back soon."}</p>
+              <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl">{meta.emoji}</span>
+              <p className="font-display text-[16px] text-[color:var(--ink)] mt-4">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريباً." : "No services available yet. Please check back soon."}</p>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "اختر خدمة للحجز" : "Choose a service to book"}</p>
+              <p className="eyebrow">{isRTL ? "اختر خدمة للحجز" : "Choose a service to book"}</p>
               {services.map((s) => (
                 <button key={s.id} onClick={() => openBooking(s)}
-                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-start"
-                  style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+                  className="premium-card w-full flex items-center gap-4 p-4 text-start">
                   {s.image_url ? (
-                    <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+                    <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-2xl object-cover shrink-0" />
                   ) : (
-                    <div className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ background: "#FDE8EC" }}>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shrink-0 bg-[color:var(--paper-2)]">
                       {meta.emoji}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-neutral-900">{s.title}</p>
-                    {s.description && <p className="text-[12px] text-neutral-500 line-clamp-2 mt-0.5">{s.description}</p>}
+                    <p className="text-[14px] font-semibold text-[color:var(--ink)]">{s.title}</p>
+                    {s.description && <p className="text-[12px] text-[color:var(--brand-muted)] line-clamp-2 mt-0.5">{s.description}</p>}
                     <div className="flex items-center gap-3 mt-1.5">
                       {s.price != null && (
-                        <span className="text-[13px] font-extrabold" style={{ color: "#8E1B3A" }}>
+                        <span className="text-[13px] font-bold text-[color:var(--brand-maroon)]">
                           {s.price_label ? s.price_label + " " : ""}{isRTL ? "د.إ" : "AED"} {Number(s.price).toFixed(0)}
                         </span>
                       )}
                       {s.duration_minutes != null && (
-                        <span className="text-[11px] text-neutral-400 flex items-center gap-1">
+                        <span className="text-[11px] text-[color:var(--brand-muted)] flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {s.duration_minutes} {isRTL ? "دقيقة" : "min"}
                         </span>
                       )}
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-300 shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-[color:var(--brand-maroon)]/40 shrink-0 rtl:rotate-180" />
                 </button>
               ))}
             </div>
@@ -231,30 +234,30 @@ export function AppointmentClient({
       {step === "book" && selected && (
         <div className="mx-auto max-w-2xl px-4 py-6 space-y-5">
           {/* Selected service banner */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 flex items-center justify-between">
+          <div className="premium-card p-4 flex items-center justify-between">
             <div>
-              <p className="text-[14px] font-bold text-neutral-900">{selected.title}</p>
+              <p className="text-[14px] font-semibold text-[color:var(--ink)]">{selected.title}</p>
               {selected.price != null && (
-                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>{isRTL ? "د.إ" : "AED"} {Number(selected.price).toFixed(0)}</p>
+                <p className="text-[13px] font-bold text-[color:var(--brand-maroon)] mt-0.5">{isRTL ? "د.إ" : "AED"} {Number(selected.price).toFixed(0)}</p>
               )}
             </div>
-            <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-neutral-500 flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> {isRTL ? "تغيير" : "Change"}
+            <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-[color:var(--brand-muted)] flex items-center gap-1 hover:text-[color:var(--brand-maroon)] transition">
+              <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {isRTL ? "تغيير" : "Change"}
             </button>
           </div>
 
           {/* Date */}
           <div>
-            <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {isRTL ? "اختر التاريخ" : "Select Date"}</p>
+            <p className="text-[12.5px] font-semibold text-[color:var(--brand-muted)] mb-2 flex items-center gap-1.5"><Calendar className="w-4 h-4 text-[color:var(--brand-maroon)]" /> {isRTL ? "اختر التاريخ" : "Select Date"}</p>
             <input type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} />
           </div>
 
           {/* Time slots */}
           {date && (
             <div>
-              <p className="text-[13px] font-bold text-neutral-800 mb-2 flex items-center gap-1.5"><Clock className="w-4 h-4" /> {isRTL ? "اختر الوقت" : "Select Time"}</p>
+              <p className="text-[12.5px] font-semibold text-[color:var(--brand-muted)] mb-2 flex items-center gap-1.5"><Clock className="w-4 h-4 text-[color:var(--brand-maroon)]" /> {isRTL ? "اختر الوقت" : "Select Time"}</p>
               {slotsForDate.length === 0 ? (
-                <p className="text-[13px] text-neutral-400 py-3">{isRTL ? "لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخاً آخر." : "No slots available on this day. Try another date."}</p>
+                <p className="text-[13px] text-[color:var(--brand-muted)] py-3">{isRTL ? "لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخاً آخر." : "No slots available on this day. Try another date."}</p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {slotsForDate.map((slot) => {
@@ -262,12 +265,14 @@ export function AppointmentClient({
                     const active = time === slot;
                     return (
                       <button key={slot} disabled={taken} onClick={() => setTime(slot)}
-                        className="h-10 rounded-lg text-[12px] font-semibold border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={active
-                          ? { background: "#8E1B3A", color: "#fff", borderColor: "#8E1B3A" }
-                          : taken
-                            ? { background: "#F3F4F6", color: "#9CA3AF", borderColor: "#E5E7EB" }
-                            : { background: "#fff", color: "#374151", borderColor: "#D1D5DB" }}>
+                        className={
+                          "h-10 rounded-full text-[12px] font-semibold border transition disabled:cursor-not-allowed " +
+                          (active
+                            ? "bg-brand-gradient text-white border-transparent shadow-[var(--shadow-card)]"
+                            : taken
+                              ? "bg-[color:var(--paper-2)] text-[color:var(--brand-muted)]/60 border-[color:var(--brand-border)] opacity-60"
+                              : "bg-white text-[color:var(--brand-muted)] border-[color:var(--brand-border)] hover:border-[color:var(--brand-gold)]/50")
+                        }>
                         {slot}
                       </button>
                     );
@@ -279,27 +284,26 @@ export function AppointmentClient({
 
           {/* Details */}
           <div className="space-y-3">
-            <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "بياناتك" : "Your Details"}</p>
+            <p className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "بياناتك" : "Your Details"}</p>
             <div className="relative">
-              <User className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <User className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--brand-maroon)]" />
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل *" : "Full Name *"} className={inputCls + " ps-11"} />
             </div>
             <div className="relative">
-              <Phone className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <Phone className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--brand-maroon)]" />
               <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={isRTL ? "رقم الهاتف *" : "Phone Number *"} type="tel" className={inputCls + " ps-11"} />
             </div>
             <div className="relative">
-              <MapPin className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <MapPin className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--brand-maroon)]" />
               <input value={address} onChange={(e) => setAddress(e.target.value)}
                 placeholder={slug === "clinics" || slug === "barber_shop" ? (isRTL ? "العنوان (اختياري)" : "Address (optional)") : (isRTL ? "العنوان *" : "Address *")} className={inputCls + " ps-11"} />
             </div>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              placeholder={isRTL ? "ملاحظات (اختياري)" : "Notes (optional)"} className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50" />
+              placeholder={isRTL ? "ملاحظات (اختياري)" : "Notes (optional)"} className="w-full rounded-xl border border-[color:var(--brand-border)] px-4 py-3 text-[14px] text-[color:var(--ink)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] bg-white transition" />
           </div>
 
           <button onClick={proceedToPayment}
-            className="w-full h-12 rounded-xl text-white font-extrabold text-[14px]"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            className="bg-brand-gradient w-full h-12 rounded-full text-white font-bold text-[14px] shadow-[var(--shadow-card)] transition hover:brightness-110">
             {isRTL ? "المتابعة إلى الدفع" : "Continue to Payment"}
           </button>
         </div>
@@ -308,38 +312,38 @@ export function AppointmentClient({
       {/* ── STEP: PAYMENT (placeholder) ── */}
       {step === "payment" && selected && (
         <div className="mx-auto max-w-md px-4 py-8">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
-            <h2 className="text-[17px] font-extrabold text-neutral-900">{isRTL ? "التأكيد والدفع" : "Confirm & Pay"}</h2>
+          <div className="premium-card p-5 space-y-4">
+            <h2 className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "التأكيد والدفع" : "Confirm & Pay"}</h2>
 
             {/* Summary */}
-            <div className="rounded-xl bg-neutral-50 border border-neutral-100 p-4 space-y-2 text-[13px]">
+            <div className="rounded-2xl bg-[color:var(--paper-2)] p-4 space-y-2 text-[13px]">
               <Row label={isRTL ? "الخدمة" : "Service"} value={selected.title} />
               <Row label={isRTL ? "التاريخ" : "Date"} value={new Date(date + "T00:00:00").toLocaleDateString(isRTL ? "ar-AE" : "en-AE", { weekday: "short", day: "numeric", month: "short" })} />
               <Row label={isRTL ? "الوقت" : "Time"} value={time} />
               <Row label={isRTL ? "الاسم" : "Name"} value={name} />
-              <div className="border-t border-neutral-200 pt-2 mt-2 flex items-center justify-between">
-                <span className="font-bold">{isRTL ? "الإجمالي" : "Total"}</span>
-                <span className="font-extrabold" style={{ color: "#8E1B3A" }}>
+              <div className="gold-rule my-2" />
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[color:var(--ink)]">{isRTL ? "الإجمالي" : "Total"}</span>
+                <span className="font-display font-semibold text-[color:var(--brand-maroon)]">
                   {selected.price != null ? `${isRTL ? "د.إ" : "AED"} ${Number(selected.price).toFixed(2)}` : (isRTL ? "يُحدد لاحقاً" : "TBD")}
                 </span>
               </div>
             </div>
 
             {/* Payment placeholder */}
-            <div className="rounded-xl border-2 border-dashed p-4 text-center" style={{ borderColor: "#F0D0D8", background: "#FDF6F8" }}>
-              <CreditCard className="w-7 h-7 mx-auto mb-2" style={{ color: "#8E1B3A" }} />
-              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "الدفع الإلكتروني قريباً" : "Online payment coming soon"}</p>
-              <p className="text-[12px] text-neutral-500 mt-1">
+            <div className="rounded-2xl border border-dashed border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)] p-4 text-center">
+              <CreditCard className="w-7 h-7 mx-auto mb-2 text-[color:var(--brand-maroon)]" />
+              <p className="text-[13px] font-bold text-[color:var(--ink)]">{isRTL ? "الدفع الإلكتروني قريباً" : "Online payment coming soon"}</p>
+              <p className="text-[12px] text-[color:var(--brand-muted)] mt-1">
                 {isRTL ? "في الوقت الحالي، أكّد حجزك وسيقوم فريقنا بترتيب الدفع عند تقديم الخدمة." : "For now, confirm your booking and our team will arrange payment on service."}
               </p>
             </div>
 
             <button onClick={bookAppointment} disabled={loading}
-              className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+              className="bg-brand-gradient w-full h-12 rounded-full text-white font-bold text-[14px] shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
               {loading ? (isRTL ? "جارٍ التأكيد…" : "Confirming…") : (isRTL ? "تأكيد الحجز" : "Confirm Booking")}
             </button>
-            <button onClick={() => setStep("book")} className="w-full text-[13px] font-semibold text-neutral-500">
+            <button onClick={() => setStep("book")} className="w-full text-[13px] font-semibold text-[color:var(--brand-muted)] hover:text-[color:var(--brand-maroon)] transition">
               {isRTL ? "رجوع" : "Back"}
             </button>
           </div>
@@ -349,19 +353,18 @@ export function AppointmentClient({
       {/* ── STEP: DONE ── */}
       {step === "done" && selected && (
         <div className="mx-auto max-w-md px-4 py-16 text-center">
-          <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
-            <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
+          <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center bg-green-50 ring-8 ring-green-50/50">
+            <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-[22px] font-extrabold text-neutral-900">{isRTL ? "تم تأكيد الحجز!" : "Booking Confirmed!"}</h2>
-          <p className="text-neutral-500 text-[14px] mt-2 leading-relaxed">
+          <h2 className="font-display text-[24px] font-semibold text-[color:var(--ink)]">{isRTL ? "تم تأكيد الحجز!" : "Booking Confirmed!"}</h2>
+          <p className="text-[color:var(--brand-muted)] text-[14px] mt-2 leading-relaxed">
             {isRTL ? (<>تم حجز موعد {selected.title} في{" "}</>) : (<>Your {selected.title} appointment is booked for{" "}</>)}
-            <span className="font-semibold text-neutral-700">
+            <span className="font-semibold text-[color:var(--ink)]">
               {new Date(date + "T00:00:00").toLocaleDateString(isRTL ? "ar-AE" : "en-AE", { weekday: "long", day: "numeric", month: "long" })} {isRTL ? "الساعة" : "at"} {time}
             </span>{isRTL ? ". سيتواصل معك فريقنا للتأكيد." : ". Our team will contact you to confirm."}
           </p>
           <button onClick={() => router.push("/services")}
-            className="mt-8 inline-block rounded-xl px-6 py-3 text-white font-bold text-[14px]"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            className="bg-brand-gradient mt-8 inline-block rounded-full px-7 py-3.5 text-white font-bold text-[14px] shadow-[var(--shadow-card)] transition hover:brightness-110">
             {isRTL ? "العودة إلى الخدمات" : "Back to Services"}
           </button>
         </div>
@@ -373,8 +376,8 @@ export function AppointmentClient({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-neutral-500">{label}</span>
-      <span className="font-semibold text-neutral-800">{value}</span>
+      <span className="text-[color:var(--brand-muted)]">{label}</span>
+      <span className="font-semibold text-[color:var(--ink)]">{value}</span>
     </div>
   );
 }

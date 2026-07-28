@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { Reveal } from "@/components/reveal";
 import { ContactButtons } from "./contact-buttons";
 
 export const dynamic = "force-dynamic";
@@ -54,25 +55,32 @@ export default async function MarketplaceDetailPage({
   const specs = (SPECS[vertical] ?? []).filter(([, key]) => r[key] != null && r[key] !== "");
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <Link href={`/marketplace/${vertical}`} className="text-sm text-neutral-500 hover:text-[#8E1B3A]">
-        ← Back to {cfg.title}
-      </Link>
+    <div className="mx-auto max-w-[1200px] px-5 md:px-8 py-8">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-[12.5px] text-[color:var(--brand-muted)]">
+        <Link href={`/marketplace/${vertical}`} className="transition hover:text-[color:var(--brand-maroon)]">
+          {cfg.title}
+        </Link>
+        <span className="opacity-50">/</span>
+        <span className="truncate text-[color:var(--ink)]">{r.title}</span>
+      </nav>
 
-      <div className="mt-4 grid gap-6 lg:grid-cols-2">
-        {/* Images */}
+      <Reveal className="mt-5 grid gap-6 lg:grid-cols-2 lg:gap-8">
+        {/* Gallery */}
         <div>
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-100">
-            {images[0] ? (
-              <img src={images[0]} alt={r.title} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center text-5xl">📷</div>
-            )}
+          <div className="premium-card overflow-hidden rounded-3xl p-0">
+            <div className="aspect-[4/3] w-full overflow-hidden bg-[color:var(--paper-2)]">
+              {images[0] ? (
+                <img src={images[0]} alt={r.title} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-5xl text-neutral-300">📷</div>
+              )}
+            </div>
           </div>
           {images.length > 1 && (
-            <div className="mt-3 grid grid-cols-4 gap-2">
+            <div className="mt-3 grid grid-cols-4 gap-2.5">
               {images.slice(1, 5).map((img, i) => (
-                <div key={i} className="aspect-square overflow-hidden rounded-lg bg-neutral-100">
+                <div key={i} className="aspect-square overflow-hidden rounded-xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)]">
                   <img src={img} alt="" className="h-full w-full object-cover" />
                 </div>
               ))}
@@ -80,43 +88,51 @@ export default async function MarketplaceDetailPage({
           )}
         </div>
 
-        {/* Details */}
-        <div>
+        {/* Details / buy box */}
+        <div className="self-start rounded-3xl border border-[color:var(--brand-border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-7 lg:sticky lg:top-24">
           {r.status === "sold" && (
-            <div className="mb-3 rounded-lg bg-red-600 px-4 py-2 text-center text-sm font-extrabold uppercase tracking-wider text-white">
-              ⓘ This item has been sold
+            <div className="mb-4 rounded-xl bg-[color:var(--brand-maroon)] px-4 py-2.5 text-center text-[12.5px] font-bold uppercase tracking-wider text-white">
+              This item has been sold
             </div>
           )}
-          <h1 className="text-2xl font-extrabold text-neutral-900">{r.title}</h1>
-          <p className="mt-1 text-2xl font-extrabold text-[#8E1B3A]">
-            {r.price ? `AED ${Number(r.price).toLocaleString()}` : "Ask for price"}
-            {r.is_negotiable ? <span className="ml-2 text-xs font-medium text-neutral-400">Negotiable</span> : null}
-          </p>
-          {r.emirate && <p className="mt-1 text-sm text-neutral-500">📍 {r.emirate}{r.location ? ` · ${r.location}` : ""}</p>}
+          <h1 className="font-display text-[26px] font-semibold leading-tight tracking-tight text-[color:var(--ink)] sm:text-[30px]">{r.title}</h1>
+          <div className="mt-2.5 flex items-baseline gap-2.5">
+            <span className="text-[26px] font-extrabold text-[color:var(--brand-maroon)]">
+              {r.price ? `AED ${Number(r.price).toLocaleString()}` : "Ask for price"}
+            </span>
+            {r.is_negotiable ? <span className="text-[12px] font-medium text-neutral-400">Negotiable</span> : null}
+          </div>
+          {r.emirate && (
+            <p className="mt-2 text-[13px] text-[color:var(--brand-muted)]">
+              <span className="me-1">📍</span>{r.emirate}{r.location ? ` · ${r.location}` : ""}
+            </p>
+          )}
 
           {specs.length > 0 && (
-            <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 rounded-xl border border-neutral-200 bg-white p-4">
-              {specs.map(([label, key]) => (
-                <div key={key} className="flex justify-between text-sm">
-                  <span className="text-neutral-400">{label}</span>
-                  <span className="font-semibold text-neutral-800">{String(r[key])}</span>
-                </div>
-              ))}
+            <div className="mt-5 rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper)] p-4">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                {specs.map(([label, key]) => (
+                  <div key={key} className="flex items-center justify-between gap-3 text-[13px]">
+                    <span className="text-[color:var(--brand-muted)]">{label}</span>
+                    <span className="font-semibold text-[color:var(--ink)]">{String(r[key])}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           {r.description && (
             <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Description</p>
-              <p className="mt-1 whitespace-pre-wrap text-sm text-neutral-700">{r.description}</p>
+              <p className="eyebrow">Description</p>
+              <p className="mt-2 whitespace-pre-wrap text-[13.5px] leading-relaxed text-neutral-700">{r.description}</p>
             </div>
           )}
 
-          <div className="mt-6">
+          <div className="mt-6 border-t border-[color:var(--brand-border)] pt-5">
             <ContactButtons vertical={vertical} listingId={r.id} listingTitle={r.title} isSold={r.status === "sold"} />
           </div>
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }

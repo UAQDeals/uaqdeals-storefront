@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 type Field = { key: string; label: string; type: "text" | "textarea" | "tel" | "email"; required?: boolean };
 type Service = {
@@ -98,62 +99,64 @@ export function ServiceCartClient({
     }
   }
 
-  const inputCls = "w-full h-12 rounded-xl border border-neutral-300 px-4 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50";
+  const inputCls = "w-full h-12 rounded-xl border border-[color:var(--brand-border)] px-4 text-[14px] text-[color:var(--ink)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] bg-white transition";
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       {/* Header */}
-      <div className="sticky top-0 z-30" style={{ background: "linear-gradient(to right, #C72931, #8E1B3A)" }}>
+      <div className="bg-maroon-radial sticky top-0 z-30">
         <div className="mx-auto max-w-3xl px-4 h-14 flex items-center gap-3">
-          <button onClick={() => step === "list" ? router.back() : setStep("list")} className="p-1.5 rounded-lg bg-white/10">
-            <ChevronLeft className="w-5 h-5 text-white" />
+          <button onClick={() => step === "list" ? router.back() : setStep("list")} className="p-1.5 rounded-full bg-white/10 ring-1 ring-[color:var(--brand-gold)]/30">
+            <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
           </button>
-          <h1 className="text-[16px] font-bold text-white flex-1">{meta.title}</h1>
+          <h1 className="font-display text-[16px] font-semibold text-white flex-1">{meta.title}</h1>
         </div>
       </div>
 
       {/* ── SERVICE LIST ── */}
       {step === "list" && (
         <div className="mx-auto max-w-3xl px-4 py-6">
-          <div className="rounded-2xl p-5 text-white mb-5" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{meta.emoji}</span>
-              <div>
-                <h2 className="text-[20px] font-extrabold leading-tight">{meta.title}</h2>
-                <p className="text-white/80 text-[13px]">{meta.tagline}</p>
+          <Reveal>
+            <div className="bg-maroon-radial relative overflow-hidden rounded-3xl p-5 text-white mb-5 shadow-[var(--shadow-premium)]">
+              <span className="pointer-events-none absolute -top-16 -end-12 h-40 w-40 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+              <div className="relative flex items-center gap-3">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-[color:var(--brand-gold)]/40 text-3xl">{meta.emoji}</span>
+                <div>
+                  <h2 className="font-display text-[20px] font-semibold leading-tight">{meta.title}</h2>
+                  <p className="text-white/75 text-[13px]">{meta.tagline}</p>
+                </div>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {services.length === 0 ? (
             <div className="text-center py-16">
-              <span className="text-5xl">{meta.emoji}</span>
-              <p className="text-neutral-500 mt-3">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريبًا." : "No services available yet. Please check back soon."}</p>
+              <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl">{meta.emoji}</span>
+              <p className="font-display text-[16px] text-[color:var(--ink)] mt-4">{isRTL ? "لا توجد خدمات متاحة بعد. يرجى المعاودة قريبًا." : "No services available yet. Please check back soon."}</p>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[13px] font-bold text-neutral-700">{isRTL ? "اختر خدمة" : "Choose a service"}</p>
+              <p className="eyebrow">{isRTL ? "اختر خدمة" : "Choose a service"}</p>
               {services.map((s) => (
                 <button key={s.id} onClick={() => openForm(s)}
-                  className="w-full flex items-center gap-4 bg-white rounded-2xl border border-neutral-100 p-4 hover:shadow-md transition-shadow text-start"
-                  style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+                  className="premium-card w-full flex items-center gap-4 p-4 text-start">
                   {s.image_url ? (
-                    <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+                    <img src={s.image_url} alt={s.title} className="w-16 h-16 rounded-2xl object-cover shrink-0" />
                   ) : (
-                    <div className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ background: "#FDE8EC" }}>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shrink-0 bg-[color:var(--paper-2)]">
                       {meta.emoji}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-neutral-900">{s.title}</p>
-                    {s.description && <p className="text-[12px] text-neutral-500 line-clamp-2 mt-0.5">{s.description}</p>}
+                    <p className="text-[14px] font-semibold text-[color:var(--ink)]">{s.title}</p>
+                    {s.description && <p className="text-[12px] text-[color:var(--brand-muted)] line-clamp-2 mt-0.5">{s.description}</p>}
                     {s.price != null && (
-                      <span className="text-[13px] font-extrabold mt-1 inline-block" style={{ color: "#8E1B3A" }}>
+                      <span className="text-[13px] font-bold mt-1 inline-block text-[color:var(--brand-maroon)]">
                         {s.price_label ? s.price_label + " " : ""}{isRTL ? "درهم" : "AED"} {Number(s.price).toFixed(0)}
                       </span>
                     )}
                   </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-300 shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-[color:var(--brand-maroon)]/40 shrink-0 rtl:rotate-180" />
                 </button>
               ))}
             </div>
@@ -164,33 +167,33 @@ export function ServiceCartClient({
       {/* ── INFO FORM ── */}
       {step === "form" && selected && (
         <div className="mx-auto max-w-2xl px-4 py-6 space-y-5">
-          <div className="rounded-xl border border-neutral-200 bg-white p-4 flex items-center justify-between">
+          <div className="premium-card p-4 flex items-center justify-between">
             <div>
-              <p className="text-[14px] font-bold text-neutral-900">{selected.title}</p>
+              <p className="text-[14px] font-semibold text-[color:var(--ink)]">{selected.title}</p>
               {selected.price != null && (
-                <p className="text-[13px] font-extrabold mt-0.5" style={{ color: "#8E1B3A" }}>{isRTL ? "درهم" : "AED"} {Number(selected.price).toFixed(0)}</p>
+                <p className="text-[13px] font-bold mt-0.5 text-[color:var(--brand-maroon)]">{isRTL ? "درهم" : "AED"} {Number(selected.price).toFixed(0)}</p>
               )}
             </div>
-            <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-neutral-500 flex items-center gap-1">
-              <ArrowLeft className="w-3.5 h-3.5" /> {isRTL ? "تغيير" : "Change"}
+            <button onClick={() => setStep("list")} className="text-[12px] font-semibold text-[color:var(--brand-muted)] flex items-center gap-1 hover:text-[color:var(--brand-maroon)] transition">
+              <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {isRTL ? "تغيير" : "Change"}
             </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4" style={{ color: "#8E1B3A" }} />
-            <h3 className="text-[15px] font-bold text-neutral-800">{isRTL ? "معلوماتك" : "Your Information"}</h3>
+            <FileText className="w-4 h-4 text-[color:var(--brand-maroon)]" />
+            <h3 className="font-display text-[16px] font-semibold text-[color:var(--ink)]">{isRTL ? "معلوماتك" : "Your Information"}</h3>
           </div>
-          <p className="text-[12px] text-neutral-500 -mt-3">{isRTL ? "نحتاج بعض التفاصيل لمعالجة هذه الخدمة." : "We need a few details to process this service."}</p>
+          <p className="text-[12px] text-[color:var(--brand-muted)] -mt-3">{isRTL ? "نحتاج بعض التفاصيل لمعالجة هذه الخدمة." : "We need a few details to process this service."}</p>
 
           {meta.fields.map((f) => (
             <div key={f.key}>
-              <label className="block text-[12px] font-semibold text-neutral-600 mb-1.5">
-                {f.label}{f.required && <span className="text-red-500"> *</span>}
+              <label className="block text-[12.5px] font-semibold text-[color:var(--brand-muted)] mb-1.5">
+                {f.label}{f.required && <span className="text-[color:var(--brand-maroon)]"> *</span>}
               </label>
               {f.type === "textarea" ? (
                 <textarea id={"field_" + f.key} rows={3}
                   value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                  className="w-full rounded-xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A] bg-neutral-50" />
+                  className="w-full rounded-xl border border-[color:var(--brand-border)] px-4 py-3 text-[14px] text-[color:var(--ink)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] bg-white transition" />
               ) : (
                 <input id={"field_" + f.key} type={f.type}
                   value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
@@ -200,33 +203,31 @@ export function ServiceCartClient({
           ))}
 
           <button onClick={submitEnquiry} disabled={submitting}
-            className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            className="bg-brand-gradient w-full h-12 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60">
             <MessageCircle className="w-4 h-4" /> {submitting ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : (isRTL ? "اطلب الخدمة" : "Request Service")}
           </button>
-          <p className="text-center text-[12px] text-neutral-400">{isRTL ? "سيتواصل معك فريقنا لتأكيد التفاصيل." : "Our team will contact you to confirm details."}</p>
+          <p className="text-center text-[12px] text-[color:var(--brand-muted)]">{isRTL ? "سيتواصل معك فريقنا لتأكيد التفاصيل." : "Our team will contact you to confirm details."}</p>
         </div>
       )}
 
       {/* ── ADDED ── */}
       {step === "added" && selected && (
         <div className="mx-auto max-w-md px-4 py-16 text-center">
-          <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: "#F0FDF4" }}>
-            <CheckCircle className="w-8 h-8" style={{ color: "#16A34A" }} />
+          <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center bg-green-50 ring-8 ring-green-50/50">
+            <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-[22px] font-extrabold text-neutral-900">{isRTL ? "تم إرسال الطلب!" : "Request Submitted!"}</h2>
-          <p className="text-neutral-500 text-[14px] mt-2">
+          <h2 className="font-display text-[24px] font-semibold text-[color:var(--ink)]">{isRTL ? "تم إرسال الطلب!" : "Request Submitted!"}</h2>
+          <p className="text-[color:var(--brand-muted)] text-[14px] mt-2">
             {isRTL
               ? `لقد استلمنا طلبك لـ ${meta.title}: ${selected.title}. سيتواصل معك فريقنا قريبًا للتأكيد.`
               : `We've received your request for ${meta.title}: ${selected.title}. Our team will contact you shortly to confirm.`}
           </p>
           <div className="mt-8 flex flex-col gap-3">
             <button onClick={() => router.push("/services")}
-              className="rounded-xl px-6 py-3 text-white font-bold text-[14px]"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+              className="bg-brand-gradient rounded-full px-6 py-3 text-white font-bold text-[14px] shadow-[var(--shadow-card)] transition hover:brightness-110">
               {isRTL ? "تصفّح المزيد من الخدمات" : "Browse More Services"}
             </button>
-            <button onClick={() => setStep("list")} className="text-[13px] font-semibold text-neutral-500">
+            <button onClick={() => setStep("list")} className="text-[13px] font-semibold text-[color:var(--brand-muted)] hover:text-[color:var(--brand-maroon)] transition">
               {isRTL ? "اطلب خدمة أخرى" : "Request another service"}
             </button>
           </div>

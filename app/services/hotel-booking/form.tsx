@@ -5,6 +5,10 @@ import { useLocale } from "next-intl";
 import { ChevronLeft, Hotel, MapPin, Calendar, User, Phone, Mail, FileText, Minus, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
+
+const PREMIUM_INPUT =
+  "w-full rounded-xl border border-[color:var(--brand-border)] bg-white ps-10 pe-4 py-3 text-[14px] text-[color:var(--ink)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] transition";
 
 const HOTEL_TYPES = [
   { label: "Budget", labelAr: "اقتصادي", icon: "\u{1F4B0}" },
@@ -15,17 +19,17 @@ const HOTEL_TYPES = [
 
 function Counter({ label, value, set, min, max }: { label: string; value: number; set: (v: number) => void; min: number; max: number; }) {
   return (
-    <div className="flex-1 rounded-xl border border-neutral-300 bg-white px-2.5 py-2">
-      <p className="text-[10px] text-neutral-500 text-center">{label}</p>
+    <div className="flex-1 rounded-xl border border-[color:var(--brand-border)] bg-white px-2.5 py-2">
+      <p className="text-[10px] text-[color:var(--brand-muted)] text-center">{label}</p>
       <div className="flex items-center justify-center gap-2.5 mt-1">
         <button type="button" disabled={value <= min} onClick={() => set(value - 1)}
-          className="p-1 rounded-md bg-neutral-100 disabled:opacity-30">
-          <Minus className="w-3.5 h-3.5 text-[#8E1B3A]" />
+          className="p-1 rounded-full bg-[color:var(--paper-2)] transition hover:brightness-95 disabled:opacity-30">
+          <Minus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
         </button>
-        <span className="text-base font-extrabold w-5 text-center">{value}</span>
+        <span className="font-display text-base font-semibold text-[color:var(--ink)] w-5 text-center">{value}</span>
         <button type="button" disabled={value >= max} onClick={() => set(value + 1)}
-          className="p-1 rounded-md bg-neutral-100 disabled:opacity-30">
-          <Plus className="w-3.5 h-3.5 text-[#8E1B3A]" />
+          className="p-1 rounded-full bg-[color:var(--paper-2)] transition hover:brightness-95 disabled:opacity-30">
+          <Plus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
         </button>
       </div>
     </div>
@@ -79,57 +83,67 @@ export function HotelBookingForm() {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="bg-white border-b border-neutral-100 sticky top-0 z-10">
+    <div className="min-h-screen bg-[color:var(--paper)]">
+      <div className="bg-white/85 backdrop-blur-md border-b border-[color:var(--brand-border)] sticky top-0 z-10">
         <div className="mx-auto max-w-2xl px-4 h-14 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-neutral-100">
-            <ChevronLeft className="w-5 h-5 text-neutral-700" />
+          <button onClick={() => router.back()} className="p-1.5 rounded-full bg-[color:var(--paper-2)] transition hover:brightness-95">
+            <ChevronLeft className="w-5 h-5 text-[color:var(--ink)] rtl:rotate-180" />
           </button>
-          <h1 className="text-[17px] font-bold text-neutral-900">{isRTL ? "حجز الفنادق" : "Hotel Booking"}</h1>
+          <h1 className="font-display text-[17px] font-semibold text-[color:var(--ink)]">{isRTL ? "حجز الفنادق" : "Hotel Booking"}</h1>
         </div>
       </div>
 
       <div className="mx-auto max-w-2xl px-4 py-5 space-y-5">
-        <div className="rounded-2xl p-4 flex items-center gap-3 text-white" style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
-          <Hotel className="w-7 h-7" />
-          <div>
-            <p className="text-[16px] font-extrabold">{isRTL ? "اعثر على إقامتك المثالية" : "Find Your Perfect Stay"}</p>
-            <p className="text-[11px] text-white/70">{isRTL ? "سنوفّر لك أفضل العروض" : "We will match you with the best deals"}</p>
+        <Reveal>
+          <div className="bg-maroon-radial relative overflow-hidden rounded-3xl p-5 flex items-center gap-4 text-white shadow-[var(--shadow-premium)]">
+            <span className="pointer-events-none absolute -top-16 -end-12 h-40 w-40 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-[color:var(--brand-gold)]/40">
+              <Hotel className="w-6 h-6" />
+            </span>
+            <div className="relative">
+              <p className="font-display text-[17px] font-semibold">{isRTL ? "اعثر على إقامتك المثالية" : "Find Your Perfect Stay"}</p>
+              <p className="text-[12px] text-white/75">{isRTL ? "سنوفّر لك أفضل العروض" : "We will match you with the best deals"}</p>
+            </div>
           </div>
-        </div>
+        </Reveal>
 
         <div>
-          <label className="text-[13px] font-bold text-neutral-800">{isRTL ? "الوجهة" : "Destination"}</label>
+          <label className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "الوجهة" : "Destination"}</label>
           <div className="relative mt-2">
-            <MapPin className="absolute start-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+            <MapPin className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
             <input value={destination} onChange={(e) => setDestination(e.target.value)} placeholder={isRTL ? "المدينة أو اسم الفندق" : "City or Hotel Name"}
-              className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+              className={PREMIUM_INPUT} />
           </div>
         </div>
 
         <div>
-          <label className="text-[13px] font-bold text-neutral-800">{isRTL ? "تواريخ الإقامة" : "Stay Dates"}</label>
+          <label className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "تواريخ الإقامة" : "Stay Dates"}</label>
           <div className="grid grid-cols-2 gap-3 mt-2">
-            <div className="rounded-xl border border-neutral-300 bg-white px-3 py-2">
-              <p className="text-[10px] text-neutral-500">{isRTL ? "الوصول" : "Check-in"}</p>
+            <div className="rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5">
+              <p className="text-[10px] text-[color:var(--brand-muted)]">{isRTL ? "الوصول" : "Check-in"}</p>
               <input type="date" min={today} value={checkIn} onChange={(e) => setCheckIn(e.target.value)}
-                className="w-full text-[13px] font-semibold focus:outline-none bg-transparent" />
+                className="w-full text-[13px] font-semibold text-[color:var(--ink)] focus:outline-none bg-transparent" />
             </div>
-            <div className="rounded-xl border border-neutral-300 bg-white px-3 py-2">
-              <p className="text-[10px] text-neutral-500">{isRTL ? "المغادرة" : "Check-out"}</p>
+            <div className="rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5">
+              <p className="text-[10px] text-[color:var(--brand-muted)]">{isRTL ? "المغادرة" : "Check-out"}</p>
               <input type="date" min={checkIn || today} value={checkOut} onChange={(e) => setCheckOut(e.target.value)}
-                className="w-full text-[13px] font-semibold focus:outline-none bg-transparent" />
+                className="w-full text-[13px] font-semibold text-[color:var(--ink)] focus:outline-none bg-transparent" />
             </div>
           </div>
-          {nights > 0 && <p className="text-[12px] font-semibold text-[#8E1B3A] mt-1.5">{isRTL ? `${nights} ${nights > 2 && nights < 11 ? "ليالٍ" : "ليلة"}` : `${nights} night${nights > 1 ? "s" : ""}`}</p>}
+          {nights > 0 && <p className="text-[12px] font-semibold text-[color:var(--brand-maroon)] mt-1.5">{isRTL ? `${nights} ${nights > 2 && nights < 11 ? "ليالٍ" : "ليلة"}` : `${nights} night${nights > 1 ? "s" : ""}`}</p>}
         </div>
 
         <div>
-          <label className="text-[13px] font-bold text-neutral-800">{isRTL ? "فئة الفندق" : "Hotel Category"}</label>
+          <label className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "فئة الفندق" : "Hotel Category"}</label>
           <div className="flex flex-wrap gap-2 mt-2">
             {HOTEL_TYPES.map((h) => (
               <button key={h.label} type="button" onClick={() => setHotelType(h.label)}
-                className={"px-3.5 py-2 rounded-lg border text-[12px] font-semibold flex items-center gap-1.5 transition " + (hotelType === h.label ? "bg-[#8E1B3A] text-white border-[#8E1B3A]" : "bg-white text-neutral-700 border-neutral-300")}>
+                className={
+                  "px-3.5 py-2 rounded-full border text-[12px] font-semibold flex items-center gap-1.5 transition " +
+                  (hotelType === h.label
+                    ? "bg-brand-gradient text-white border-transparent shadow-[var(--shadow-card)]"
+                    : "bg-white text-[color:var(--brand-muted)] border-[color:var(--brand-border)] hover:border-[color:var(--brand-gold)]/50")
+                }>
                 <span>{h.icon}</span> {isRTL ? h.labelAr : h.label}
               </button>
             ))}
@@ -137,7 +151,7 @@ export function HotelBookingForm() {
         </div>
 
         <div>
-          <label className="text-[13px] font-bold text-neutral-800">{isRTL ? "الغرف والضيوف" : "Rooms & Guests"}</label>
+          <label className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "الغرف والضيوف" : "Rooms & Guests"}</label>
           <div className="flex gap-2.5 mt-2">
             <Counter label={isRTL ? "الغرف" : "Rooms"} value={rooms} set={setRooms} min={1} max={10} />
             <Counter label={isRTL ? "البالغون" : "Adults"} value={adults} set={setAdults} min={1} max={20} />
@@ -146,23 +160,23 @@ export function HotelBookingForm() {
         </div>
 
         <div className="space-y-3">
-          <label className="text-[13px] font-bold text-neutral-800">{isRTL ? "بيانات التواصل" : "Contact Details"}</label>
+          <label className="text-[12.5px] font-semibold text-[color:var(--brand-muted)]">{isRTL ? "بيانات التواصل" : "Contact Details"}</label>
           <Field icon={User} placeholder={isRTL ? "الاسم الكامل" : "Full Name"} value={name} onChange={setName} />
           <Field icon={Phone} placeholder={isRTL ? "رقم الهاتف" : "Phone"} value={phone} onChange={setPhone} type="tel" />
           <Field icon={Mail} placeholder={isRTL ? "البريد الإلكتروني" : "Email"} value={email} onChange={setEmail} type="email" />
           <div className="relative">
-            <FileText className="absolute start-3 top-3.5 w-4.5 h-4.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+            <FileText className="absolute start-3 top-3.5 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={isRTL ? "طلبات خاصة" : "Special Requests"} rows={3}
-              className="w-full rounded-xl border border-neutral-300 ps-10 pe-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+              className={PREMIUM_INPUT} />
           </div>
         </div>
 
         <button onClick={submit} disabled={loading}
-          className="w-full h-13 rounded-2xl text-white font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ background: "#C72931", height: 52 }}>
+          className="bg-brand-gradient w-full rounded-full text-white font-bold text-[15px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60"
+          style={{ height: 52 }}>
           {loading ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : <><Hotel className="w-5 h-5" /> {isRTL ? "إرسال الطلب" : "Submit Enquiry"}</>}
         </button>
-        <p className="text-center text-[11px] text-neutral-500">{isRTL ? "سيردّ فريق الكونسيرج خلال ساعتين" : "Our concierge will respond within 2 hours"}</p>
+        <p className="text-center text-[11px] text-[color:var(--brand-muted)]">{isRTL ? "سيردّ فريق الكونسيرج خلال ساعتين" : "Our concierge will respond within 2 hours"}</p>
       </div>
     </div>
   );
@@ -171,9 +185,9 @@ export function HotelBookingForm() {
 function Field({ icon: Icon, placeholder, value, onChange, type = "text" }: { icon: any; placeholder: string; value: string; onChange: (v: string) => void; type?: string; }) {
   return (
     <div className="relative">
-      <Icon className="absolute start-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+      <Icon className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+        className={PREMIUM_INPUT} />
     </div>
   );
 }

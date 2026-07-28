@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, Ticket, Copy, Calendar } from "lucide-react";
 import QRCode from "qrcode";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 type TicketRow = {
   id: string;
@@ -43,42 +44,40 @@ function TicketCard({ ticket }: { ticket: TicketRow }) {
   const sc = statusColor(ticket.status ?? "confirmed");
 
   return (
-    <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden"
-      style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}>
+    <div className="premium-card overflow-hidden">
       <div className="p-4 flex items-start gap-4">
         {/* QR */}
         <div className="shrink-0">
           {qr ? (
-            <img src={qr} alt="QR" className="rounded-lg border border-neutral-100" style={{ width: 96, height: 96 }} />
+            <img src={qr} alt="QR" className="rounded-xl border border-[color:var(--brand-border)]" style={{ width: 96, height: 96 }} />
           ) : (
-            <div className="rounded-lg bg-neutral-100 flex items-center justify-center" style={{ width: 96, height: 96 }}>
-              <Ticket className="w-6 h-6 text-neutral-300" />
+            <div className="rounded-xl bg-[color:var(--paper-2)] flex items-center justify-center" style={{ width: 96, height: 96 }}>
+              <Ticket className="w-6 h-6 text-[color:var(--brand-gold)]" />
             </div>
           )}
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide"
-              style={{ background: "#FDE8EC", color: "#8E1B3A" }}>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
               {ticket.booking_type}
             </span>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide"
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
               style={{ background: sc.bg, color: sc.text }}>
               {ticket.status ?? "confirmed"}
             </span>
           </div>
-          <h3 className="text-[15px] font-bold text-neutral-900 leading-snug line-clamp-1">{ticket.title}</h3>
+          <h3 className="font-display text-[16px] font-semibold text-[color:var(--ink)] leading-snug line-clamp-1">{ticket.title}</h3>
 
-          <div className="mt-1.5 space-y-0.5 text-[12px] text-neutral-500">
+          <div className="mt-1.5 space-y-0.5 text-[12px] text-[color:var(--brand-muted)]">
             {ticket.ticket_type && <p>{ticket.ticket_type} × {ticket.quantity ?? 1}</p>}
             {ticket.visit_date && (
               <p className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" /> {ticket.visit_date}
+                <Calendar className="w-3 h-3 text-[color:var(--brand-gold)]" /> {ticket.visit_date}
               </p>
             )}
-            <p className="font-semibold text-neutral-700">
+            <p className="font-bold text-[color:var(--brand-maroon)]">
               {ticket.total_price ? `AED ${Number(ticket.total_price).toFixed(2)}` : "Free"}
             </p>
           </div>
@@ -93,13 +92,12 @@ function TicketCard({ ticket }: { ticket: TicketRow }) {
             toast.success("Code copied!");
           }
         }}
-        className="w-full flex items-center justify-between px-4 py-3 border-t border-dashed"
-        style={{ borderColor: "#F0D0D8", background: "#FDF2F4" }}
+        className="w-full flex items-center justify-between px-4 py-3 border-t border-dashed border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)]/60 transition hover:bg-[color:var(--paper-2)]"
       >
-        <span className="text-[10px] font-bold tracking-widest text-neutral-400">E-TICKET CODE</span>
-        <span className="flex items-center gap-2 text-[15px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>
+        <span className="text-[10px] font-bold tracking-widest text-[color:var(--brand-muted)]">E-TICKET CODE</span>
+        <span className="flex items-center gap-2 text-[15px] font-extrabold tracking-widest text-[color:var(--brand-maroon)]">
           {ticket.e_ticket_code ?? "—"}
-          <Copy className="w-3.5 h-3.5" />
+          <Copy className="w-3.5 h-3.5 text-[color:var(--brand-gold)]" />
         </span>
       </button>
     </div>
@@ -110,32 +108,35 @@ export function MyTicketsClient({ tickets }: { tickets: TicketRow[] }) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       {/* App bar */}
-      <div className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)" }}>
+      <div className="bg-maroon-radial relative overflow-hidden sticky top-0 z-10">
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
         <div className="mx-auto max-w-2xl px-4 h-14 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10">
-            <ChevronLeft className="w-5 h-5 text-white" />
+          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10 border border-[color:var(--brand-gold)]/25 backdrop-blur-sm transition hover:bg-white/20">
+            <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
           </button>
-          <h1 className="text-[17px] font-bold text-white">My Tickets</h1>
+          <h1 className="font-display text-[18px] font-semibold text-white">My Tickets</h1>
         </div>
       </div>
 
-      <div className="mx-auto max-w-2xl px-4 py-5">
+      <div className="mx-auto max-w-2xl px-4 py-6">
         {tickets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-3">
-            <span className="text-5xl">🎟️</span>
-            <p className="text-[15px] text-neutral-500">No tickets yet</p>
+          <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl ring-1 ring-[color:var(--brand-gold)]/30">🎟️</span>
+            <p className="font-display text-[18px] font-semibold text-[color:var(--ink)]">No tickets yet</p>
             <button onClick={() => router.push("/services/zoo-events")}
-              className="mt-2 px-5 h-10 rounded-xl text-white font-bold text-[13px]"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+              className="bg-brand-gradient mt-2 px-6 h-11 rounded-full text-white font-bold text-[13px] shadow-[var(--shadow-card)] transition hover:brightness-110">
               Browse Zoo & Events
             </button>
           </div>
         ) : (
           <div className="space-y-4">
-            {tickets.map((t) => <TicketCard key={t.id} ticket={t} />)}
+            {tickets.map((t, i) => (
+              <Reveal key={t.id} delay={i * 70}>
+                <TicketCard ticket={t} />
+              </Reveal>
+            ))}
           </div>
         )}
       </div>

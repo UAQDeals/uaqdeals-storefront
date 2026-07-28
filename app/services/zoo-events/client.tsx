@@ -10,6 +10,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import QRCode from "qrcode";
+import { Reveal } from "@/components/reveal";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type TicketOption = {
@@ -167,28 +168,26 @@ function TicketModal({
         <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 space-y-5">
           <div className="flex flex-col items-center text-center gap-2">
             <CheckCircle className="w-14 h-14" style={{ color: "#16A34A" }} />
-            <h3 className="text-[20px] font-extrabold text-neutral-900">{isRTL ? "تم استلام الحجز!" : "Booking Received!"}</h3>
-            <p className="text-[13px] text-neutral-500">{title}</p>
+            <h3 className="font-display text-[22px] font-semibold text-[color:var(--ink)]">{isRTL ? "تم استلام الحجز!" : "Booking Received!"}</h3>
+            <p className="text-[13px] text-[color:var(--brand-muted)]">{title}</p>
           </div>
-          <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-3"
-            style={{ borderColor: "#8E1B3A", background: "#FDF2F4" }}>
+          <div className="rounded-2xl border-2 border-dashed border-[color:var(--brand-gold)]/50 bg-[color:var(--paper-2)] p-4 text-center space-y-3">
             {qrDataUrl && (
               <img src={qrDataUrl} alt={isRTL ? "رمز QR للتذكرة" : "Ticket QR Code"} className="mx-auto rounded-lg" style={{ width: 180, height: 180 }} />
             )}
             <div className="space-y-1">
-              <p className="text-[11px] font-bold tracking-widest text-neutral-400">{isRTL ? "رمز التذكرة الإلكترونية" : "E-TICKET CODE"}</p>
-              <p className="text-[22px] font-extrabold tracking-widest" style={{ color: "#8E1B3A" }}>{eTicket}</p>
+              <p className="text-[11px] font-bold tracking-widest text-[color:var(--brand-muted)]">{isRTL ? "رمز التذكرة الإلكترونية" : "E-TICKET CODE"}</p>
+              <p className="text-[22px] font-extrabold tracking-widest text-[color:var(--brand-maroon)]">{eTicket}</p>
             </div>
           </div>
           <p className="text-[12px] text-neutral-400 text-center">{isRTL ? "حجزك قيد التأكيد. ستصلك رسالة بريد إلكتروني عند تأكيده." : "Your booking is pending confirmation. You'll get an email once it's confirmed."}</p>
           <div className="flex gap-3">
             <button onClick={() => { navigator.clipboard.writeText(eTicket); toast.success(isRTL ? "تم نسخ الرمز!" : "Code copied!"); }}
-              className="flex-1 h-11 rounded-xl border border-neutral-300 flex items-center justify-center gap-2 text-[13px] font-semibold text-neutral-700">
+              className="flex-1 h-11 rounded-full border border-[color:var(--brand-border)] flex items-center justify-center gap-2 text-[13px] font-semibold text-[color:var(--ink)] transition hover:bg-[color:var(--paper-2)]">
               <Copy className="w-4 h-4" /> {isRTL ? "نسخ الرمز" : "Copy Code"}
             </button>
             <button onClick={onClose}
-              className="flex-1 h-11 rounded-xl text-white font-bold text-[13px]"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+              className="bg-brand-gradient flex-1 h-11 rounded-full text-white font-bold text-[13px] shadow-[var(--shadow-card)] hover:brightness-110 transition">
               {isRTL ? "تم" : "Done"}
             </button>
           </div>
@@ -209,12 +208,12 @@ function TicketModal({
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-[17px] font-extrabold text-neutral-900">
+              <h3 className="font-display text-[18px] font-semibold text-[color:var(--ink)]">
                 {type === "attraction" ? (isRTL ? "حجز التذاكر" : "Book Tickets") : (isFreeEvent ? (isRTL ? "احصل على تذكرة مجانية" : "Get Free Ticket") : (isRTL ? "شراء التذاكر" : "Buy Tickets"))}
               </h3>
-              <p className="text-[12px] text-neutral-500 mt-0.5 line-clamp-1">{title}</p>
+              <p className="text-[12px] text-[color:var(--brand-muted)] mt-0.5 line-clamp-1">{title}</p>
             </div>
-            <button onClick={onClose} className="p-1.5 rounded-lg bg-neutral-100 shrink-0">
+            <button onClick={onClose} className="p-1.5 rounded-lg bg-[color:var(--paper-2)] shrink-0 transition hover:brightness-95">
               <X className="w-4 h-4 text-neutral-600" />
             </button>
           </div>
@@ -223,9 +222,9 @@ function TicketModal({
           {type === "attraction" && sorted.length > 0 ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "التذاكر" : "Tickets"}</p>
+                <p className="text-[13px] font-bold text-[color:var(--ink)]">{isRTL ? "التذاكر" : "Tickets"}</p>
                 {totalQty > 0 && (
-                  <span className="text-[12px] font-bold" style={{ color: "#8E1B3A" }}>{isRTL ? `${totalQty} محدد` : `${totalQty} selected`}</span>
+                  <span className="text-[12px] font-bold text-[color:var(--brand-maroon)]">{isRTL ? `${totalQty} محدد` : `${totalQty} selected`}</span>
                 )}
               </div>
               {sorted.map(t => {
@@ -233,26 +232,28 @@ function TicketModal({
                 const active = count > 0;
                 return (
                   <div key={t.id}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl border transition-colors"
-                    style={active ? { borderColor: "#8E1B3A", borderWidth: 1.5, background: "#FDF2F4" } : { borderColor: "#E5E7EB" }}>
+                    className={"w-full flex items-center gap-3 p-3 rounded-xl border transition-colors " +
+                      (active
+                        ? "border-[color:var(--brand-maroon)] bg-[color:var(--paper-2)]"
+                        : "border-[color:var(--brand-border)]")}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-neutral-900">{t.ticket_type}</p>
-                      <p className="text-[11px] text-neutral-500">
+                      <p className="text-[13px] font-bold text-[color:var(--ink)]">{t.ticket_type}</p>
+                      <p className="text-[11px] text-[color:var(--brand-muted)]">
                         {isRTL ? `${t.price} د.إ` : `AED ${t.price}`}
                         {t.max_persons ? (isRTL ? ` · حتى ${t.max_persons} أشخاص` : ` · up to ${t.max_persons} persons`) : ""}
                         {t.description ? ` · ${t.description}` : ""}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden shrink-0">
+                    <div className="flex items-center gap-1 border border-[color:var(--brand-border)] rounded-full overflow-hidden shrink-0">
                       <button onClick={() => setCount(t.id, count - 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
+                        className="w-8 h-8 flex items-center justify-center bg-[color:var(--paper-2)] disabled:opacity-30"
                         disabled={count <= 0}>
-                        <Minus className="w-3.5 h-3.5" style={{ color: "#8E1B3A" }} />
+                        <Minus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
                       </button>
                       <span className="w-8 text-center text-[15px] font-extrabold">{count}</span>
                       <button onClick={() => setCount(t.id, count + 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-neutral-50">
-                        <Plus className="w-3.5 h-3.5" style={{ color: "#8E1B3A" }} />
+                        className="w-8 h-8 flex items-center justify-center bg-[color:var(--paper-2)]">
+                        <Plus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
                       </button>
                     </div>
                   </div>
@@ -262,17 +263,17 @@ function TicketModal({
           ) : (
             /* Events — single guest counter */
             <div className="flex items-center justify-between">
-              <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "الضيوف" : "Guests"}</p>
-              <div className="flex items-center gap-1 border border-neutral-300 rounded-lg overflow-hidden">
+              <p className="text-[13px] font-bold text-[color:var(--ink)]">{isRTL ? "الضيوف" : "Guests"}</p>
+              <div className="flex items-center gap-1 border border-[color:var(--brand-border)] rounded-full overflow-hidden">
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-9 h-9 flex items-center justify-center bg-neutral-50 disabled:opacity-30"
+                  className="w-9 h-9 flex items-center justify-center bg-[color:var(--paper-2)] disabled:opacity-30"
                   disabled={quantity <= 1}>
-                  <Minus className="w-3.5 h-3.5 text-neutral-600" />
+                  <Minus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
                 </button>
                 <span className="w-9 text-center text-[15px] font-extrabold">{quantity}</span>
                 <button onClick={() => setQuantity(q => q + 1)}
-                  className="w-9 h-9 flex items-center justify-center bg-neutral-50">
-                  <Plus className="w-3.5 h-3.5 text-neutral-600" />
+                  className="w-9 h-9 flex items-center justify-center bg-[color:var(--paper-2)]">
+                  <Plus className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" />
                 </button>
               </div>
             </div>
@@ -281,44 +282,42 @@ function TicketModal({
           {/* Visit date (attractions only) */}
           {type === "attraction" && (
             <div className="space-y-1.5">
-              <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "تاريخ الزيارة" : "Visit Date"} <span className="text-red-500">*</span></p>
+              <p className="text-[13px] font-bold text-[color:var(--ink)]">{isRTL ? "تاريخ الزيارة" : "Visit Date"} <span className="text-red-500">*</span></p>
               <div className="relative">
-                <Calendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+                <Calendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-gold-deep)]" style={{ width: 18, height: 18 }} />
                 <input type="date" min={today} value={visitDate} onChange={e => setVisitDate(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-[13px] font-semibold focus:outline-none focus:border-[#8E1B3A]" />
+                  className="w-full h-12 rounded-xl border border-[color:var(--brand-border)] ps-10 pe-4 text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]" />
               </div>
             </div>
           )}
 
           {/* Contact */}
           <div className="space-y-2.5">
-            <p className="text-[13px] font-bold text-neutral-800">{isRTL ? "بياناتك" : "Your Details"}</p>
+            <p className="text-[13px] font-bold text-[color:var(--ink)]">{isRTL ? "بياناتك" : "Your Details"}</p>
             <div className="relative">
-              <User className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+              <User className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-gold-deep)]" style={{ width: 18, height: 18 }} />
               <input value={name} onChange={e => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل *" : "Full Name *"}
-                className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+                className="w-full h-12 rounded-xl border border-[color:var(--brand-border)] ps-10 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]" />
             </div>
             <div className="relative">
-              <Phone className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+              <Phone className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-gold-deep)]" style={{ width: 18, height: 18 }} />
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder={isRTL ? "رقم الهاتف *" : "Phone Number *"} type="tel"
-                className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+                className="w-full h-12 rounded-xl border border-[color:var(--brand-border)] ps-10 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]" />
             </div>
           </div>
 
           {/* Total */}
           {totalPrice > 0 && (
-            <div className="flex items-center justify-between rounded-xl px-4 py-3"
-              style={{ background: "#FDE8EC" }}>
-              <p className="text-[13px] text-neutral-600">{isRTL ? "الإجمالي" : "Total"} ({totalQty}×)</p>
-              <p className="text-[16px] font-extrabold" style={{ color: "#8E1B3A" }}>
+            <div className="flex items-center justify-between rounded-xl px-4 py-3 bg-[color:var(--paper-2)]">
+              <p className="text-[13px] text-[color:var(--brand-muted)]">{isRTL ? "الإجمالي" : "Total"} ({totalQty}×)</p>
+              <p className="text-[16px] font-extrabold text-[color:var(--brand-maroon)]">
                 {isRTL ? `${totalPrice.toFixed(2)} د.إ` : `AED ${totalPrice.toFixed(2)}`}
               </p>
             </div>
           )}
 
           <button onClick={submit} disabled={loading}
-            className="w-full h-12 rounded-xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            className="bg-brand-gradient w-full h-12 rounded-full text-white font-extrabold text-[14px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] hover:brightness-110 transition disabled:opacity-60">
             {loading ? (isRTL ? "جارٍ المعالجة..." : "Processing...") : (isFreeEvent ? (isRTL ? "تأكيد التذكرة المجانية" : "Confirm Free Ticket") : (isRTL ? "تأكيد الحجز" : "Confirm Booking"))}
           </button>
         </div>
@@ -331,45 +330,42 @@ function TicketModal({
 function AttractionCard({ attraction, onBook }: { attraction: Attraction; onBook: () => void }) {
   const isRTL = useLocale() === "ar";
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-neutral-100"
-      style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.07)" }}>
-      <div className="relative h-48 bg-neutral-200">
+    <div className="group premium-card overflow-hidden">
+      <div className="relative h-48 bg-[color:var(--paper-2)] overflow-hidden">
         {attraction.image_url
-          ? <img src={attraction.image_url} alt={attraction.name} className="w-full h-full object-cover" />
+          ? <img src={attraction.image_url} alt={attraction.name} className="w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
           : <div className="w-full h-full flex items-center justify-center text-5xl">🦁</div>}
       </div>
       <div className="p-4 space-y-3">
-        <h3 className="text-[16px] font-extrabold text-neutral-900">{attraction.name}</h3>
+        <h3 className="font-display text-[17px] font-semibold text-[color:var(--ink)]">{attraction.name}</h3>
         <div className="flex flex-wrap gap-3">
           {attraction.location && (
-            <span className="flex items-center gap-1 text-[12px] text-neutral-500">
-              <MapPin className="w-3.5 h-3.5" style={{ color: "#8E1B3A" }} /> {attraction.location}
+            <span className="flex items-center gap-1 text-[12px] text-[color:var(--brand-muted)]">
+              <MapPin className="w-3.5 h-3.5 text-[color:var(--brand-maroon)]" /> {attraction.location}
             </span>
           )}
           {attraction.opening_hours && (
-            <span className="flex items-center gap-1 text-[12px] text-neutral-500">
+            <span className="flex items-center gap-1 text-[12px] text-[color:var(--brand-muted)]">
               <Clock className="w-3.5 h-3.5" /> {attraction.opening_hours}
             </span>
           )}
         </div>
         {attraction.description && (
-          <p className="text-[12px] text-neutral-500 leading-relaxed line-clamp-2">{attraction.description}</p>
+          <p className="text-[12px] text-[color:var(--brand-muted)] leading-relaxed line-clamp-2">{attraction.description}</p>
         )}
         {attraction.attraction_tickets.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {[...attraction.attraction_tickets]
               .sort((a, b) => a.display_order - b.display_order)
               .map(t => (
-                <span key={t.id} className="px-2 py-0.5 rounded-md text-[11px] font-bold"
-                  style={{ background: "#FDE8EC", color: "#8E1B3A" }}>
+                <span key={t.id} className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
                   {isRTL ? `${t.ticket_type} — ${t.price} د.إ` : `${t.ticket_type} — AED ${t.price}`}
                 </span>
               ))}
           </div>
         )}
         <button onClick={onBook}
-          className="w-full h-11 rounded-xl text-white font-bold text-[13px] flex items-center justify-center gap-2"
-          style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+          className="bg-brand-gradient w-full h-11 rounded-full text-white font-bold text-[13px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] hover:brightness-110 transition">
           <Ticket className="w-4 h-4" /> {isRTL ? "حجز التذاكر" : "Book Tickets"}
         </button>
       </div>
@@ -382,36 +378,32 @@ function EventCard({ event, onBook }: { event: Event; onBook: () => void }) {
   const isRTL = useLocale() === "ar";
   const isFree = !event.ticket_price || event.ticket_price === 0;
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-neutral-100"
-      style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.07)" }}>
-      <div className="relative h-44 bg-neutral-200">
+    <div className="group premium-card overflow-hidden">
+      <div className="relative h-44 bg-[color:var(--paper-2)] overflow-hidden">
         {event.image_url
-          ? <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+          ? <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
           : <div className="w-full h-full flex items-center justify-center text-5xl">🎉</div>}
-        <div className="absolute top-3 end-3 px-2.5 py-1 rounded-lg text-[11px] font-extrabold"
-          style={isFree
-            ? { background: "#16A34A", color: "#fff" }
-            : { background: "#8E1B3A", color: "#fff" }}>
+        <div className={"absolute top-3 end-3 px-2.5 py-1 rounded-full text-[11px] font-extrabold text-white shadow-sm " +
+          (isFree ? "bg-green-600" : "bg-brand-gradient")}>
           {isFree ? (isRTL ? "مجاني" : "FREE") : (isRTL ? `${event.ticket_price} د.إ` : `AED ${event.ticket_price}`)}
         </div>
       </div>
       <div className="p-4 space-y-2.5">
-        <h3 className="text-[15px] font-extrabold text-neutral-900">{event.title}</h3>
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold" style={{ color: "#8E1B3A" }}>
+        <h3 className="font-display text-[16px] font-semibold text-[color:var(--ink)]">{event.title}</h3>
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[color:var(--brand-maroon)]">
           <Calendar className="w-3.5 h-3.5" />
           {formatEventDate(event.event_date, event.event_time)}
         </div>
         {event.location && (
-          <div className="flex items-center gap-1.5 text-[12px] text-neutral-500">
+          <div className="flex items-center gap-1.5 text-[12px] text-[color:var(--brand-muted)]">
             <MapPin className="w-3.5 h-3.5" /> {event.location}
           </div>
         )}
         {event.description && (
-          <p className="text-[12px] text-neutral-500 leading-relaxed line-clamp-2">{event.description}</p>
+          <p className="text-[12px] text-[color:var(--brand-muted)] leading-relaxed line-clamp-2">{event.description}</p>
         )}
         <button onClick={onBook}
-          className="w-full h-11 rounded-xl text-white font-bold text-[13px] flex items-center justify-center gap-2"
-          style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+          className="bg-brand-gradient w-full h-11 rounded-full text-white font-bold text-[13px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] hover:brightness-110 transition">
           <Ticket className="w-4 h-4" /> {isFree ? (isRTL ? "احصل على تذكرة مجانية" : "Get Free Ticket") : (isRTL ? "شراء التذاكر" : "Buy Tickets")}
         </button>
       </div>
@@ -436,59 +428,62 @@ export function ZooEventsClient({
   } | null>(null);
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       {/* App bar */}
-      <div className="sticky top-0 z-10"
-        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)" }}>
-        <div className="mx-auto max-w-6xl px-4 h-14 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10">
-            <ChevronLeft className="w-5 h-5 text-white" />
+      <div className="bg-maroon-radial relative overflow-hidden sticky top-0 z-10">
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+        <div className="relative mx-auto max-w-6xl px-4 h-14 flex items-center gap-3">
+          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10 border border-[color:var(--brand-gold)]/25 backdrop-blur-sm transition hover:bg-white/20">
+            <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
           </button>
-          <h1 className="text-[17px] font-bold text-white flex-1">{isRTL ? "الحديقة والفعاليات" : "Zoo & Events"}</h1>
+          <h1 className="font-display text-[18px] font-semibold text-white flex-1">{isRTL ? "الحديقة والفعاليات" : "Zoo & Events"}</h1>
         </div>
 
         {/* Tabs */}
-        <div className="mx-auto max-w-6xl px-4 flex border-t border-white/10">
+        <div className="relative mx-auto max-w-6xl px-4 flex gap-2 pb-3">
           {(["attractions", "events"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className="flex-1 sm:flex-none sm:px-8 py-3 text-[13px] font-bold capitalize transition-colors relative"
-              style={activeTab === tab ? { color: "#fff" } : { color: "rgba(255,255,255,0.55)" }}>
+              className={"rounded-full px-6 py-1.5 text-[13px] font-semibold capitalize border transition-colors " +
+                (activeTab === tab
+                  ? "border-[color:var(--brand-gold)]/60 bg-white text-[color:var(--brand-maroon)]"
+                  : "border-white/20 bg-white/10 text-white/80 backdrop-blur-sm hover:bg-white/20")}>
               {tab === "attractions" ? (isRTL ? "المعالم" : "Attractions") : (isRTL ? "الفعاليات" : "Events")}
-              {activeTab === tab && (
-                <div className="absolute bottom-0 start-0 end-0 h-0.5 bg-white rounded-full" />
-              )}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-5">
+      <div className="mx-auto max-w-6xl px-4 py-6">
         {activeTab === "attractions" ? (
           attractions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <span className="text-5xl">🦁</span>
-              <p className="text-[15px] text-neutral-500">{isRTL ? "لا توجد معالم متاحة" : "No attractions available"}</p>
+            <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
+              <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl ring-1 ring-[color:var(--brand-gold)]/30">🦁</span>
+              <p className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "لا توجد معالم متاحة" : "No attractions available"}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {attractions.map(a => (
-                <AttractionCard key={a.id} attraction={a}
-                  onBook={() => setModal({ type: "attraction", attraction: a })} />
+              {attractions.map((a, i) => (
+                <Reveal key={a.id} delay={i * 60}>
+                  <AttractionCard attraction={a}
+                    onBook={() => setModal({ type: "attraction", attraction: a })} />
+                </Reveal>
               ))}
             </div>
           )
         ) : (
           events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <span className="text-5xl">🎉</span>
-              <p className="text-[15px] text-neutral-500">{isRTL ? "لا توجد فعاليات قادمة" : "No upcoming events"}</p>
-              <p className="text-[12px] text-neutral-400">{isRTL ? "تحقق مرة أخرى قريباً!" : "Check back soon!"}</p>
+            <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
+              <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl ring-1 ring-[color:var(--brand-gold)]/30">🎉</span>
+              <p className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "لا توجد فعاليات قادمة" : "No upcoming events"}</p>
+              <p className="text-[12px] text-[color:var(--brand-muted)]">{isRTL ? "تحقق مرة أخرى قريباً!" : "Check back soon!"}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {events.map(e => (
-                <EventCard key={e.id} event={e}
-                  onBook={() => setModal({ type: "event", event: e })} />
+              {events.map((e, i) => (
+                <Reveal key={e.id} delay={i * 60}>
+                  <EventCard event={e}
+                    onBook={() => setModal({ type: "event", event: e })} />
+                </Reveal>
               ))}
             </div>
           )

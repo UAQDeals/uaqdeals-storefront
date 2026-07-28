@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import {
-  ChevronLeft, Upload, Check, CheckCircle2, FileText, Paperclip,
+  ChevronLeft, Upload, Check, CheckCircle2, Paperclip,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 const DOC_FIELDS: { key: string; col: string; label: string; labelAr: string }[] = [
   { key: "trade_license",    col: "trade_license_path",    label: "Trade License",              labelAr: "الرخصة التجارية" },
@@ -18,9 +19,6 @@ const DOC_FIELDS: { key: string; col: string; label: string; labelAr: string }[]
   { key: "vat_receipt",      col: "vat_receipt_path",      label: "VAT Receipts (4 quarters)",  labelAr: "إيصالات ضريبة القيمة المضافة (4 أرباع)" },
   { key: "emirates_id",      col: "emirates_id_path",      label: "Emirates ID",                labelAr: "الهوية الإماراتية" },
 ];
-
-const MAROON = "#8E1B3A";
-const MAROON2 = "#C72931";
 
 export function GovtEnquiryClient({
   slug, serviceId, serviceTitle, description, imageUrl,
@@ -94,30 +92,29 @@ export function GovtEnquiryClient({
 
   if (done) {
     return (
-      <div className="min-h-screen bg-[#FAF8F6]">
+      <div className="min-h-screen bg-[color:var(--paper)]">
         <Header title={serviceTitle} onBack={() => router.push(`/services/enquiry/${slug}`)} />
         <div className="mx-auto max-w-lg px-5 py-20 text-center">
-          <div className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center bg-[#F0FDF4] ring-8 ring-[#F0FDF4]/40">
-            <CheckCircle2 className="w-10 h-10 text-[#16A34A]" />
+          <div className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center bg-green-50 ring-8 ring-green-50/50">
+            <CheckCircle2 className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-[26px] font-black tracking-tight text-neutral-900">{isRTL ? "تم استلام طلبك" : "Enquiry received"}</h2>
-          <p className="text-neutral-500 text-[15px] mt-3 leading-relaxed">
+          <h2 className="font-display text-[26px] font-semibold tracking-tight text-[color:var(--ink)]">{isRTL ? "تم استلام طلبك" : "Enquiry received"}</h2>
+          <p className="text-[color:var(--brand-muted)] text-[15px] mt-3 leading-relaxed">
             {isRTL ? (
               <>
                 شكراً {name.split(" ")[0]}. سيقوم فريق {serviceTitle} بمراجعة طلبك والتواصل معك على{" "}
-                <span className="font-semibold text-neutral-700">{phone}</span>.
+                <span className="font-semibold text-[color:var(--ink)]">{phone}</span>.
               </>
             ) : (
               <>
                 Thanks {name.split(" ")[0]}. Our {serviceTitle} team will review your request and reach you on{" "}
-                <span className="font-semibold text-neutral-700">{phone}</span>.
+                <span className="font-semibold text-[color:var(--ink)]">{phone}</span>.
               </>
             )}
           </p>
           <button
             onClick={() => router.push("/services")}
-            className="mt-9 inline-flex items-center justify-center rounded-full px-7 py-3.5 text-white font-bold text-[14px] shadow-lg shadow-[#8E1B3A]/20"
-            style={{ background: `linear-gradient(135deg, ${MAROON}, ${MAROON2})` }}>
+            className="bg-brand-gradient mt-9 inline-flex items-center justify-center rounded-full px-7 py-3.5 text-white font-bold text-[14px] shadow-[var(--shadow-card)] transition hover:brightness-110">
             {isRTL ? "العودة إلى الخدمات" : "Back to services"}
           </button>
         </div>
@@ -126,39 +123,41 @@ export function GovtEnquiryClient({
   }
 
   const fieldCls =
-    "w-full h-12 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/15 focus:border-[#8E1B3A] transition";
+    "w-full h-12 rounded-xl border border-[color:var(--brand-border)] bg-white px-4 text-[14px] text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] transition";
 
   return (
-    <div className="min-h-screen bg-[#FAF8F6]">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       <Header title={serviceTitle} onBack={() => router.push(`/services/enquiry/${slug}`)} />
 
       <div className="mx-auto max-w-lg px-5 pt-5">
         {/* Hero: image contained on a tinted panel so logos show whole */}
         {imageUrl && (
-          <div className="rounded-3xl p-5 mb-5"
-            style={{ background: "#F5F3F1" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageUrl}
-              alt={serviceTitle}
-              className="w-full h-52 object-contain"
-            />
-          </div>
+          <Reveal>
+            <div className="rounded-3xl p-5 mb-5 bg-[color:var(--paper-2)] border border-[color:var(--brand-border)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt={serviceTitle}
+                className="w-full h-52 object-contain"
+              />
+            </div>
+          </Reveal>
         )}
 
         <div className="mb-1.5">
-          <span className="inline-block text-[11px] font-bold uppercase tracking-[0.12em] text-[#8E1B3A]">
+          <span className="eyebrow">
             {isRTL ? "طلب خدمة" : "Service Enquiry"}
           </span>
         </div>
-        <h1 className="text-[24px] leading-tight font-black tracking-tight text-neutral-900">{serviceTitle}</h1>
+        <h1 className="font-display text-[26px] leading-tight font-semibold tracking-tight text-[color:var(--ink)]">{serviceTitle}</h1>
         {description && (
-          <p className="text-neutral-500 text-[14.5px] mt-2.5 leading-relaxed whitespace-pre-wrap">{description}</p>
+          <p className="text-[color:var(--brand-muted)] text-[14.5px] mt-2.5 leading-relaxed whitespace-pre-wrap">{description}</p>
         )}
+        <div className="gold-rule mt-5" />
 
         {/* Contact card */}
-        <div className="mt-7 rounded-2xl bg-white border border-neutral-200/80 p-5 shadow-sm">
-          <h2 className="text-[15px] font-bold text-neutral-900 mb-4">{isRTL ? "بياناتك" : "Your details"}</h2>
+        <div className="premium-card mt-7 p-5">
+          <h2 className="font-display text-[16px] font-semibold text-[color:var(--ink)] mb-4">{isRTL ? "بياناتك" : "Your details"}</h2>
           <div className="space-y-3.5">
             <Field label={isRTL ? "الاسم" : "Name"} required>
               <input className={fieldCls} value={name} onChange={(e) => setName(e.target.value)} placeholder={isRTL ? "الاسم الكامل" : "Full name"} />
@@ -176,7 +175,7 @@ export function GovtEnquiryClient({
             </div>
             <Field label={isRTL ? "طلبك" : "Your enquiry"}>
               <textarea
-                className="w-full min-h-[110px] rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#8E1B3A]/15 focus:border-[#8E1B3A] transition resize-y"
+                className="w-full min-h-[110px] rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-[14px] text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] transition resize-y"
                 value={enquiry}
                 onChange={(e) => setEnquiry(e.target.value)}
                 placeholder={isRTL ? "أخبرنا بما تحتاج المساعدة فيه…" : "Tell us what you need help with…"}
@@ -186,23 +185,20 @@ export function GovtEnquiryClient({
         </div>
 
         {/* Documents checklist */}
-        <div className="mt-5 rounded-2xl bg-white border border-neutral-200/80 p-5 shadow-sm">
+        <div className="premium-card mt-5 p-5">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-[15px] font-bold text-neutral-900">{isRTL ? "المستندات" : "Documents"}</h2>
-            <span className="text-[12px] font-semibold text-neutral-400">
+            <h2 className="font-display text-[16px] font-semibold text-[color:var(--ink)]">{isRTL ? "المستندات" : "Documents"}</h2>
+            <span className="text-[12px] font-semibold text-[color:var(--brand-muted)]">
               {isRTL ? `${attachedCount} من ${DOC_FIELDS.length} مرفقة` : `${attachedCount} of ${DOC_FIELDS.length} attached`}
             </span>
           </div>
-          <p className="text-[12.5px] text-neutral-400 mb-4">{isRTL ? "جميعها اختيارية. أرفق ما ينطبق منها — يتم تخزين ملفاتك بشكل آمن." : "All optional. Attach any that apply — your files are stored securely."}</p>
+          <p className="text-[12.5px] text-[color:var(--brand-muted)] mb-4">{isRTL ? "جميعها اختيارية. أرفق ما ينطبق منها — يتم تخزين ملفاتك بشكل آمن." : "All optional. Attach any that apply — your files are stored securely."}</p>
 
           {/* progress bar */}
-          <div className="h-1.5 w-full rounded-full bg-neutral-100 mb-4 overflow-hidden">
+          <div className="h-1.5 w-full rounded-full bg-[color:var(--paper-2)] mb-4 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-300"
-              style={{
-                width: `${(attachedCount / DOC_FIELDS.length) * 100}%`,
-                background: `linear-gradient(90deg, ${MAROON}, ${MAROON2})`,
-              }}
+              className="bg-brand-gradient h-full rounded-full transition-all duration-300"
+              style={{ width: `${(attachedCount / DOC_FIELDS.length) * 100}%` }}
             />
           </div>
 
@@ -217,8 +213,7 @@ export function GovtEnquiryClient({
         <button
           onClick={submit}
           disabled={loading}
-          className="w-full rounded-full py-4 mt-6 text-white font-bold text-[15px] shadow-lg shadow-[#8E1B3A]/25 disabled:opacity-60 transition active:scale-[0.99]"
-          style={{ background: `linear-gradient(135deg, ${MAROON}, ${MAROON2})` }}>
+          className="bg-brand-gradient w-full rounded-full py-4 mt-6 text-white font-bold text-[15px] shadow-[var(--shadow-card)] disabled:opacity-60 transition hover:brightness-110 active:scale-[0.99]">
           {loading ? (isRTL ? "جارٍ الإرسال…" : "Submitting…") : (isRTL ? "إرسال الطلب" : "Submit enquiry")}
         </button>
 
@@ -232,8 +227,8 @@ export function GovtEnquiryClient({
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-[12.5px] font-semibold text-neutral-600 mb-1.5">
-        {label} {required && <span className="text-[#C72931]">*</span>}
+      <label className="block text-[12.5px] font-semibold text-[color:var(--brand-muted)] mb-1.5">
+        {label} {required && <span className="text-[color:var(--brand-maroon)]">*</span>}
       </label>
       {children}
     </div>
@@ -248,25 +243,25 @@ function FileRow({
   return (
     <div
       className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 transition ${
-        attached ? "border-[#8E1B3A]/30 bg-[#8E1B3A]/[0.03]" : "border-neutral-200 bg-white"
+        attached ? "border-[color:var(--brand-gold)]/40 bg-[color:var(--brand-gold)]/[0.06]" : "border-[color:var(--brand-border)] bg-white"
       }`}>
       <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-        attached ? "bg-[#8E1B3A]/10" : "bg-neutral-100"
+        attached ? "bg-[color:var(--brand-maroon)]/10" : "bg-[color:var(--paper-2)]"
       }`}>
         {attached
-          ? <Check className="w-4 h-4 text-[#8E1B3A]" />
-          : <Paperclip className="w-4 h-4 text-neutral-400" />}
+          ? <Check className="w-4 h-4 text-[color:var(--brand-maroon)]" />
+          : <Paperclip className="w-4 h-4 text-[color:var(--brand-muted)]" />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[13.5px] font-medium text-neutral-700 truncate">{label}</p>
-        {attached && <p className="text-[11.5px] text-neutral-400 truncate">{file!.name}</p>}
+        <p className="text-[13.5px] font-medium text-[color:var(--ink)] truncate">{label}</p>
+        {attached && <p className="text-[11.5px] text-[color:var(--brand-muted)] truncate">{file!.name}</p>}
       </div>
       {attached ? (
-        <button onClick={() => onPick(null)} className="text-[12px] font-semibold text-neutral-400 hover:text-[#C72931] px-1">
+        <button onClick={() => onPick(null)} className="text-[12px] font-semibold text-[color:var(--brand-muted)] hover:text-[color:var(--brand-maroon)] px-1 transition">
           {isRTL ? "إزالة" : "Remove"}
         </button>
       ) : (
-        <label htmlFor={inputId} className="cursor-pointer flex items-center gap-1.5 text-[12.5px] font-bold text-[#8E1B3A] px-1">
+        <label htmlFor={inputId} className="cursor-pointer flex items-center gap-1.5 text-[12.5px] font-bold text-[color:var(--brand-maroon)] px-1">
           <Upload className="w-3.5 h-3.5" /> {isRTL ? "إضافة" : "Add"}
         </label>
       )}
@@ -283,12 +278,12 @@ function FileRow({
 
 function Header({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <div className="sticky top-0 z-30 bg-[#FAF8F6]/85 backdrop-blur-md border-b border-neutral-200/60">
+    <div className="sticky top-0 z-30 bg-[color:var(--paper)]/85 backdrop-blur-md border-b border-[color:var(--brand-border)]">
       <div className="mx-auto max-w-lg px-4 h-14 flex items-center gap-2">
-        <button onClick={onBack} className="p-1.5 -ms-1.5 rounded-lg text-neutral-600 hover:bg-neutral-100 transition">
-          <ChevronLeft className="w-5 h-5" />
+        <button onClick={onBack} className="p-1.5 -ms-1.5 rounded-full text-[color:var(--brand-muted)] hover:bg-[color:var(--paper-2)] transition">
+          <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
         </button>
-        <h1 className="text-[15px] font-bold text-neutral-900 truncate">{title}</h1>
+        <h1 className="font-display text-[15px] font-semibold text-[color:var(--ink)] truncate">{title}</h1>
       </div>
     </div>
   );

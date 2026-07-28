@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { dedicatedFor } from "@/lib/service-routes";
 import { getTranslations } from "next-intl/server";
 import { isTypeEnabled } from "@/lib/emirate";
+import { Reveal } from "@/components/reveal";
 
 // ── Section data mirroring Flutter services_screen.dart ──────────────────────
 
@@ -91,42 +92,45 @@ function ServiceCard({
   return (
     <Link
       href={routeForSlug(slug)}
-      className="group relative block overflow-hidden rounded-[20px] shadow-md ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-      style={{ aspectRatio: "16/9" }}
+      className="group premium-card relative block overflow-hidden transition-transform duration-500 ease-out hover:-translate-y-1"
     >
-      {/* Background image */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={img}
-        alt={name}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      {/* Legibility scrim — darker toward the bottom (mirrors the app tile) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.35) 62%, rgba(0,0,0,0.85) 100%)",
-        }}
-      />
-      {/* Hover tint */}
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: "rgba(142,27,58,0.18)" }}
-      />
-      {/* Frosted glass emoji chip */}
-      <div className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-xl border border-white/35 bg-white/20 text-lg backdrop-blur-sm">
-        {emoji}
-      </div>
-      {/* Open affordance */}
-      <div className="absolute bottom-3 right-3 flex h-6 w-6 translate-y-1 items-center justify-center rounded-full bg-white/90 text-neutral-800 opacity-0 shadow transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-        <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+      {/* Real image */}
+      <div className="relative w-full overflow-hidden bg-[color:var(--paper-2)]" style={{ aspectRatio: "16/10" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={img}
+          alt={name}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110"
+        />
+        {/* Soft scrim so the emoji chip reads on any image */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 32%, transparent 100%)",
+          }}
+          aria-hidden
+        />
+        {/* Maroon hover tint */}
+        <div
+          className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: "rgba(142,27,58,0.12)" }}
+          aria-hidden
+        />
+        {/* Frosted glass emoji glyph */}
+        <div className="absolute start-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-xl border border-white/40 bg-white/25 text-base backdrop-blur-sm">
+          {emoji}
+        </div>
       </div>
       {/* Label */}
-      <div className="absolute inset-x-0 bottom-0 p-3.5">
-        <p className="text-[13.5px] font-semibold leading-snug text-white drop-shadow-sm">
+      <div className="flex items-center justify-between gap-2 p-3">
+        <p className="text-[13px] font-semibold leading-snug text-[color:var(--ink)] line-clamp-2">
           {name}
         </p>
+        <ArrowUpRight
+          className="h-4 w-4 shrink-0 -translate-y-0.5 text-[color:var(--brand-muted)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:text-[color:var(--brand-maroon)]"
+          strokeWidth={2.5}
+        />
       </div>
     </Link>
   );
@@ -154,39 +158,40 @@ export default async function ServicesPage() {
   // For full AR support this page can be made a Client Component if needed.
 
   return (
-    <main className="min-h-screen bg-[color:var(--brand-cream)]">
-      {/* Page header */}
-      <div
-        className="border-b border-[color:var(--brand-border)]"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--brand-maroon) 0%, var(--brand-red) 60%, var(--brand-orange) 100%)",
-        }}
-      >
-        <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10">
-          <p className="text-white/70 text-xs font-semibold tracking-widest uppercase mb-1">
-            UAQ Deals
-          </p>
-          <h1 className="text-white text-3xl md:text-4xl font-bold tracking-tight">
+    <main className="min-h-screen bg-[color:var(--paper)]">
+      {/* Premium page header */}
+      <section className="bg-maroon-radial relative overflow-hidden">
+        <span
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent"
+          aria-hidden
+        />
+        <span
+          className="pointer-events-none absolute -top-24 -end-24 h-72 w-72 rounded-full bg-[color:var(--brand-gold)]/12 blur-3xl"
+          aria-hidden
+        />
+        <span
+          className="pointer-events-none absolute -bottom-28 -start-20 h-80 w-80 rounded-full bg-black/15 blur-2xl"
+          aria-hidden
+        />
+        <div className="rise-in relative mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-16">
+          <p className="eyebrow text-[color:var(--brand-gold)]">UAQ Deals</p>
+          <h1 className="font-display mt-1.5 text-[32px] font-medium leading-[1.05] tracking-tight text-white sm:text-[42px]">
             Services
           </h1>
-          <p className="text-white/75 mt-1.5 text-sm">
+          <p className="mt-3.5 max-w-md text-[14px] leading-relaxed text-white/80 sm:text-[15px]">
             Everything you need — right here in Umm Al Quwain.
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Sections */}
-      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10 space-y-10">
-        {visibleSections.map((section) => (
-          <section key={section.title.en}>
-            {/* Section title — gold accent bar + heading (mirrors the app) */}
-            <div className="mb-4 flex items-center gap-2.5">
-              <span
-                className="h-5 w-1 rounded-full"
-                style={{ background: "linear-gradient(180deg,#E7C56A,#C9A24B)" }}
-              />
-              <h2 className="text-lg font-bold tracking-tight text-neutral-900">
+      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-14 space-y-12">
+        {visibleSections.map((section, si) => (
+          <Reveal as="section" key={section.title.en} delay={Math.min(si, 3) * 60}>
+            {/* Section header — accent bar + serif heading */}
+            <div className="mb-5 flex items-center gap-3.5">
+              <span className="accent-bar h-9 w-1.5 rounded-full" />
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[26px]">
                 {section.title.en}
               </h2>
             </div>
@@ -194,7 +199,7 @@ export default async function ServicesPage() {
             {/* Grid — 2-up on mobile like the app, wider on desktop */}
             <div
               className={
-                "grid gap-3 sm:gap-4 " +
+                "grid gap-3.5 sm:gap-4 " +
                 (section.items.length === 2
                   ? "grid-cols-2"
                   : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4")
@@ -210,7 +215,7 @@ export default async function ServicesPage() {
                 />
               ))}
             </div>
-          </section>
+          </Reveal>
         ))}
       </div>
     </main>

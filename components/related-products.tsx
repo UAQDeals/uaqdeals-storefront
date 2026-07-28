@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { aed } from "@/lib/format";
 
 type Product = {
@@ -34,36 +34,34 @@ export function RelatedProducts({
   if (!products.length) return null;
 
   return (
-    <section className="border-t border-[color:var(--brand-border)] bg-[color:var(--brand-cream)] py-10">
-      <div className="mx-auto max-w-6xl px-4">
+    <section className="border-t border-[color:var(--brand-border)] py-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 md:px-8">
 
         {/* Header */}
         <div className="mb-6 flex items-end justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--brand-maroon)]">
-              <ShoppingBag className="h-5 w-5 text-white" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <span className="accent-bar h-9 w-1.5 rounded-full" />
             <div>
-              <p className="text-[10.5px] font-bold tracking-[2px] uppercase text-[color:var(--brand-maroon)]">
+              <p className="eyebrow">
                 From this category
               </p>
-              <h2 className="text-[20px] font-extrabold tracking-tight text-neutral-900">
+              <h2 className="font-display mt-0.5 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">
                 You might also like
               </h2>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => scroll("left")}
-              className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] transition-colors shadow-sm">
+              className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--brand-border)] bg-white text-neutral-600 shadow-sm transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] hover:shadow-md">
               <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
             </button>
             <button onClick={() => scroll("right")}
-              className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] transition-colors shadow-sm">
+              className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--brand-border)] bg-white text-neutral-600 shadow-sm transition hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)] hover:shadow-md">
               <ChevronRight className="h-4 w-4 rtl:rotate-180" />
             </button>
             {categoryId && (
               <Link href={"/shop/" + categoryId}
-                className="text-[12px] font-bold text-neutral-900 underline underline-offset-2 hover:text-[color:var(--brand-maroon)] transition-colors">
+                className="ms-1 text-[12.5px] font-bold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]">
                 View all →
               </Link>
             )}
@@ -77,36 +75,35 @@ export function RelatedProducts({
             const img = p.thumbnail_url ?? p.images?.[0] ?? null;
             const price = p.sale_price ?? p.price;
             const hasDiscount = p.sale_price && p.price && Number(p.sale_price) < Number(p.price);
+            const off = hasDiscount ? Math.round((1 - Number(p.sale_price) / Number(p.price)) * 100) : 0;
             return (
               <Link key={p.id} href={"/products/" + p.id}
-                className="group shrink-0 w-[160px] md:w-[200px]">
+                className="group premium-card shrink-0 w-[160px] overflow-hidden md:w-[200px]">
                 {/* Image */}
-                <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white border border-[color:var(--brand-border)] shadow-sm">
+                <div className="relative aspect-square w-full overflow-hidden bg-[color:var(--paper-2)]">
                   {img ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={img} alt={p.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-4xl text-neutral-200">
+                    <div className="flex h-full w-full items-center justify-center text-4xl text-neutral-300">
                       📦
                     </div>
                   )}
                   {hasDiscount && (
-                    <span className="absolute top-2 start-2 rounded-full bg-[#C72931] px-2 py-0.5 text-[9px] font-black tracking-widest text-white">
-                      SALE
+                    <span className="bg-brand-gradient absolute top-2.5 start-2.5 rounded-full px-2.5 py-1 text-[9.5px] font-black tracking-wider text-white shadow-sm">
+                      -{off}%
                     </span>
                   )}
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[color:var(--brand-maroon)]/0 group-hover:bg-[color:var(--brand-maroon)]/5 transition-colors duration-300 rounded-2xl" />
                 </div>
 
                 {/* Info */}
-                <div className="pt-3 pb-1">
-                  <p className="text-[12.5px] font-semibold text-neutral-800 line-clamp-2 leading-snug">
+                <div className="p-3">
+                  <p className="min-h-[32px] text-[12.5px] leading-snug text-neutral-700 line-clamp-2">
                     {p.name}
                   </p>
-                  <div className="mt-1.5 flex items-baseline gap-2">
-                    <span className="text-[14px] font-extrabold text-neutral-900">{aed(price)}</span>
+                  <div className="mt-2 flex items-baseline gap-1.5">
+                    <span className="text-[15px] font-extrabold text-[color:var(--brand-maroon)]">{aed(price)}</span>
                     {hasDiscount && (
                       <span className="text-[11px] text-neutral-400 line-through">{aed(p.price)}</span>
                     )}

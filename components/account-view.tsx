@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { aed } from "@/lib/format";
 import { WalletWithdraw, type Withdrawal } from "@/components/wallet-withdraw";
+import { Reveal } from "@/components/reveal";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -240,12 +241,15 @@ export function AccountView({
   const coinAed     = (coinBalance * 0.1).toFixed(2);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 space-y-5">
+    <div className="mx-auto max-w-4xl px-5 py-8 space-y-5 md:px-8">
 
       {/* ── Hero header ─────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl p-6 text-white shadow-lg"
+      <Reveal>
+      <div className="relative overflow-hidden rounded-3xl p-6 text-white shadow-[var(--shadow-premium)] sm:p-8"
         style={{ background: "linear-gradient(135deg, #8E1B3A 0%, #C72931 60%, #F24732 100%)" }}>
-        <div className="flex items-center gap-4">
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+        <span className="pointer-events-none absolute -top-16 -end-12 h-48 w-48 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+        <div className="relative flex items-center gap-4">
           {profile.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatar_url} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
@@ -256,7 +260,7 @@ export function AccountView({
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold tracking-tight truncate">{displayName}</h1>
+              <h1 className="font-display text-2xl font-semibold tracking-tight truncate">{displayName}</h1>
               {!editing && (
                 <button onClick={() => setEditing(true)}
                   className="rounded-full bg-white/20 p-1.5 hover:bg-white/30 transition shrink-0">
@@ -307,24 +311,24 @@ export function AccountView({
           </div>
         )}
       </div>
+      </Reveal>
 
       {/* ── Stats strip ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center">
-          <Coins className="h-5 w-5 mx-auto mb-1 text-amber-500" />
-          <p className="text-xl font-extrabold text-neutral-900">{coinBalance.toLocaleString()}</p>
-          <p className="text-[11px] text-neutral-500 mt-0.5">UAQ Coins</p>
+        <div className="premium-card p-4 text-center">
+          <span className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-gold)]/10"><Coins className="h-5 w-5 text-[color:var(--brand-gold-deep)]" /></span>
+          <p className="font-display text-xl font-semibold text-[color:var(--ink)]">{coinBalance.toLocaleString()}</p>
+          <p className="text-[11px] text-[color:var(--brand-muted)] mt-0.5">UAQ Coins</p>
         </div>
-        <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center">
-          <Package className="h-5 w-5 mx-auto mb-1 text-[color:var(--brand-maroon)]" />
-          <p className="text-xl font-extrabold text-neutral-900">{recentOrders.length}</p>
-          <p className="text-[11px] text-neutral-500 mt-0.5">Orders</p>
+        <div className="premium-card p-4 text-center">
+          <span className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--brand-maroon)]/10"><Package className="h-5 w-5 text-[color:var(--brand-maroon)]" /></span>
+          <p className="font-display text-xl font-semibold text-[color:var(--ink)]">{recentOrders.length}</p>
+          <p className="text-[11px] text-[color:var(--brand-muted)] mt-0.5">Orders</p>
         </div>
-        <Link href="/account/priority-card"
-          className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 text-center hover:border-[color:var(--brand-maroon)] transition-colors">
-          <span className="text-xl block mb-1">{"🥇"}</span>
-          <p className="text-sm font-extrabold text-neutral-900">Priority</p>
-          <p className="text-[11px] text-neutral-500 mt-0.5">Cards</p>
+        <Link href="/account/priority-card" className="premium-card p-4 text-center">
+          <span className="text-xl block mb-1.5">{"🥇"}</span>
+          <p className="font-display text-base font-semibold text-[color:var(--ink)]">Priority</p>
+          <p className="text-[11px] text-[color:var(--brand-muted)] mt-0.5">Cards</p>
         </Link>
       </div>
 
@@ -337,7 +341,7 @@ export function AccountView({
           {/* Quick actions 2x2 */}
           <div className="grid grid-cols-2 gap-3">
             <Link href="/orders"
-              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              className="premium-card flex items-center gap-3 p-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FDE8EC" }}>{"📦"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">{t("myOrders")}</p>
@@ -345,7 +349,7 @@ export function AccountView({
               </div>
             </Link>
             <Link href="/account/priority-card"
-              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              className="premium-card flex items-center gap-3 p-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#FEF9C3" }}>{"🥇"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">Priority Cards</p>
@@ -353,7 +357,7 @@ export function AccountView({
               </div>
             </Link>
             <Link href="/tickets"
-              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-[color:var(--brand-maroon)] hover:shadow-sm transition-all">
+              className="premium-card flex items-center gap-3 p-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl" style={{ background: "#EDE9FE" }}>{"🎟️"}</span>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-neutral-900">My Tickets</p>
@@ -361,7 +365,7 @@ export function AccountView({
               </div>
             </Link>
             <button onClick={signOut}
-              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 hover:border-red-300 hover:shadow-sm transition-all text-left w-full">
+              className="flex items-center gap-3 rounded-2xl border border-[color:var(--brand-border)] bg-white p-4 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-1 hover:border-red-300 hover:shadow-[var(--shadow-card-hover)] text-left w-full">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50">
                 <LogOut className="h-4 w-4 text-red-500" />
               </span>
@@ -373,9 +377,9 @@ export function AccountView({
           </div>
 
           {/* Recent orders */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-neutral-900">{t("myOrders")}</p>
+              <p className="font-display text-[15px] font-semibold text-[color:var(--ink)]">{t("myOrders")}</p>
               <Link href="/orders" className="text-xs font-semibold text-[color:var(--brand-maroon)] hover:underline">
                 {tc("seeAll")} &rarr;
               </Link>
@@ -383,9 +387,9 @@ export function AccountView({
             {recentOrders.length === 0 ? (
               <div className="py-8 text-center">
                 <Package className="h-10 w-10 text-neutral-200 mx-auto mb-3" />
-                <p className="text-sm text-neutral-500">{t("noOrders")}</p>
+                <p className="text-sm text-[color:var(--brand-muted)]">{t("noOrders")}</p>
                 <Link href="/categories"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-5 py-2 text-sm font-bold text-white hover:opacity-90">
+                  className="bg-brand-gradient mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
                   Start shopping
                 </Link>
               </div>
@@ -427,9 +431,9 @@ export function AccountView({
           </div>
 
           {/* Saved addresses */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-neutral-900">Saved Addresses</p>
+              <p className="font-display text-[15px] font-semibold text-[color:var(--ink)]">Saved Addresses</p>
               {!addingAddr && (
                 <button onClick={() => setAddingAddr(true)}
                   className="flex items-center gap-1 text-xs font-semibold text-[color:var(--brand-maroon)] hover:underline">
@@ -483,11 +487,11 @@ export function AccountView({
                   <div>
                     <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Label</label>
                     <input value={addrLabel} onChange={(e) => setAddrLabel(e.target.value)} placeholder="Home / Work"
-                      className="input w-full" />
+                      className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Emirate</label>
-                    <select value={addrEmirate} onChange={(e) => setAddrEmirate(e.target.value)} className="input w-full bg-white">
+                    <select value={addrEmirate} onChange={(e) => setAddrEmirate(e.target.value)} className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40">
                       {["UAQ","Dubai","Abu Dhabi","Sharjah","Ajman","RAK","Fujairah"].map((e) => (
                         <option key={e} value={e}>{e}</option>
                       ))}
@@ -496,19 +500,19 @@ export function AccountView({
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Full Address</label>
-                  <input value={addrFull} onChange={(e) => setAddrFull(e.target.value)} placeholder="Building, street, area\u2026" className="input w-full" />
+                  <input value={addrFull} onChange={(e) => setAddrFull(e.target.value)} placeholder="Building, street, area\u2026" className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Landmark (optional)</label>
-                  <input value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} placeholder="Near mosque\u2026" className="input w-full" />
+                  <input value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} placeholder="Near mosque\u2026" className="w-full rounded-xl border border-[color:var(--brand-border)] bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40" />
                 </div>
                 <div className="flex gap-2">
                   <button onClick={saveAddress} disabled={addrSaving}
-                    className="rounded-full bg-[color:var(--brand-maroon)] text-white px-5 py-2 text-sm font-bold hover:opacity-90 disabled:opacity-50">
+                    className="bg-brand-gradient rounded-full px-5 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-50">
                     {addrSaving ? "Saving\u2026" : "Save address"}
                   </button>
                   <button onClick={() => setAddingAddr(false)}
-                    className="rounded-full border border-[color:var(--brand-border)] px-5 py-2 text-sm font-semibold hover:bg-neutral-50">
+                    className="rounded-full border border-[color:var(--brand-border)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-muted)] transition hover:bg-[color:var(--paper-2)]">
                     Cancel
                   </button>
                 </div>
@@ -522,7 +526,7 @@ export function AccountView({
         <div className="space-y-5">
 
           {/* AED wallet — refund-funded store credit; separate from coins */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
             <div className="mb-4 rounded-xl bg-gradient-to-br from-[color:var(--brand-maroon)] to-[#6e122c] p-4 text-white">
               <div className="flex items-center gap-2">
                 <Wallet className="h-4 w-4 text-[color:var(--brand-gold)]" />
@@ -565,7 +569,7 @@ export function AccountView({
           </div>
 
           {/* Coin wallet */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
             <div className="mb-4">
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50">
@@ -603,8 +607,8 @@ export function AccountView({
 
           {/* Coupons */}
           {coupons.length > 0 && (
-            <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">Available Coupons</p>
+            <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
+              <p className="eyebrow mb-3">Available Coupons</p>
               <div className="space-y-2">
                 {coupons.map((c) => {
                   const discount = c.free_shipping ? "Free shipping"
@@ -632,8 +636,8 @@ export function AccountView({
           )}
 
           {/* Personal details */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">{t("personalDetails")}</p>
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
+            <p className="eyebrow mb-3">{t("personalDetails")}</p>
             <dl className="divide-y divide-neutral-50">
               <KV label={t("fullName")}  value={profile.full_name} />
               <KV label={t("mobile")}    value={profile.phone_number} />
@@ -643,7 +647,7 @@ export function AccountView({
           </div>
 
           {/* Get the app */}
-          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
+          <div className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)]">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-900">
                 <Smartphone className="h-5 w-5 text-white" />

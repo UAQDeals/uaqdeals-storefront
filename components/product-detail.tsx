@@ -11,6 +11,7 @@ import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { PrescriptionUploadModal } from "@/components/prescription-upload-modal";
 import { DealFinderChat } from "@/components/deal-finder-chat";
+import { Reveal } from "@/components/reveal";
 import {
   type VariantTree,
   type VOption,
@@ -323,22 +324,22 @@ export function ProductDetail({
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
       {/* ── Gallery ─────────────────────────────────────────────────────── */}
       <div className="md:sticky md:top-24 md:self-start">
-        <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white">
-          <div className="relative aspect-square bg-neutral-100">
+        <div className="premium-card group overflow-hidden rounded-3xl">
+          <div className="relative aspect-square overflow-hidden bg-[color:var(--paper-2)]">
             {activeGallery[safeImg] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={activeGallery[safeImg]} alt={displayName} className="h-full w-full object-cover" />
+              <img src={activeGallery[safeImg]} alt={displayName} className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-neutral-300"><ShoppingBag className="h-16 w-16" /></div>
             )}
-            {discountPct > 0 && <span className="bg-brand-gradient absolute start-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold text-white">-{discountPct}%</span>}
+            {discountPct > 0 && <span className="bg-brand-gradient absolute start-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">-{discountPct}%</span>}
           </div>
         </div>
         {activeGallery.length > 1 && (
           <div className="mt-3 flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {activeGallery.map((src, i) => (
               <button key={src + i} onClick={() => setActiveImg(i)}
-                className={"h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition " + (i === safeImg ? "border-[color:var(--brand-maroon)]" : "border-transparent opacity-70 hover:opacity-100")}
+                className={"h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition " + (i === safeImg ? "border-[color:var(--brand-maroon)] ring-2 ring-[color:var(--brand-gold)]/30" : "border-[color:var(--brand-border)] opacity-70 hover:opacity-100 hover:border-[color:var(--brand-gold)]/60")}
                 aria-label={`Image ${i + 1}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={src} alt="" className="h-full w-full object-cover" />
@@ -349,14 +350,14 @@ export function ProductDetail({
       </div>
 
       {/* ── Buy box (sticky on desktop) ──────────────────────────────────── */}
-      <div className="flex flex-col md:sticky md:top-24 md:self-start">
+      <div className="flex flex-col rounded-3xl border border-[color:var(--brand-border)] bg-white p-6 shadow-[var(--shadow-card)] md:sticky md:top-24 md:self-start">
         {p.condition === "used" && (
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-black tracking-widest text-amber-700 uppercase">Used Item</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-black tracking-widest text-amber-700 uppercase">Used Item</span>
             <VerifiedBadge />
           </div>
         )}
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{displayName}</h1>
+        <h1 className="font-display text-[26px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[32px]">{displayName}</h1>
 
         {(p.vendor_name || p.brand) && (
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-600">
@@ -367,13 +368,13 @@ export function ProductDetail({
 
         {/* Rating summary — jumps to the reviews section below. */}
         {avgRating > 0 && (
-          <a href="#reviews" className="mt-2 inline-flex items-center gap-1.5 text-sm">
+          <a href="#reviews" className="mt-2.5 inline-flex items-center gap-1.5 text-sm">
             <span className="flex">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className={`h-4 w-4 ${i < Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
+                <Star key={i} className={`h-4 w-4 ${i < Math.round(avgRating) ? "fill-[color:var(--brand-gold)] text-[color:var(--brand-gold)]" : "text-neutral-200"}`} />
               ))}
             </span>
-            <span className="font-semibold">{avgRating.toFixed(1)}</span>
+            <span className="font-semibold text-[color:var(--ink)]">{avgRating.toFixed(1)}</span>
             <span className="text-neutral-500 hover:text-[color:var(--brand-maroon)] hover:underline">
               ({reviews.length || p.review_count} {(reviews.length || p.review_count) === 1 ? t("review") : t("reviews")})
             </span>
@@ -454,41 +455,41 @@ export function ProductDetail({
         ) : null}
 
         <div className="mt-7 flex flex-wrap items-stretch gap-3">
-          <div className="inline-flex items-center rounded-full border border-neutral-200 bg-white">
-            <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-40" aria-label="−" disabled={qty <= 1}><Minus className="h-4 w-4" /></button>
-            <span className="w-8 text-center text-sm font-semibold">{qty}</span>
-            <button onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="inline-flex h-11 w-11 items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-40" aria-label="+" disabled={qty >= maxQty}><Plus className="h-4 w-4" /></button>
+          <div className="inline-flex items-center rounded-full border border-[color:var(--brand-border)] bg-white shadow-sm">
+            <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--paper-2)] disabled:opacity-40" aria-label="−" disabled={qty <= 1}><Minus className="h-4 w-4" /></button>
+            <span className="w-8 text-center text-sm font-bold text-[color:var(--ink)]">{qty}</span>
+            <button onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--paper-2)] disabled:opacity-40" aria-label="+" disabled={qty >= maxQty}><Plus className="h-4 w-4" /></button>
           </div>
 
           {canAdd ? (
-            <button onClick={handleAdd} className="bg-brand-gradient inline-flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">
+            <button onClick={handleAdd} className="bg-brand-gradient inline-flex flex-1 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
               <ShoppingCart className="h-4 w-4" /> {t("addToCart")} · {aed(unitPrice * qty)}
             </button>
           ) : isRx && !rxUploaded ? (
             <div className="flex flex-1 flex-col items-stretch gap-1">
               <button
                 onClick={() => setRxOpen(true)}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110"
               >
                 <FileText className="h-4 w-4" /> Upload Prescription to Add
               </button>
-              <p className="text-center text-xs text-neutral-500">A valid prescription is required for this item.</p>
+              <p className="text-center text-xs text-[color:var(--brand-muted)]">A valid prescription is required for this item.</p>
             </div>
           ) : needsVariant ? (
-            <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">{t("selectOption")}</button>
+            <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-bold text-neutral-500">{t("selectOption")}</button>
           ) : (
-            <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-semibold text-neutral-500">{tc("outOfStock")}</button>
+            <button disabled className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-neutral-200 px-6 py-3 text-sm font-bold text-neutral-500">{tc("outOfStock")}</button>
           )}
         </div>
 
         {/* Buy Now (express to checkout) + Share */}
         <div className="mt-3 flex items-stretch gap-3">
           {canAdd && (
-            <button onClick={handleBuyNow} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[color:var(--brand-maroon)] px-6 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)]/5">
+            <button onClick={handleBuyNow} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[color:var(--brand-maroon)] px-6 py-3 text-sm font-bold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)]/5">
               <Zap className="h-4 w-4" /> {t("buyNow")}
             </button>
           )}
-          <button onClick={handleShare} aria-label={t("share")} className="inline-flex items-center justify-center gap-2 rounded-full border border-neutral-200 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-50">
+          <button onClick={handleShare} aria-label={t("share")} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--brand-border)] px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]">
             <Share2 className="h-4 w-4" /> <span className="hidden sm:inline">{t("share")}</span>
           </button>
         </div>
@@ -518,55 +519,64 @@ export function ProductDetail({
       {/* end sticky row */}
 
       {/* ── Detail sections (full-width block, below the sticky row) ─────── */}
-      <div className="relative z-10 bg-[color:var(--brand-cream)]">
+      <div className="relative z-10">
         {displayDescription && (
-          <div className="mt-2 border-t border-[color:var(--brand-border)] pt-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("description")}</h2>
-            <div className="prose prose-sm mt-2 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: displayDescription }} />
-          </div>
+          <Reveal className="mt-2 border-t border-[color:var(--brand-border)] pt-7">
+            <div className="flex items-center gap-3">
+              <span className="accent-bar h-6 w-1.5 rounded-full" />
+              <h2 className="font-display text-[20px] font-semibold tracking-tight text-[color:var(--ink)]">{t("description")}</h2>
+            </div>
+            <div className="prose prose-sm mt-3 max-w-none text-sm leading-relaxed text-neutral-700" dangerouslySetInnerHTML={{ __html: displayDescription }} />
+          </Reveal>
         )}
 
         {specRows.length > 0 && (
-          <div className="mt-8 border-t border-[color:var(--brand-border)] pt-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("specifications")}</h2>
-            <dl className="mt-3 overflow-hidden rounded-xl border border-[color:var(--brand-border)] md:max-w-2xl">
+          <Reveal className="mt-9 border-t border-[color:var(--brand-border)] pt-7">
+            <div className="flex items-center gap-3">
+              <span className="accent-bar h-6 w-1.5 rounded-full" />
+              <h2 className="font-display text-[20px] font-semibold tracking-tight text-[color:var(--ink)]">{t("specifications")}</h2>
+            </div>
+            <dl className="mt-4 overflow-hidden rounded-2xl border border-[color:var(--brand-border)] md:max-w-2xl">
               {specRows.map(([k, v], i) => (
-                <div key={k} className={"flex text-sm " + (i % 2 ? "bg-white" : "bg-neutral-50/60")}>
-                  <dt className="w-2/5 shrink-0 px-4 py-2.5 font-medium capitalize text-neutral-500">{k.replace(/_/g, " ")}</dt>
+                <div key={k} className={"flex text-sm " + (i % 2 ? "bg-white" : "bg-[color:var(--paper-2)]/50")}>
+                  <dt className="w-2/5 shrink-0 px-4 py-2.5 font-medium capitalize text-[color:var(--brand-muted)]">{k.replace(/_/g, " ")}</dt>
                   <dd className="px-4 py-2.5 text-neutral-800">{v}</dd>
                 </div>
               ))}
             </dl>
-          </div>
+          </Reveal>
         )}
 
-        <p className="mt-8 text-xs text-neutral-500">
+        <p className="mt-8 text-xs text-[color:var(--brand-muted)]">
           {t("needHelp")}{" "}
           <Link href="/contact" className="font-semibold text-[color:var(--brand-maroon)] hover:underline">{t("contactUs")}</Link>
         </p>
       </div>
 
       {/* ── Reviews section (full-width block) ───────────────────────── */}
-      <div id="reviews" className="relative z-10 scroll-mt-24 border-t border-[color:var(--brand-border)] pt-8 mt-2 bg-[color:var(--brand-cream)]">
+      <div id="reviews" className="relative z-10 scroll-mt-24 border-t border-[color:var(--brand-border)] pt-9 mt-2">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight">{tr("title")}</h2>
-            {avgRating > 0 && (
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
-                  ))}
+          <div className="flex items-center gap-3">
+            <span className="accent-bar h-9 w-1.5 rounded-full" />
+            <div>
+              <h2 className="font-display text-[24px] font-semibold tracking-tight text-[color:var(--ink)]">{tr("title")}</h2>
+              {avgRating > 0 && (
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-[color:var(--brand-gold)] text-[color:var(--brand-gold)]" : "text-neutral-200"}`} />
+                    ))}
+                  </div>
+                  <span className="text-sm font-semibold text-[color:var(--ink)]">{avgRating.toFixed(1)}</span>
+                  <span className="text-sm text-[color:var(--brand-muted)]">{tr("count", { count: p.review_count })}</span>
                 </div>
-                <span className="text-sm font-semibold">{avgRating.toFixed(1)}</span>
-                <span className="text-sm text-neutral-500">{tr("count", { count: p.review_count })}</span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           {!reviewSubmitted && !showReviewForm && (
             <button
               onClick={() => setShowReviewForm(true)}
-              className="flex items-center gap-2 border border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold hover:bg-[color:var(--brand-maroon)] hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-[color:var(--brand-maroon)] px-5 py-2.5 text-sm font-bold text-[color:var(--brand-maroon)] transition-colors hover:bg-[color:var(--brand-maroon)] hover:text-white"
             >
               <Star className="w-4 h-4" /> {tr("write")}
             </button>
@@ -575,35 +585,35 @@ export function ProductDetail({
 
         {/* Review form */}
         {showReviewForm && !reviewSubmitted && (
-          <div className="mb-8 border border-[color:var(--brand-border)] p-5 bg-neutral-50">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4">{tr("yourReview")}</h3>
+          <div className="premium-card mb-8 p-6">
+            <h3 className="eyebrow mb-4">{tr("yourReview")}</h3>
             {/* Star picker */}
             <div className="flex items-center gap-1 mb-4">
               {Array.from({ length: 5 }).map((_, i) => (
                 <button key={i} onClick={() => setReviewRating(i + 1)}>
-                  <Star className={`w-7 h-7 transition-colors ${i < reviewRating ? "fill-amber-400 text-amber-400" : "text-neutral-300 hover:text-amber-300"}`} />
+                  <Star className={`w-7 h-7 transition-colors ${i < reviewRating ? "fill-[color:var(--brand-gold)] text-[color:var(--brand-gold)]" : "text-neutral-300 hover:text-[color:var(--brand-gold)]/60"}`} />
                 </button>
               ))}
-              <span className="ms-2 text-sm text-neutral-500">{tr("stars", { count: reviewRating })}</span>
+              <span className="ms-2 text-sm text-[color:var(--brand-muted)]">{tr("stars", { count: reviewRating })}</span>
             </div>
             <textarea
               value={reviewComment}
               onChange={(e) => setReviewComment(e.target.value)}
               placeholder={tr("commentPlaceholder")}
               rows={3}
-              className="w-full border border-neutral-200 px-3 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 resize-none mb-4"
+              className="mb-4 w-full resize-none rounded-xl border border-[color:var(--brand-border)] bg-white px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-[color:var(--brand-maroon)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40"
             />
             <div className="flex gap-3">
               <button
                 onClick={submitReview}
                 disabled={reviewSubmitting}
-                className="bg-neutral-900 text-white text-sm font-bold px-6 py-2.5 hover:bg-neutral-700 transition-colors disabled:opacity-50"
+                className="bg-brand-gradient rounded-full px-6 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-50"
               >
                 {reviewSubmitting ? tr("submitting") : tr("submit")}
               </button>
               <button
                 onClick={() => setShowReviewForm(false)}
-                className="border border-neutral-200 text-sm font-semibold px-6 py-2.5 hover:bg-neutral-50 transition-colors"
+                className="rounded-full border border-[color:var(--brand-border)] px-6 py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]"
               >
                 {tc("cancel")}
               </button>
@@ -612,34 +622,34 @@ export function ProductDetail({
         )}
 
         {reviewSubmitted && (
-          <div className="mb-6 bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 font-medium flex items-center gap-2">
+          <div className="mb-6 flex items-center gap-2 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
             <Star className="w-4 h-4" /> {tr("thanks")}
           </div>
         )}
 
         {/* Review list */}
         {reviews.length === 0 ? (
-          <div className="py-10 text-center text-neutral-400 text-sm border border-dashed border-neutral-200">
+          <div className="rounded-2xl border border-dashed border-[color:var(--brand-border)] bg-[color:var(--paper-2)]/40 py-12 text-center text-sm text-[color:var(--brand-muted)]">
             {tr("empty")}
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {reviews.map((r) => (
-              <div key={r.id} className="border-b border-neutral-100 pb-5 last:border-0">
+              <div key={r.id} className="premium-card p-5">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-full bg-neutral-200 shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold text-neutral-600">
+                  <div className="w-10 h-10 rounded-full bg-[color:var(--paper-2)] shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold text-[color:var(--brand-maroon)] ring-1 ring-[color:var(--brand-border)]">
                     {r.reviewer_avatar
                       ? <img src={r.reviewer_avatar} alt="" className="w-full h-full object-cover" />
                       : (r.reviewer_name?.[0] ?? "?").toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold">{r.reviewer_name ?? tr("customer")}</p>
+                      <p className="text-sm font-semibold text-[color:var(--ink)]">{r.reviewer_name ?? tr("customer")}</p>
                       <p className="text-xs text-neutral-400">{new Date(r.created_at).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" })}</p>
                     </div>
                     <div className="flex mt-0.5 mb-2">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`w-3.5 h-3.5 ${i < r.rating ? "fill-amber-400 text-amber-400" : "text-neutral-200"}`} />
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < r.rating ? "fill-[color:var(--brand-gold)] text-[color:var(--brand-gold)]" : "text-neutral-200"}`} />
                       ))}
                     </div>
                     {r.comment && <p className="text-sm text-neutral-700 leading-relaxed">{r.comment}</p>}

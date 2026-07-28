@@ -6,6 +6,7 @@ import { ShoppingCart, Plus, Minus, Star, MapPin, ChevronLeft } from "lucide-rea
 import { aed } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Product = any;
@@ -83,30 +84,31 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
   const [activeTab, setActiveTab] = useState(categories[0] ?? "");
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
 
       {/* ── Header ── */}
-      <div className="sticky top-0 z-20 bg-white border-b border-neutral-100 shadow-sm">
-        <div className="mx-auto max-w-3xl px-4 py-3 flex items-center gap-3">
+      <div className="bg-maroon-radial relative overflow-hidden sticky top-0 z-20">
+        <span className="pointer-events-none absolute -top-16 -end-16 h-52 w-52 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+        <div className="relative mx-auto max-w-3xl px-4 py-3.5 flex items-center gap-3">
           <Link href="/categories/restaurant"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-100 hover:bg-neutral-200 transition-colors">
-            <ChevronLeft className="h-5 w-5 text-neutral-700" />
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 border border-[color:var(--brand-gold)]/25 backdrop-blur-sm text-white transition hover:bg-white/20">
+            <ChevronLeft className="h-5 w-5 rtl:rotate-180" />
           </Link>
           {vendor.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={vendor.logo_url} alt={vendor.name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+            <img src={vendor.logo_url} alt={vendor.name} className="h-11 w-11 rounded-xl object-cover shrink-0 ring-1 ring-[color:var(--brand-gold)]/40" />
           ) : (
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white text-lg"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white text-lg ring-1 ring-[color:var(--brand-gold)]/40">
               🍕
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="text-base font-extrabold text-neutral-900 truncate">{vendor.name}</h1>
-            <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+            <h1 className="font-display text-[17px] font-semibold text-white truncate">{vendor.name}</h1>
+            <div className="flex items-center gap-2.5 text-[11px] text-white/70">
               {vendor.rating && vendor.rating > 0 && (
-                <span className="flex items-center gap-0.5 font-semibold text-green-700">
-                  <Star className="h-3 w-3 fill-green-700" /> {Number(vendor.rating).toFixed(1)}
+                <span className="flex items-center gap-0.5 font-bold text-[color:var(--brand-gold)]">
+                  <Star className="h-3 w-3 fill-[color:var(--brand-gold)]" /> {Number(vendor.rating).toFixed(1)}
                 </span>
               )}
               {vendor.emirate && (
@@ -118,7 +120,7 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
           </div>
           {totalItems > 0 && (
             <Link href="/cart"
-              className="relative flex items-center gap-2 rounded-full bg-[color:var(--brand-maroon)] px-3 py-2 text-xs font-bold text-white hover:opacity-90 shrink-0">
+              className="relative flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-bold text-[color:var(--brand-maroon)] shadow-sm ring-1 ring-[color:var(--brand-gold)]/40 transition hover:brightness-105 shrink-0">
               <ShoppingCart className="h-4 w-4" />
               <span>{totalItems} item{totalItems !== 1 ? "s" : ""}</span>
               <span className="hidden sm:inline">· {aed(totalPrice)}</span>
@@ -128,13 +130,13 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
 
         {/* Category tabs */}
         {categories.length > 1 && (
-          <div className="flex overflow-x-auto [scrollbar-width:none] border-t border-neutral-100 mx-0 px-4">
+          <div className="relative flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-4 pb-3">
             {categories.map((cat) => (
               <button key={cat} onClick={() => setActiveTab(cat)}
-                className={"shrink-0 px-4 py-2.5 text-[13px] font-semibold border-b-2 transition-colors " +
+                className={"shrink-0 rounded-full px-4 py-1.5 text-[13px] font-semibold whitespace-nowrap border transition-colors " +
                   (activeTab === cat
-                    ? "border-[color:var(--brand-maroon)] text-[color:var(--brand-maroon)]"
-                    : "border-transparent text-neutral-500 hover:text-neutral-700")}>
+                    ? "border-[color:var(--brand-gold)]/60 bg-white text-[color:var(--brand-maroon)]"
+                    : "border-white/20 bg-white/10 text-white/80 backdrop-blur-sm hover:bg-white/20")}>
                 {cat}
               </button>
             ))}
@@ -143,46 +145,48 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
       </div>
 
       {/* ── Menu items ── */}
-      <div className="mx-auto max-w-3xl px-4 py-5">
+      <div className="mx-auto max-w-3xl px-4 py-6">
         {categories.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-neutral-400 text-sm">No menu items yet</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-4xl ring-1 ring-[color:var(--brand-gold)]/30">🍽️</span>
+            <p className="font-display text-[17px] font-semibold text-[color:var(--ink)]">No menu items yet</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {(grouped[activeTab] ?? []).map((p: Product) => {
+            {(grouped[activeTab] ?? []).map((p: Product, i: number) => {
               const price = p.sale_price ?? p.price;
               const hasDiscount = p.sale_price && p.price && Number(p.sale_price) < Number(p.price);
               return (
-                <div key={p.id}
-                  className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-neutral-100 hover:shadow-md transition-shadow">
-                  {/* Image */}
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                    {p.thumbnail_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.thumbnail_url} alt={p.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-2xl text-neutral-300">🍝</div>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-bold text-neutral-900 leading-tight">{p.name}</p>
-                    {p.description && (
-                      <p className="text-[12px] text-neutral-500 mt-0.5 line-clamp-2">{p.description}</p>
-                    )}
-                    <div className="mt-2 flex items-baseline gap-2">
-                      <span className="text-[14px] font-extrabold text-[color:var(--brand-maroon)]">{aed(price)}</span>
-                      {hasDiscount && (
-                        <span className="text-[11px] text-neutral-400 line-through">{aed(p.price)}</span>
+                <Reveal key={p.id} delay={i * 45}>
+                  <div className="group premium-card flex items-center gap-3 p-3.5">
+                    {/* Image */}
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[color:var(--paper-2)]">
+                      {p.thumbnail_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.thumbnail_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-2xl text-neutral-300">🍝</div>
                       )}
                     </div>
-                  </div>
 
-                  {/* +/- stepper */}
-                  <QtyButton product={p} onAdd={(prod) => onAddToCart(prod, vendor.id, vendor.name)} />
-                </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-bold text-[color:var(--ink)] leading-tight">{p.name}</p>
+                      {p.description && (
+                        <p className="text-[12px] text-[color:var(--brand-muted)] mt-0.5 line-clamp-2">{p.description}</p>
+                      )}
+                      <div className="mt-2 flex items-baseline gap-2">
+                        <span className="text-[15px] font-extrabold text-[color:var(--brand-maroon)]">{aed(price)}</span>
+                        {hasDiscount && (
+                          <span className="text-[11px] text-neutral-400 line-through">{aed(p.price)}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* +/- stepper */}
+                    <QtyButton product={p} onAdd={(prod) => onAddToCart(prod, vendor.id, vendor.name)} />
+                  </div>
+                </Reveal>
               );
             })}
           </div>
@@ -192,15 +196,15 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
       {/* ── Switch restaurant confirmation dialog ── */}
       {confirmSwitch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
-            <h3 className="text-base font-extrabold text-neutral-900 mb-2">Start a new order?</h3>
-            <p className="text-sm text-neutral-600 mb-5">
-              Your cart has items from <span className="font-semibold">{confirmSwitch.otherVendorName}</span>.
+          <div className="premium-card w-full max-w-sm p-6 shadow-[var(--shadow-premium)]">
+            <h3 className="font-display text-[19px] font-semibold text-[color:var(--ink)] mb-2">Start a new order?</h3>
+            <p className="text-sm text-[color:var(--brand-muted)] mb-5">
+              Your cart has items from <span className="font-semibold text-[color:var(--ink)]">{confirmSwitch.otherVendorName}</span>.
               Adding items from {vendor.name} will clear your current cart.
             </p>
             <div className="flex gap-3">
               <button onClick={() => setConfirmSwitch(null)}
-                className="flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors">
+                className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-bold text-[color:var(--ink)] hover:bg-[color:var(--paper-2)] transition-colors">
                 Cancel
               </button>
               <button
@@ -209,7 +213,7 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
                   performAdd(confirmSwitch.pendingProduct, vendor.id, vendor.name);
                   setConfirmSwitch(null);
                 }}
-                className="flex-1 rounded-xl bg-[color:var(--brand-maroon)] py-2.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+                className="bg-brand-gradient flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] hover:brightness-110 transition">
                 Clear &amp; Add
               </button>
             </div>
@@ -221,7 +225,7 @@ export function VendorMenuClient({ vendor, grouped }: { vendor: Vendor; grouped:
       {totalItems > 0 && (
         <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-center px-4">
           <Link href="/cart"
-            className="inline-flex items-center gap-3 rounded-full bg-[color:var(--brand-maroon)] px-6 py-3.5 text-sm font-bold text-white shadow-xl hover:opacity-90 transition-opacity">
+            className="bg-brand-gradient inline-flex items-center gap-3 rounded-full px-6 py-3.5 text-sm font-bold text-white shadow-[var(--shadow-premium)] ring-1 ring-[color:var(--brand-gold)]/40 hover:brightness-110 transition">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs font-extrabold">{totalItems}</span>
             View Cart
             <span className="ms-1 opacity-80">· {aed(totalPrice)}</span>

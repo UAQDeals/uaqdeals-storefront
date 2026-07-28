@@ -44,16 +44,23 @@ export async function TrendingNow() {
   if (!items.length) return null;
 
   return (
-    <section className="mt-6">
-      <div className="mb-3 flex items-center gap-2">
-        <TrendingUp className="h-4 w-4 text-[color:var(--brand-maroon)]" />
-        <h2 className="text-base font-bold text-neutral-900">Trending Now</h2>
-        <span className="text-xs text-neutral-400">in UAQ</span>
+    <section className="mt-10">
+      <div className="mb-5 flex items-center gap-3.5">
+        <span className="accent-bar h-9 w-1.5 rounded-full" />
+        <div>
+          <p className="eyebrow flex items-center gap-1.5">
+            <TrendingUp className="h-3.5 w-3.5" />
+            in UAQ
+          </p>
+          <h2 className="font-display mt-0.5 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">
+            Trending Now
+          </h2>
+        </div>
       </div>
 
       {/* Horizontal scroll container */}
       <div
-        className="flex gap-3 overflow-x-auto pb-2"
+        className="flex gap-4 overflow-x-auto pb-3"
         style={{ scrollbarWidth: "none" }}
       >
         {items.map((item) => (
@@ -74,16 +81,16 @@ function TrendingCard({ item }: { item: TrendingItem }) {
   return (
     <Link
       href={href}
-      className="group flex w-36 shrink-0 flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:border-[color:var(--brand-maroon)] hover:shadow-sm sm:w-40"
+      className="group premium-card flex w-40 shrink-0 flex-col overflow-hidden sm:w-44"
     >
       {/* Image */}
-      <div className="relative flex h-32 w-full items-center justify-center overflow-hidden bg-neutral-50 sm:h-36">
+      <div className="relative flex h-32 w-full items-center justify-center overflow-hidden bg-[color:var(--paper-2)] sm:h-36">
         {catalog.main_image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={catalog.main_image_url}
             alt={catalog.title}
-            className="h-full w-full object-contain p-2 transition group-hover:scale-105"
+            className="h-full w-full object-contain p-2 transition-transform duration-[600ms] ease-out group-hover:scale-110"
           />
         ) : (
           <div className="h-12 w-12 rounded-full bg-neutral-200" />
@@ -91,7 +98,7 @@ function TrendingCard({ item }: { item: TrendingItem }) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col gap-1 p-2.5">
+      <div className="flex flex-1 flex-col gap-1 p-3">
         {catalog.brand && (
           <p className="text-[10px] font-bold uppercase tracking-wide text-[color:var(--brand-maroon)]">
             {catalog.brand}
@@ -101,7 +108,7 @@ function TrendingCard({ item }: { item: TrendingItem }) {
           {catalog.title}
         </p>
         {catalog.icecat_category && (
-          <p className="mt-auto text-[10px] text-neutral-400 line-clamp-1">
+          <p className="mt-auto text-[10px] text-[color:var(--brand-muted)] line-clamp-1">
             {catalog.icecat_category}
           </p>
         )}

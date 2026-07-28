@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
+import { Reveal } from "@/components/reveal";
 
 type Listing = Record<string, any>;
 
@@ -84,7 +85,7 @@ export function MarketplaceList({
       {/* hero-stripped */}
       <div className="mb-6 flex items-center gap-3">
         <div className="flex-1">
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-[color:var(--brand-muted)]">
             {isRTL
               ? `${filtered.length} إعلان في ${catLabel(selectedCat)}`
               : `${filtered.length} listing${filtered.length === 1 ? "" : "s"} in ${selectedCat}`}
@@ -92,7 +93,7 @@ export function MarketplaceList({
         </div>
         <Link
           href={`/marketplace/${vertical}/sell`}
-          className="rounded-lg bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap"
+          className="bg-brand-gradient whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110"
         >
           + {ctaLabel[vertical] ?? (isRTL ? "إدراج" : "List")}
         </Link>
@@ -105,10 +106,10 @@ export function MarketplaceList({
             key={c}
             onClick={() => setSelectedCat(c)}
             className={
-              "rounded-full px-4 py-1.5 text-xs font-semibold transition-colors " +
+              "rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-300 " +
               (selectedCat === c
-                ? "bg-gradient-to-r from-[#8E1B3A] to-[#C72931] text-white"
-                : "border border-neutral-300 bg-white text-neutral-700 hover:border-[#8E1B3A]/40")
+                ? "bg-brand-gradient text-white shadow-[var(--shadow-card)]"
+                : "border border-[color:var(--brand-border)] bg-white text-neutral-700 hover:-translate-y-0.5 hover:border-[color:var(--brand-gold)] hover:text-[color:var(--brand-maroon)]")
             }
           >
             {catLabel(c)}
@@ -117,43 +118,46 @@ export function MarketplaceList({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-neutral-300 bg-white p-16 text-center">
-          <p className="text-sm text-neutral-500">{isRTL ? `لا توجد إعلانات في ${catLabel(selectedCat)} حالياً. تحقق مرة أخرى قريباً.` : `No listings in ${selectedCat} right now. Check back soon.`}</p>
+        <div className="premium-card flex flex-col items-center gap-3 p-16 text-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-3xl">{emoji}</span>
+          <p className="font-display text-[17px] text-[color:var(--ink)]">{isRTL ? `لا توجد إعلانات في ${catLabel(selectedCat)} حالياً. تحقق مرة أخرى قريباً.` : `No listings in ${selectedCat} right now. Check back soon.`}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((r) => {
+          {filtered.map((r, i) => {
             const img = Array.isArray(r.images) && r.images.length > 0 ? r.images[0] : null;
             const detail = detailFor(vertical, r, isRTL);
             return (
-              <Link
-                key={r.id}
-                href={`/marketplace/${vertical}/${r.id}`}
-                className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-md"
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
-                  {img ? (
-                    <img src={img} alt={r.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-4xl">{emoji}</div>
-                  )}
-                  {r.status === "sold" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <span className="rounded-md bg-red-600 px-4 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg">{isRTL ? "تم البيع" : "Sold"}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <p className="truncate text-sm font-bold text-neutral-900">{r.title}</p>
-                  {detail && <p className="mt-0.5 truncate text-xs text-neutral-500">{detail}</p>}
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="text-base font-extrabold text-[#8E1B3A]">
-                      {r.price ? `${isRTL ? "درهم" : "AED"} ${Number(r.price).toLocaleString()}` : (isRTL ? "السعر عند الطلب" : "Ask price")}
-                    </span>
-                    {r.emirate && <span className="text-[11px] text-neutral-400">{r.emirate}</span>}
+              <Reveal key={r.id} delay={(i % 3) * 70}>
+                <Link
+                  href={`/marketplace/${vertical}/${r.id}`}
+                  className="premium-card group block h-full overflow-hidden"
+                >
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-[color:var(--paper-2)]">
+                    {img ? (
+                      <img src={img} alt={r.title} className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-4xl text-neutral-300">{emoji}</div>
+                    )}
+                    {r.status === "sold" && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <span className="bg-brand-gradient rounded-full px-4 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg">{isRTL ? "تم البيع" : "Sold"}</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
+                  <div className="p-4">
+                    <p className="truncate text-sm font-bold text-[color:var(--ink)] transition-colors group-hover:text-[color:var(--brand-maroon)]">{r.title}</p>
+                    {detail && <p className="mt-0.5 truncate text-xs text-[color:var(--brand-muted)]">{detail}</p>}
+                    <span className="gold-rule my-2.5 block" />
+                    <div className="flex items-center justify-between">
+                      <span className="text-base font-extrabold text-[color:var(--brand-maroon)]">
+                        {r.price ? `${isRTL ? "درهم" : "AED"} ${Number(r.price).toLocaleString()}` : (isRTL ? "السعر عند الطلب" : "Ask price")}
+                      </span>
+                      {r.emirate && <span className="text-[11px] text-neutral-400">{r.emirate}</span>}
+                    </div>
+                  </div>
+                </Link>
+              </Reveal>
             );
           })}
         </div>

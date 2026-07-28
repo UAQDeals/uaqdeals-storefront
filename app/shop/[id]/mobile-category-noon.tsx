@@ -59,7 +59,7 @@ export function MobileCategoryNoon({
   return (
     <div className="flex h-[calc(100dvh-112px)]">
       {/* Department rail */}
-      <aside className="w-[116px] shrink-0 overflow-y-auto border-e border-neutral-200 bg-neutral-50 pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <aside className="w-[116px] shrink-0 overflow-y-auto border-e border-[color:var(--brand-border)] bg-[color:var(--paper-2)] pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {topCategories.map((d) => {
           const active = d.id === activeTopId;
           return (
@@ -81,12 +81,9 @@ export function MobileCategoryNoon({
       {/* Right column */}
       <div className="min-w-0 flex-1 overflow-y-auto bg-white pb-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {/* Banner */}
-        <div
-          className="m-3 overflow-hidden rounded-2xl p-4 text-white"
-          style={{ background: "linear-gradient(135deg, #8E1B3A 0%, #C72931 58%, #F24732 100%)" }}
-        >
+        <div className="bg-brand-gradient m-3 overflow-hidden rounded-2xl p-4 text-white shadow-[var(--shadow-card)]">
           <p className="text-[10px] font-bold uppercase tracking-[2px] text-white/70">UAQ Deals</p>
-          <p className="mt-0.5 text-[18px] font-extrabold leading-tight">{category.name}</p>
+          <p className="font-display mt-0.5 text-[20px] font-semibold leading-tight">{category.name}</p>
           <p className="mt-1 text-[12px] leading-snug text-white/80">{subtitle}</p>
         </div>
         {/* Subcategory accordions */}
@@ -96,40 +93,40 @@ export function MobileCategoryNoon({
               <Link
                 key={sec.id}
                 href={"/shop/" + sec.id}
-                className="flex items-center justify-between border-b border-neutral-100 px-4 py-3.5"
+                className="flex items-center justify-between border-b border-[color:var(--brand-border)] px-4 py-3.5 transition-colors hover:bg-[color:var(--paper-2)]/50"
               >
-                <span className="text-[14px] font-bold text-neutral-900">{sec.name}</span>
+                <span className="text-[14px] font-bold text-[color:var(--ink)]">{sec.name}</span>
                 <ChevronDown className="h-4 w-4 -rotate-90 text-neutral-400 rtl:rotate-90" />
               </Link>
             );
           }
           const isOpen = !!open[sec.id];
           return (
-            <div key={sec.id} className="border-b border-neutral-100">
+            <div key={sec.id} className="border-b border-[color:var(--brand-border)]">
               <button
                 onClick={() => toggle(sec.id)}
                 className="flex w-full items-center justify-between px-4 py-3.5 text-start"
               >
-                <span className="text-[14px] font-bold text-neutral-900">{sec.name}</span>
-                <ChevronDown className={"h-4 w-4 text-neutral-500 transition-transform " + (isOpen ? "rotate-180" : "")} />
+                <span className="text-[14px] font-bold text-[color:var(--ink)]">{sec.name}</span>
+                <ChevronDown className={"h-4 w-4 text-[color:var(--brand-maroon)] transition-transform " + (isOpen ? "rotate-180" : "")} />
               </button>
               {isOpen && (
                 <div className="grid grid-cols-3 gap-2.5 px-3 pb-4">
                   {sec.children.map((g) => {
                     const icon = iconFor(g.name);
                     return (
-                      <Link key={g.id} href={"/shop/" + g.id} className="flex flex-col items-center gap-1.5">
-                        <span className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
+                      <Link key={g.id} href={"/shop/" + g.id} className="group flex flex-col items-center gap-1.5">
+                        <span className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] shadow-[var(--shadow-sm)] transition group-hover:-translate-y-0.5 group-hover:border-[color:var(--brand-gold)]">
                           {g.image ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={g.image} alt={g.name} className="h-full w-full object-cover" />
+                            <img src={g.image} alt={g.name} className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
                           ) : icon.kind === "emoji" ? (
-                            <span className="text-2xl">{icon.value}</span>
+                            <span className="text-2xl transition-transform group-hover:scale-110">{icon.value}</span>
                           ) : (
                             <span className="text-brand-gradient text-lg font-extrabold">{icon.value}</span>
                           )}
                         </span>
-                        <span className="line-clamp-2 text-center text-[11px] font-medium leading-tight text-neutral-700">
+                        <span className="line-clamp-2 text-center text-[11px] font-medium leading-tight text-neutral-700 transition-colors group-hover:text-[color:var(--brand-maroon)]">
                           {g.name}
                         </span>
                       </Link>
@@ -137,7 +134,7 @@ export function MobileCategoryNoon({
                   })}
                   <Link
                     href={"/shop/" + sec.id}
-                    className="flex items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-white p-2 text-center"
+                    className="flex items-center justify-center rounded-2xl border border-dashed border-[color:var(--brand-gold)]/50 bg-[color:var(--paper-2)]/40 p-2 text-center transition hover:bg-[color:var(--paper-2)]"
                   >
                     <span className="text-[12px] font-bold text-[color:var(--brand-maroon)]">Shop all</span>
                   </Link>

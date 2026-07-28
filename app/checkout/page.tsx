@@ -54,9 +54,15 @@ export default async function CheckoutPage() {
   const defaultEmirate = (profile?.emirate as string | null) ?? null;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("title")}</h1>
-      <p className="mt-1 text-sm text-neutral-600">{t("subtitle")}</p>
+    <div className="mx-auto max-w-[1320px] px-5 py-10 md:px-8">
+      <div className="mb-2 flex items-center gap-3.5">
+        <span className="accent-bar h-9 w-1.5 rounded-full" />
+        <div>
+          <p className="eyebrow">{t("subtitle")}</p>
+          <h1 className="font-display mt-0.5 text-[26px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[32px]">{t("title")}</h1>
+        </div>
+      </div>
+      <div className="gold-rule mb-6 mt-4" />
       <div className="mt-6">
         <CheckoutForm
           userId={user.id}

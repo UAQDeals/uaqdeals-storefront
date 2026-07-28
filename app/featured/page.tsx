@@ -35,26 +35,27 @@ export default async function FeaturedPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-[1320px] px-5 py-10 md:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-4 flex items-center gap-1 text-xs text-neutral-500">
-        <Link href="/" className="hover:text-[color:var(--brand-maroon)]">Home</Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-neutral-700">Featured Products</span>
+      <nav className="mb-5 flex items-center gap-1.5 text-xs text-[color:var(--brand-muted)]">
+        <Link href="/" className="transition-colors hover:text-[color:var(--brand-maroon)]">Home</Link>
+        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+        <span className="text-[color:var(--ink)]">Featured Products</span>
       </nav>
 
       {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 sm:flex-row sm:items-center">
-        <span className="bg-brand-gradient inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-2xl text-white">
+      <div className="premium-card mb-9 flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
+        <span className="bg-brand-gradient inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl text-white shadow-[var(--shadow-card)]">
           ⭐
         </span>
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Featured Products</h1>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="eyebrow">Featured</p>
+          <h1 className="font-display mt-0.5 text-[28px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[34px]">Featured Products</h1>
+          <p className="mt-1.5 text-sm text-[color:var(--brand-muted)]">
             Hand-picked products from our top vendors across all categories.
           </p>
         </div>
-        <div className="ms-auto shrink-0 text-sm font-semibold text-neutral-500">
+        <div className="ms-auto shrink-0 rounded-full border border-[color:var(--brand-border)] bg-[color:var(--paper-2)]/60 px-4 py-1.5 text-sm font-semibold text-[color:var(--brand-muted)]">
           {products.length} product{products.length !== 1 ? "s" : ""}
         </div>
       </div>
@@ -62,11 +63,12 @@ export default async function FeaturedPage() {
       {products.length ? (
         <FeaturedProducts products={products} />
       ) : (
-        <div className="rounded-2xl border border-dashed border-[color:var(--brand-border)] bg-white p-10 text-center">
-          <p className="text-base font-semibold text-neutral-800">No featured products yet</p>
-          <p className="mt-1 text-sm text-neutral-500">Admin can mark products as featured from the catalog.</p>
+        <div className="premium-card flex flex-col items-center p-12 text-center">
+          <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-3xl">⭐</span>
+          <p className="font-display text-[20px] font-semibold text-[color:var(--ink)]">No featured products yet</p>
+          <p className="mt-1.5 text-sm text-[color:var(--brand-muted)]">Admin can mark products as featured from the catalog.</p>
           <Link href="/categories"
-            className="mt-5 inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white">
+            className="bg-brand-gradient mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110">
             Browse all categories
           </Link>
         </div>

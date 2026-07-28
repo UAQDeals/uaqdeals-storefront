@@ -3,6 +3,7 @@ import { ChevronRight, ShoppingBag } from "lucide-react";
 import { aed } from "@/lib/format";
 import { CategoryRail } from "./category-rail";
 import { QuickAddButton } from "@/components/quick-add-button";
+import { Reveal } from "@/components/reveal";
 import type { ProductCard } from "@/components/featured-products";
 import { rowHasOptions } from "@/lib/variants";
 
@@ -22,10 +23,10 @@ export function ShopCategoryDesktop({
   railImages?: Record<string, string | null>;
 }) {
   return (
-    <div className="bg-[color:var(--brand-cream)] pb-12">
+    <div className="bg-[color:var(--paper)] pb-12">
       {/* Breadcrumb */}
-      <div className="border-b border-neutral-100 bg-white">
-        <nav className="mx-auto flex max-w-[1320px] flex-wrap items-center gap-1 px-5 py-3 text-[12.5px] text-neutral-500 md:px-8">
+      <div className="border-b border-[color:var(--brand-border)] bg-white">
+        <nav className="mx-auto flex max-w-[1320px] flex-wrap items-center gap-1 px-5 py-3 text-[12.5px] text-[color:var(--brand-muted)] md:px-8">
           <Link href="/" className="transition-colors hover:text-[color:var(--brand-maroon)]">Home</Link>
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-300 rtl:rotate-180" />
           <Link href="/categories" className="transition-colors hover:text-[color:var(--brand-maroon)]">Categories</Link>
@@ -33,7 +34,7 @@ export function ShopCategoryDesktop({
             <span key={b.id} className="flex items-center gap-1">
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-300 rtl:rotate-180" />
               {i === breadcrumb.length - 1 ? (
-                <span className="font-semibold text-neutral-800">{b.name}</span>
+                <span className="font-semibold text-[color:var(--ink)]">{b.name}</span>
               ) : (
                 <Link href={"/shop/" + b.id} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>
               )}
@@ -45,9 +46,12 @@ export function ShopCategoryDesktop({
       {/* Subcategory rail */}
       {children.length > 0 && (
         <div className="mx-auto max-w-[1320px] px-5 pt-8 md:px-8">
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-6 w-1.5 rounded-full bg-brand-gradient" />
-            <h2 className="text-[17px] font-extrabold tracking-tight text-neutral-900">Shop {category.name}</h2>
+          <div className="mb-5 flex items-center gap-3.5">
+            <span className="accent-bar h-9 w-1.5 rounded-full" />
+            <div>
+              <p className="eyebrow">{category.name}</p>
+              <h2 className="font-display mt-0.5 text-[22px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[26px]">Shop {category.name}</h2>
+            </div>
           </div>
           <CategoryRail items={children} images={railImages} />
         </div>
@@ -55,20 +59,26 @@ export function ShopCategoryDesktop({
 
       {/* Products */}
       <div className="mx-auto max-w-[1320px] px-5 pt-10 md:px-8">
-        <div className="mb-5 flex items-center gap-3">
-          <span className="h-6 w-1.5 rounded-full bg-brand-gradient" />
-          <h2 className="text-[17px] font-extrabold tracking-tight text-neutral-900">Popular in {category.name}</h2>
+        <div className="mb-5 flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <div>
+            <p className="eyebrow">{category.name}</p>
+            <h2 className="font-display mt-0.5 text-[22px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[26px]">Popular in {category.name}</h2>
+          </div>
         </div>
 
         {products.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-neutral-200 bg-white p-14 text-center">
-            <p className="text-[13.5px] text-neutral-500">
+          <div className="premium-card p-14 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)]">
+              <ShoppingBag className="h-8 w-8 text-[color:var(--brand-maroon)]" />
+            </div>
+            <p className="font-display text-[15px] text-[color:var(--brand-muted)]">
               Products in this category are on the way. Pick a subcategory above to explore.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {products.map((p) => {
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {products.map((p, i) => {
               const img = p.thumbnail_url || (Array.isArray(p.images) && p.images.length ? p.images[0] : null);
               const hasSale =
                 p.sale_price != null && Number(p.sale_price) > 0 && p.price != null && Number(p.sale_price) < Number(p.price);
@@ -78,41 +88,42 @@ export function ShopCategoryDesktop({
               const salePct = hasSale ? Math.round(((Number(p.price) - Number(p.sale_price)) / Number(p.price)) * 100) : 0;
 
               return (
-                <div key={p.id} className="group">
+                <Reveal key={p.id} delay={Math.min(i, 10) * 35}>
+                <div className="group premium-card overflow-hidden">
                   <Link href={`/products/${p.id}`} className="block">
-                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-[color:var(--paper-2)]">
                       {img ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={img} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <img src={img} alt={p.name} className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-neutral-300">
                           <ShoppingBag className="h-10 w-10" />
                         </div>
                       )}
                       {hasSale && (
-                        <span className="absolute start-2 top-2 bg-[#c72931] px-2 py-1 text-[9px] font-black tracking-widest text-white">
+                        <span className="bg-brand-gradient absolute start-2.5 top-2.5 rounded-full px-2.5 py-1 text-[9.5px] font-black tracking-wider text-white shadow-sm">
                           -{salePct}%
                         </span>
                       )}
                       {p.condition === "used" && (
-                        <span className="absolute end-2 top-2 bg-amber-500 px-2 py-1 text-[9px] font-black tracking-widest text-white">
+                        <span className="absolute end-2.5 top-2.5 rounded-full bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] px-2.5 py-1 text-[9.5px] font-black tracking-wider text-white shadow-sm">
                           USED
                         </span>
                       )}
                     </div>
                   </Link>
-                  <div className="pb-1 pt-2.5">
-                    <p className="truncate text-[11px] font-bold uppercase tracking-wide text-neutral-900">
+                  <div className="p-3">
+                    <p className="truncate text-[10.5px] font-bold uppercase tracking-wide text-[color:var(--brand-muted)]">
                       {p.vendor_name ?? "UAQ Deals"}
                     </p>
                     <Link href={`/products/${p.id}`}>
-                      <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-neutral-600 transition-colors hover:text-neutral-900">
+                      <p className="mt-0.5 min-h-[32px] line-clamp-2 text-[12.5px] leading-snug text-neutral-700 transition-colors hover:text-[color:var(--ink)]">
                         {p.name}
                       </p>
                     </Link>
                     <div className="mt-2 flex items-center justify-between gap-2">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-[13.5px] font-bold text-neutral-900">{aed(display)}</span>
+                        <span className="text-[15px] font-extrabold text-[color:var(--brand-maroon)]">{aed(display)}</span>
                         {hasSale && <span className="text-[11px] text-neutral-400 line-through">{aed(p.price)}</span>}
                       </div>
                       <QuickAddButton
@@ -132,6 +143,7 @@ export function ShopCategoryDesktop({
                     </div>
                   </div>
                 </div>
+                </Reveal>
               );
             })}
           </div>

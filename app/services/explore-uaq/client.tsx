@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 
 const CATEGORIES = [
   "All", "Tour Package", "Mangrove Visit", "Water Sports",
@@ -104,10 +105,10 @@ function EnquiryModal({
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-[17px] font-bold text-neutral-900">{isRTL ? "الحجز / الاستفسار" : "Book / Enquire"}</h3>
-            <p className="text-[12px] text-neutral-500 mt-0.5">{experience.title}</p>
+            <h3 className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "الحجز / الاستفسار" : "Book / Enquire"}</h3>
+            <p className="text-[12px] text-[color:var(--brand-muted)] mt-0.5">{experience.title}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-neutral-100 shrink-0">
+          <button onClick={onClose} className="p-1.5 rounded-lg bg-[color:var(--paper-2)] shrink-0 transition hover:brightness-95">
             <X className="w-4 h-4 text-neutral-600" />
           </button>
         </div>
@@ -121,41 +122,40 @@ function EnquiryModal({
           {/* Guests + Date row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-600 mb-1.5">{isRTL ? "عدد الضيوف" : "Guests"}</p>
-              <div className="flex items-center justify-between h-11 rounded-xl border border-neutral-300 px-3 bg-white">
+              <p className="text-[11px] font-semibold text-[color:var(--brand-muted)] mb-1.5">{isRTL ? "عدد الضيوف" : "Guests"}</p>
+              <div className="flex items-center justify-between h-11 rounded-xl border border-[color:var(--brand-border)] px-3 bg-white">
                 <button type="button" onClick={() => setGuests(g => Math.max(1, g - 1))}
-                  className="w-7 h-7 rounded-md bg-neutral-100 flex items-center justify-center text-[#8E1B3A] font-bold disabled:opacity-30"
+                  className="w-7 h-7 rounded-md bg-[color:var(--paper-2)] flex items-center justify-center text-[color:var(--brand-maroon)] font-bold disabled:opacity-30"
                   disabled={guests <= 1}>
                   <Users className="w-3.5 h-3.5" />
                 </button>
                 <span className="text-[15px] font-bold">{guests}</span>
                 <button type="button" onClick={() => setGuests(g => g + 1)}
-                  className="w-7 h-7 rounded-md bg-neutral-100 flex items-center justify-center text-[#8E1B3A] font-bold">
+                  className="w-7 h-7 rounded-md bg-[color:var(--paper-2)] flex items-center justify-center text-[color:var(--brand-maroon)] font-bold">
                   +
                 </button>
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-neutral-600 mb-1.5">{isRTL ? "التاريخ المفضل" : "Preferred Date"}</p>
+              <p className="text-[11px] font-semibold text-[color:var(--brand-muted)] mb-1.5">{isRTL ? "التاريخ المفضل" : "Preferred Date"}</p>
               <div className="relative">
-                <Calendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 16, height: 16 }} />
+                <Calendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-gold-deep)]" style={{ width: 16, height: 16 }} />
                 <input type="date" min={today} value={date} onChange={e => setDate(e.target.value)}
-                  className="w-full h-11 rounded-xl border border-neutral-300 ps-9 pe-2 text-[12px] font-semibold focus:outline-none focus:border-[#8E1B3A] bg-white" />
+                  className="w-full h-11 rounded-xl border border-[color:var(--brand-border)] ps-9 pe-2 text-[12px] font-semibold focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)] bg-white" />
               </div>
             </div>
           </div>
 
           <div className="relative">
-            <FileText className="absolute start-3 top-3.5 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+            <FileText className="absolute start-3 top-3.5 text-[color:var(--brand-gold-deep)]" style={{ width: 18, height: 18 }} />
             <textarea value={message} onChange={e => setMessage(e.target.value)}
               placeholder={isRTL ? "أي طلبات خاصة..." : "Any special requests..."} rows={3}
-              className="w-full rounded-xl border border-neutral-300 ps-10 pe-4 py-3 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+              className="w-full rounded-xl border border-[color:var(--brand-border)] ps-10 pe-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]" />
           </div>
         </div>
 
         <button onClick={submit} disabled={loading}
-          className="w-full h-12 rounded-xl text-white font-bold text-[14px] flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+          className="bg-brand-gradient w-full h-12 rounded-full text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-[var(--shadow-card)] hover:brightness-110 transition disabled:opacity-60">
           {loading ? (isRTL ? "جارٍ الإرسال..." : "Submitting...") : (isRTL ? "إرسال الطلب" : "Submit Enquiry")}
         </button>
         <p className="text-center text-[11px] text-neutral-400">{isRTL ? "سنتواصل معك قريبًا" : "We'll get back to you soon"}</p>
@@ -170,9 +170,9 @@ function Field({ icon: Icon, placeholder, value, onChange, type = "text" }: {
 }) {
   return (
     <div className="relative">
-      <Icon className="absolute start-3 top-1/2 -translate-y-1/2 text-[#8E1B3A]" style={{ width: 18, height: 18 }} />
+      <Icon className="absolute start-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-gold-deep)]" style={{ width: 18, height: 18 }} />
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-12 rounded-xl border border-neutral-300 ps-10 pe-4 text-sm focus:outline-none focus:border-[#8E1B3A]" />
+        className="w-full h-12 rounded-xl border border-[color:var(--brand-border)] ps-10 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 focus:border-[color:var(--brand-maroon)]" />
     </div>
   );
 }
@@ -192,21 +192,21 @@ function ExperienceDetail({
   const highlights: string[] = Array.isArray(exp.highlights) ? exp.highlights : [];
 
   return (
-    <div className="min-h-screen bg-neutral-50 pb-28">
+    <div className="min-h-screen bg-[color:var(--paper)] pb-28">
       {/* Hero image */}
-      <div className="relative h-64 md:h-96 w-full bg-neutral-200">
+      <div className="relative h-64 md:h-96 w-full bg-[color:var(--paper-2)]">
         {exp.image_url ? (
           <img src={exp.image_url} alt={exp.title} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+          <div className="bg-maroon-radial w-full h-full flex items-center justify-center">
             <Compass className="w-16 h-16 text-white/30" />
           </div>
         )}
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/30 to-transparent" aria-hidden />
         {/* Back button */}
         <button onClick={onBack}
-          className="absolute top-4 start-4 w-9 h-9 rounded-full bg-black/40 flex items-center justify-center">
-          <ChevronLeft className="w-5 h-5 text-white" />
+          className="absolute top-4 start-4 w-9 h-9 rounded-full bg-black/40 border border-[color:var(--brand-gold)]/30 backdrop-blur-sm flex items-center justify-center transition hover:bg-black/55">
+          <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
         </button>
       </div>
 
@@ -214,25 +214,24 @@ function ExperienceDetail({
         {/* Category + duration */}
         <div className="flex flex-wrap gap-2 items-center">
           {exp.category && (
-            <span className="px-2.5 py-1 rounded-lg text-[12px] font-semibold"
-              style={{ background: "#FDE8EC", color: "#8E1B3A" }}>
+            <span className="px-3 py-1 rounded-full text-[12px] font-semibold bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
               {categoryLabel(exp.category, isRTL)}
             </span>
           )}
           {exp.duration && (
-            <span className="flex items-center gap-1 text-[12px] text-neutral-500">
+            <span className="flex items-center gap-1 text-[12px] text-[color:var(--brand-muted)]">
               <Clock className="w-3.5 h-3.5" /> {exp.duration}
             </span>
           )}
         </div>
 
         {/* Title */}
-        <h1 className="text-[22px] font-bold text-neutral-900 leading-snug">{exp.title}</h1>
+        <h1 className="font-display text-[26px] font-semibold text-[color:var(--ink)] leading-snug">{exp.title}</h1>
 
         {/* Location */}
         {exp.location && (
-          <div className="flex items-center gap-1.5 text-[13px] text-neutral-500">
-            <MapPin className="w-4 h-4 text-[#8E1B3A]" /> {exp.location}
+          <div className="flex items-center gap-1.5 text-[13px] text-[color:var(--brand-muted)]">
+            <MapPin className="w-4 h-4 text-[color:var(--brand-maroon)]" /> {exp.location}
           </div>
         )}
 
@@ -244,11 +243,14 @@ function ExperienceDetail({
         {/* Highlights */}
         {highlights.length > 0 && (
           <div className="space-y-2">
-            <h2 className="text-[16px] font-bold text-neutral-900">{isRTL ? "أبرز المميزات" : "Highlights"}</h2>
+            <div className="flex items-center gap-3">
+              <span className="accent-bar h-6 w-1.5 rounded-full" />
+              <h2 className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "أبرز المميزات" : "Highlights"}</h2>
+            </div>
             <div className="space-y-2">
               {highlights.map((h, i) => (
                 <div key={i} className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: "#8E1B3A" }} />
+                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-[color:var(--brand-gold)]" />
                   <p className="text-[13.5px] text-neutral-700 leading-snug">{h}</p>
                 </div>
               ))}
@@ -258,18 +260,16 @@ function ExperienceDetail({
       </div>
 
       {/* Sticky bottom bar */}
-      <div className="fixed bottom-0 start-0 end-0 bg-white border-t border-neutral-100 px-4 py-3 z-10"
-        style={{ boxShadow: "0 -4px 12px rgba(0,0,0,0.06)" }}>
+      <div className="fixed bottom-0 start-0 end-0 bg-white/90 backdrop-blur border-t border-[color:var(--brand-border)] px-4 py-3 z-10 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="mx-auto max-w-4xl flex items-center gap-4">
           {price && (
             <div className="shrink-0">
-              <p className="text-[11px] text-neutral-400">{isRTL ? "يبدأ من" : "From"}</p>
-              <p className="text-[22px] font-bold text-neutral-900">{isRTL ? "درهم" : "AED"} {price}</p>
+              <p className="text-[11px] text-[color:var(--brand-muted)]">{isRTL ? "يبدأ من" : "From"}</p>
+              <p className="text-[22px] font-extrabold text-[color:var(--brand-maroon)]">{isRTL ? "درهم" : "AED"} {price}</p>
             </div>
           )}
           <button onClick={onEnquire}
-            className="flex-1 h-12 rounded-2xl text-white font-bold text-[15px]"
-            style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            className="bg-brand-gradient flex-1 h-12 rounded-full text-white font-bold text-[15px] shadow-[var(--shadow-card)] hover:brightness-110 transition">
             {isRTL ? "الحجز / الاستفسار" : "Book / Enquire"}
           </button>
         </div>
@@ -283,28 +283,26 @@ function ExperienceCard({ exp, onClick }: { exp: Experience; onClick: () => void
   const isRTL = useLocale() === "ar";
   const price = formatPrice(exp.price);
   return (
-    <button onClick={onClick} className="text-start bg-white rounded-[18px] overflow-hidden border border-black/[0.06]"
-      style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+    <button onClick={onClick} className="group premium-card text-start overflow-hidden w-full h-full block">
       {/* Image */}
-      <div className="relative w-full" style={{ paddingBottom: "147%" }}>
+      <div className="relative w-full overflow-hidden" style={{ paddingBottom: "147%" }}>
         <div className="absolute inset-0">
           {exp.image_url ? (
-            <img src={exp.image_url} alt={exp.title} className="w-full h-full object-cover" />
+            <img src={exp.image_url} alt={exp.title} className="w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}>
+            <div className="bg-maroon-radial w-full h-full flex items-center justify-center">
               <Compass className="w-8 h-8 text-white/30" />
             </div>
           )}
           {/* Category badge */}
           {exp.category && (
-            <div className="absolute top-2 start-2 bg-white rounded-[10px] px-2 py-0.5">
-              <span className="text-[10px] font-semibold text-[#8E1B3A]">{categoryLabel(exp.category, isRTL)}</span>
+            <div className="absolute top-2 start-2 bg-white/90 backdrop-blur rounded-full px-2.5 py-0.5 ring-1 ring-[color:var(--brand-gold)]/40">
+              <span className="text-[10px] font-semibold text-[color:var(--brand-maroon)]">{categoryLabel(exp.category, isRTL)}</span>
             </div>
           )}
           {/* Duration badge */}
           {exp.duration && (
-            <div className="absolute bottom-2 end-2 bg-black/55 rounded-lg px-1.5 py-0.5 flex items-center gap-1">
+            <div className="absolute bottom-2 end-2 bg-black/55 backdrop-blur-sm rounded-full px-2 py-0.5 flex items-center gap-1">
               <Clock className="w-2.5 h-2.5 text-white" />
               <span className="text-[10px] font-semibold text-white">{exp.duration}</span>
             </div>
@@ -313,10 +311,10 @@ function ExperienceCard({ exp, onClick }: { exp: Experience; onClick: () => void
       </div>
       {/* Info */}
       <div className="p-2.5 space-y-1.5">
-        <p className="text-[13px] font-semibold text-neutral-900 leading-snug line-clamp-2">{exp.title}</p>
+        <p className="text-[13px] font-semibold text-[color:var(--ink)] leading-snug line-clamp-2">{exp.title}</p>
         {price && (
-          <div className="inline-block px-2 py-0.5 rounded-[10px]" style={{ background: "#FDE8EC" }}>
-            <span className="text-[11px] font-bold text-[#8E1B3A]">{isRTL ? `من ${price} درهم` : `from AED ${price}`}</span>
+          <div className="inline-block px-2.5 py-0.5 rounded-full bg-[color:var(--paper-2)]">
+            <span className="text-[11px] font-bold text-[color:var(--brand-maroon)]">{isRTL ? `من ${price} درهم` : `from AED ${price}`}</span>
           </div>
         )}
       </div>
@@ -353,19 +351,19 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-[color:var(--paper)]">
       {/* App bar */}
-      <div className="sticky top-0 z-10 overflow-hidden"
-        style={{ background: "linear-gradient(to right, #C72931 0%, #8E1B3A 40%, #6B1530 100%)" }}>
-        <div className="mx-auto max-w-7xl px-4 h-14 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10">
-            <ChevronLeft className="w-5 h-5 text-white" />
+      <div className="bg-maroon-radial relative overflow-hidden sticky top-0 z-10">
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+        <div className="relative mx-auto max-w-7xl px-4 h-14 flex items-center gap-3">
+          <button onClick={() => router.back()} className="p-1.5 rounded-lg bg-white/10 border border-[color:var(--brand-gold)]/25 backdrop-blur-sm transition hover:bg-white/20">
+            <ChevronLeft className="w-5 h-5 text-white rtl:rotate-180" />
           </button>
-          <h1 className="text-[17px] font-bold text-white">{isRTL ? "اكتشف أم القيوين" : "Explore UAQ"}</h1>
+          <h1 className="font-display text-[18px] font-semibold text-white">{isRTL ? "اكتشف أم القيوين" : "Explore UAQ"}</h1>
         </div>
       </div>
 
-      <div className="py-4 space-y-4">
+      <div className="py-5 space-y-4">
         {/* Category pills */}
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -373,10 +371,10 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
               const active = cat === activeCategory;
               return (
                 <button key={cat} onClick={() => setActiveCategory(cat)}
-                  className="shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold whitespace-nowrap border transition-colors"
-                  style={active
-                    ? { background: "linear-gradient(135deg, #8E1B3A, #C72931)", color: "#fff", borderColor: "transparent" }
-                    : { background: "#fff", color: "#374151", borderColor: "#D1D5DB" }}>
+                  className={"shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold whitespace-nowrap border transition-colors " +
+                    (active
+                      ? "bg-brand-gradient text-white border-transparent shadow-[var(--shadow-card)]"
+                      : "bg-white text-neutral-700 border-[color:var(--brand-border)] hover:border-[color:var(--brand-maroon)] hover:text-[color:var(--brand-maroon)]")}>
                   {categoryLabel(cat, isRTL)}
                 </button>
               );
@@ -386,14 +384,18 @@ export function ExploreClient({ experiences }: { experiences: Experience[] }) {
 
         {/* Grid */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <Compass className="w-12 h-12" style={{ color: "#8E1B3A", opacity: 0.3 }} />
-            <p className="text-[15px] text-neutral-500">{isRTL ? "لا توجد تجارب" : "No experiences found"}</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color:var(--paper-2)] ring-1 ring-[color:var(--brand-gold)]/30">
+              <Compass className="w-9 h-9 text-[color:var(--brand-maroon)]" />
+            </span>
+            <p className="font-display text-[18px] font-semibold text-[color:var(--ink)]">{isRTL ? "لا توجد تجارب" : "No experiences found"}</p>
           </div>
         ) : (
           <div className="mx-auto max-w-7xl px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-            {filtered.map(exp => (
-              <ExperienceCard key={exp.id} exp={exp} onClick={() => setSelectedExp(exp)} />
+            {filtered.map((exp, i) => (
+              <Reveal key={exp.id} delay={i * 40}>
+                <ExperienceCard exp={exp} onClick={() => setSelectedExp(exp)} />
+              </Reveal>
             ))}
           </div>
         )}

@@ -1,6 +1,7 @@
 import { DEDICATED } from "@/lib/service-routes";
 import Link from "next/link";
 import { showProducts, isTypeEnabled, enabledProductCategories } from "@/lib/emirate";
+import { Reveal } from "@/components/reveal";
 
 export const metadata = { title: "Categories — UAQ Deals" };
 export const revalidate = 300;
@@ -96,17 +97,15 @@ const SERVICE_SECTIONS = [
 function ServiceCard({ slug, name, img }: { slug: string; name: string; img: string }) {
   return (
     <Link href={serviceRoute(slug)}
-      className="group relative block overflow-hidden rounded-2xl"
+      className="group relative block overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-gold)]/15 transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:ring-[color:var(--brand-gold)]/40"
       style={{ aspectRatio: "16/9" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={img} alt={name}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-      <div className="absolute inset-0"
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)" }} />
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ background: "rgba(142,27,58,0.18)" }} />
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/5" />
+      <span className="pointer-events-none absolute -end-6 -top-6 h-20 w-20 rounded-full bg-[color:var(--brand-gold)]/15 blur-xl" aria-hidden />
       <div className="absolute bottom-0 inset-x-0 p-3.5">
-        <p className="text-white font-semibold text-[13.5px] leading-snug drop-shadow-sm">{name}</p>
+        <p className="font-display text-white font-semibold text-[14px] leading-snug drop-shadow-sm">{name}</p>
       </div>
     </Link>
   );
@@ -128,48 +127,50 @@ export default async function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[color:var(--brand-cream)]">
+    <div className="min-h-screen bg-[color:var(--paper)]">
 
       {/* ── Hero header ── */}
-      <div className="border-b border-[color:var(--brand-border)]"
-        style={{ background: "linear-gradient(135deg, var(--brand-maroon) 0%, var(--brand-red) 60%, var(--brand-orange) 100%)" }}>
-        <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10">
-          <p className="text-white/70 text-xs font-semibold tracking-widest uppercase mb-1">UAQ Deals</p>
-          <h1 className="text-white text-3xl md:text-4xl font-bold tracking-tight">Shop &amp; Services</h1>
-          <p className="text-white/75 mt-1.5 text-sm">Everything Umm Al Quwain needs, in one place</p>
+      <div className="bg-maroon-radial relative overflow-hidden border-b border-[color:var(--brand-border)]">
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+        <span className="pointer-events-none absolute -top-20 -end-20 h-64 w-64 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+        <span className="pointer-events-none absolute -bottom-24 -start-16 h-72 w-72 rounded-full bg-black/15 blur-2xl" aria-hidden />
+        <div className="rise-in relative mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-14">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[color:var(--brand-gold)]">UAQ Deals</p>
+          <h1 className="font-display text-white text-[30px] sm:text-[40px] font-semibold tracking-tight mt-2 leading-[1.05]">Shop &amp; Services</h1>
+          <p className="text-white/75 mt-2.5 text-[14px] sm:text-[15px]">Everything Umm Al Quwain needs, in one place</p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-10 space-y-10">
+      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-12 space-y-12">
 
         {/* ── Product Categories ── */}
         {showProd && (
           <section>
-            <div className="flex items-center gap-3 mb-4 mt-2">
-              <h2 className="text-[15px] font-bold text-neutral-800">Shop by Category</h2>
-              <div className="flex-1 h-px bg-neutral-200" />
+            <div className="mb-5 flex items-center gap-3.5">
+              <span className="accent-bar h-9 w-1.5 rounded-full" />
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-[color:var(--ink)]">Shop by Category</h2>
             </div>
-            <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
-              {(productCats ?? []).map((c) => {
+            <div className="grid gap-3.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
+              {(productCats ?? []).map((c, i) => {
                 // Prefer the admin-uploaded category image; fall back to curated.
                 const img = (c.image_url && c.image_url.length > 0)
                   ? c.image_url
                   : (CAT_IMAGES[c.name] ?? DEFAULT_IMG);
                 return (
-                  <Link key={c.id} href={"/shop/" + c.id}
-                    className="group relative block overflow-hidden rounded-2xl"
-                    style={{ aspectRatio: "16/9" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img} alt={c.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <div className="absolute inset-0"
-                      style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.6) 100%)" }} />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: "rgba(142,27,58,0.18)" }} />
-                    <div className="absolute bottom-0 inset-x-0 p-3">
-                      <p className="text-white font-semibold text-[12.5px] leading-snug drop-shadow-sm">{c.name}</p>
-                    </div>
-                  </Link>
+                  <Reveal key={c.id} delay={i * 45}>
+                    <Link href={"/shop/" + c.id}
+                      className="group relative block overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-gold)]/15 transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:ring-[color:var(--brand-gold)]/40"
+                      style={{ aspectRatio: "16/9" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt={c.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/5" />
+                      <span className="pointer-events-none absolute -end-6 -top-6 h-20 w-20 rounded-full bg-[color:var(--brand-gold)]/15 blur-xl" aria-hidden />
+                      <div className="absolute bottom-0 inset-x-0 p-3">
+                        <p className="font-display text-white font-semibold text-[13px] leading-snug drop-shadow-sm">{c.name}</p>
+                      </div>
+                    </Link>
+                  </Reveal>
                 );
               })}
             </div>
@@ -179,18 +180,20 @@ export default async function CategoriesPage() {
         {/* ── Service Sections — mirrors /services page layout ── */}
         {serviceSections.map((sec) => (
           <section key={sec.title}>
-            <div className="flex items-center gap-3 mb-4">
-              <h2 className="text-[15px] font-bold text-neutral-800">{sec.title}</h2>
-              <div className="flex-1 h-px bg-neutral-200" />
+            <div className="mb-5 flex items-center gap-3.5">
+              <span className="accent-bar h-9 w-1.5 rounded-full" />
+              <h2 className="font-display text-[22px] font-semibold tracking-tight text-[color:var(--ink)]">{sec.title}</h2>
             </div>
-            <div className="grid gap-3"
+            <div className="grid gap-3.5"
               style={{
                 gridTemplateColumns: sec.items.length === 2
                   ? "repeat(2, 1fr)"
                   : "repeat(auto-fill, minmax(240px, 1fr))",
               }}>
-              {sec.items.map((s) => (
-                <ServiceCard key={s.slug} slug={s.slug} name={s.name} img={s.img} />
+              {sec.items.map((s, i) => (
+                <Reveal key={s.slug} delay={i * 45}>
+                  <ServiceCard slug={s.slug} name={s.name} img={s.img} />
+                </Reveal>
               ))}
             </div>
           </section>

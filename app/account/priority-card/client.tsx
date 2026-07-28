@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { CheckCircle, Truck, Tag, Coins, Ticket, Star, Zap, Crown } from "lucide-react";
 import { toast } from "sonner";
+import { Reveal } from "@/components/reveal";
 import { purchasePriorityCard } from "./actions";
 
 type Plan = any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -33,24 +34,24 @@ function ActiveCardBanner({ card }: { card: Card }) {
       })
     : null;
   return (
-    <div className={"mb-8 rounded-2xl bg-gradient-to-br p-5 text-white shadow-lg " + style.gradient}>
+    <div className={"mb-8 rounded-3xl bg-gradient-to-br p-6 text-white shadow-[var(--shadow-premium)] " + style.gradient}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Your Active Card</p>
-          <h2 className="mt-1 text-2xl font-extrabold">{style.emoji} {plan?.name ?? card.tier}</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Your Active Card</p>
+          <h2 className="font-display mt-1 text-2xl font-semibold">{style.emoji} {plan?.name ?? card.tier}</h2>
           {until && <p className="mt-1 text-sm opacity-90">Free delivery until {until}</p>}
         </div>
         <CheckCircle className="h-8 w-8 opacity-80" />
       </div>
-      <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
+      <div className="mt-4 flex flex-wrap gap-2.5 text-sm font-semibold">
         {plan?.discount_pct > 0 && (
-          <span className="rounded-full bg-white/20 px-3 py-1">{plan.discount_pct}% discount</span>
+          <span className="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm ring-1 ring-white/25">{plan.discount_pct}% discount</span>
         )}
         {plan?.cashback_pct > 0 && (
-          <span className="rounded-full bg-white/20 px-3 py-1">{plan.cashback_pct}% coinback</span>
+          <span className="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm ring-1 ring-white/25">{plan.cashback_pct}% coinback</span>
         )}
         {plan?.lucky_draw_entries > 0 && (
-          <span className="rounded-full bg-white/20 px-3 py-1">{plan.lucky_draw_entries} lucky draw entries</span>
+          <span className="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm ring-1 ring-white/25">{plan.lucky_draw_entries} lucky draw entries</span>
         )}
       </div>
     </div>
@@ -92,23 +93,23 @@ export function PriorityCardClient({
       {activeCard && <ActiveCardBanner card={activeCard} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {plans.map((plan: Plan) => {
+        {plans.map((plan: Plan, idx: number) => {
           const style = TIER_STYLES[plan.tier] ?? TIER_STYLES.standard;
           const isActive = activeCard?.tier === plan.tier;
           return (
+            <Reveal key={plan.id} delay={(idx % 2) * 80}>
             <div
-              key={plan.id}
               className={
-                "rounded-2xl border bg-white p-5 transition " +
+                "premium-card h-full p-5 " +
                 (isActive
-                  ? "border-[color:var(--brand-maroon)] ring-2 ring-[color:var(--brand-maroon)]/20"
-                  : "border-[color:var(--brand-border)] hover:shadow-md")
+                  ? "!border-[color:var(--brand-maroon)] ring-2 ring-[color:var(--brand-maroon)]/20"
+                  : "")
               }
             >
-              <div className={"mb-4 flex items-center gap-3 rounded-xl bg-gradient-to-br p-4 text-white " + style.gradient}>
+              <div className={"mb-4 flex items-center gap-3 rounded-2xl bg-gradient-to-br p-4 text-white shadow-sm " + style.gradient}>
                 <span className="text-3xl">{style.emoji}</span>
                 <div>
-                  <p className="text-lg font-extrabold leading-tight">{plan.name}</p>
+                  <p className="font-display text-lg font-semibold leading-tight">{plan.name}</p>
                   <p className="text-sm font-semibold opacity-90">AED {Number(plan.price).toFixed(0)}</p>
                 </div>
                 {isActive && <CheckCircle className="ms-auto h-5 w-5" />}
@@ -144,12 +145,12 @@ export function PriorityCardClient({
 
               {/* Rules */}
               {Array.isArray(plan.rules) && plan.rules.filter((r: string) => r.trim()).length > 0 && (
-                <div className="mb-3 rounded-xl bg-neutral-50 p-3">
-                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-500">Terms</p>
+                <div className="mb-3 rounded-xl bg-[color:var(--paper-2)] p-3">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-muted)]">Terms</p>
                   <ul className="space-y-1 text-xs text-neutral-600">
                     {plan.rules.filter((r: string) => r.trim()).map((rule: string, i: number) => (
                       <li key={i} className="flex items-start gap-1.5">
-                        <span className="mt-0.5 shrink-0 text-[color:var(--brand-maroon)]">•</span>
+                        <span className="mt-0.5 shrink-0 text-[color:var(--brand-gold-deep)]">•</span>
                         <span>{rule.trim()}</span>
                       </li>
                     ))}
@@ -163,8 +164,8 @@ export function PriorityCardClient({
                 className={
                   "w-full rounded-full py-3 text-sm font-bold transition " +
                   (isActive
-                    ? "bg-neutral-100 text-neutral-500 cursor-default"
-                    : "bg-[color:var(--brand-maroon)] text-white hover:opacity-90 shadow-sm")
+                    ? "bg-[color:var(--paper-2)] text-[color:var(--brand-muted)] cursor-default"
+                    : "bg-brand-gradient text-white shadow-[var(--shadow-card)] hover:brightness-110")
                 }
               >
                 {isActive
@@ -172,33 +173,34 @@ export function PriorityCardClient({
                   : "Get " + plan.name + " · AED " + Number(plan.price).toFixed(0)}
               </button>
             </div>
+            </Reveal>
           );
         })}
       </div>
 
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setConfirming(null)} />
-          <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-bold">Confirm Purchase</h3>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setConfirming(null)} />
+          <div className="premium-card relative w-full max-w-sm p-6 shadow-[var(--shadow-premium)]">
+            <h3 className="font-display text-xl font-semibold text-[color:var(--ink)]">Confirm Purchase</h3>
             <p className="mt-2 text-sm text-neutral-600">
-              {confirming.name} — <strong>AED {Number(confirming.price).toFixed(0)}</strong>
+              {confirming.name} — <strong className="text-[color:var(--brand-maroon)]">AED {Number(confirming.price).toFixed(0)}</strong>
             </p>
-            <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+            <p className="mt-3 rounded-xl bg-[color:var(--paper-2)] p-3 text-xs text-[color:var(--brand-muted)] ring-1 ring-[color:var(--brand-gold)]/25">
               Online payment is not yet connected. Our team will contact you
               to collect payment. Your card will be activated immediately.
             </p>
             <div className="mt-5 flex gap-3">
               <button
                 onClick={() => setConfirming(null)}
-                className="flex-1 rounded-full border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+                className="flex-1 rounded-full border border-[color:var(--brand-border)] py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-[color:var(--paper-2)]"
               >
                 Cancel
               </button>
               <button
                 onClick={confirm}
                 disabled={pending}
-                className="flex-1 rounded-full bg-[color:var(--brand-maroon)] py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60"
+                className="bg-brand-gradient flex-1 rounded-full py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60"
               >
                 {pending ? "Activating…" : "Confirm"}
               </button>

@@ -27,7 +27,7 @@ export function SearchInput({ initialValue = "" }: { initialValue?: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-3">
       <div className="relative flex-1">
-        <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none" />
+        <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[color:var(--brand-maroon)] pointer-events-none" />
         <input
           ref={inputRef}
           type="search"
@@ -35,13 +35,13 @@ export function SearchInput({ initialValue = "" }: { initialValue?: string }) {
           defaultValue={initialValue}
           placeholder="Search products, deals, services…"
           autoFocus
-          className="w-full h-12 ps-11 pe-10 border border-neutral-300 bg-white text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+          className="w-full h-12 ps-12 pe-10 rounded-full border border-[color:var(--brand-border)] bg-white text-[14px] text-[color:var(--ink)] placeholder:text-neutral-400 shadow-[var(--shadow-sm)] focus:outline-none focus:border-[color:var(--brand-maroon)] focus:ring-2 focus:ring-[color:var(--brand-gold)]/40 transition"
         />
         {initialValue && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700"
+            className="absolute end-4 top-1/2 -translate-y-1/2 text-neutral-400 transition-colors hover:text-[color:var(--brand-maroon)]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -50,7 +50,7 @@ export function SearchInput({ initialValue = "" }: { initialValue?: string }) {
       <button
         type="submit"
         disabled={isPending}
-        className="h-12 px-6 bg-neutral-900 text-white text-[13px] font-bold hover:bg-neutral-700 transition-colors disabled:opacity-50 shrink-0"
+        className="h-12 px-6 rounded-full bg-brand-gradient text-white text-[13px] font-bold shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-50 shrink-0"
       >
         {isPending ? "…" : "Search"}
       </button>

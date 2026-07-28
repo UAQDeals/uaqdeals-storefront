@@ -94,37 +94,37 @@ export default async function CategoryDetailPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       {/* Breadcrumb */}
-      <nav className="mb-4 flex items-center gap-1 text-xs text-neutral-500">
-        <Link href="/" className="hover:text-[color:var(--brand-maroon)]">
+      <nav className="mb-4 flex items-center gap-1.5 text-xs text-[color:var(--brand-muted)]">
+        <Link href="/" className="transition-colors hover:text-[color:var(--brand-maroon)]">
           Home
         </Link>
-        <ChevronRight className="h-3 w-3" />
+        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
         <Link
           href="/categories"
-          className="hover:text-[color:var(--brand-maroon)]"
+          className="transition-colors hover:text-[color:var(--brand-maroon)]"
         >
           Categories
         </Link>
-        <ChevronRight className="h-3 w-3" />
-        <span className="text-neutral-700">{vt.name}</span>
+        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+        <span className="font-medium text-[color:var(--ink)]">{vt.name}</span>
       </nav>
 
       {/* Header */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 sm:flex-row sm:items-center">
+      <div className="rise-in premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
         <span
-          className="bg-brand-gradient inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white"
+          className="bg-brand-gradient inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
           aria-hidden
         >
           <Store className="h-6 w-6" />
         </span>
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="font-display text-[26px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[32px]">
             {vt.name}
           </h1>
           {vt.description ? (
-            <p className="mt-1 text-sm text-neutral-600">{vt.description}</p>
+            <p className="mt-1 text-sm text-[color:var(--brand-muted)]">{vt.description}</p>
           ) : (
-            <p className="mt-1 text-sm text-neutral-600">
+            <p className="mt-1 text-sm text-[color:var(--brand-muted)]">
               Products from local {vt.name.toLowerCase()} vendors.
             </p>
           )}
@@ -140,16 +140,19 @@ export default async function CategoryDetailPage({
           <FeaturedProducts products={products} />
         </div>
       ) : (
-        <div className="mt-10 rounded-2xl border border-dashed border-[color:var(--brand-border)] bg-white p-10 text-center">
-          <p className="text-base font-semibold text-neutral-800">
+        <div className="mt-10 flex flex-col items-center rounded-3xl border border-[color:var(--brand-border)] bg-white p-12 text-center shadow-[var(--shadow-card)]">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-[color:var(--brand-maroon)]">
+            <Store className="h-7 w-7" />
+          </span>
+          <p className="font-display mt-4 text-[20px] font-semibold text-[color:var(--ink)]">
             No products yet
           </p>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-[color:var(--brand-muted)]">
             New listings in {vt.name.toLowerCase()} will appear here.
           </p>
           <Link
             href="/categories"
-            className="mt-5 inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white"
+            className="bg-brand-gradient mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110"
           >
             Browse other categories
           </Link>

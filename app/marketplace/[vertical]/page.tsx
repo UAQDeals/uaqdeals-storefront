@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { MarketplaceList } from "./marketplace-list";
 import { MarketplaceNav } from "./marketplace-nav";
 import { CategoryHero } from "@/components/category-hero";
+import { Reveal } from "@/components/reveal";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -71,46 +72,53 @@ export default async function MarketplacePage({
     return (
       <>
       <MarketplaceNav active={vertical} isRTL={isRTL} />
-      <div className="mx-auto max-w-2xl px-4 pt-10 pb-20 text-center">
-        <div className="mb-6 text-6xl">📱</div>
-        <h1 className="text-3xl font-extrabold text-neutral-900 mb-3">
-          {isRTL ? "بيع أجهزتك الإلكترونية" : "Sell Your Electronic Devices"}
-        </h1>
-        <p className="text-neutral-500 text-base mb-2">
-          {isRTL ? "لديك هاتف أو جهاز لوحي أو حاسوب محمول أو جهاز لم تعد بحاجة إليه؟" : "Got a phone, tablet, laptop, or gadget you no longer need?"}
-        </p>
-        <p className="text-neutral-500 text-base mb-8">
-          {isRTL ? (
-            <>
-              أرسل جهازك — بمجرد مراجعة فريقنا والموافقة عليه، سيتم إدراجه في متجر UAQ Deals مع شارة <span className="font-semibold text-[#C72931]">مستعمل</span> ليجده المشترون.
-            </>
-          ) : (
-            <>
-              Submit your device — once our team reviews and approves it, it will be listed in the UAQ Deals shop with a <span className="font-semibold text-[#C72931]">USED</span> badge for buyers to find.
-            </>
-          )}
-        </p>
-        <div className="bg-neutral-50 rounded-2xl border border-neutral-200 p-6 mb-8 text-start space-y-3">
-          <p className="font-semibold text-neutral-800 text-sm">{isRTL ? "كيف تعمل الخدمة" : "How it works"}</p>
-          <div className="flex items-start gap-3">
-            <span className="w-6 h-6 rounded-full bg-[#C72931] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-            <p className="text-sm text-neutral-600">{isRTL ? "أدخل تفاصيل جهازك وارفع الصور" : "Fill in your device details and upload photos"}</p>
+      <div className="mx-auto max-w-2xl px-5 md:px-8 pt-12 pb-20 text-center">
+        <Reveal>
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--paper-2)] text-3xl">📱</span>
+          <h1 className="font-display mt-6 text-[30px] font-semibold leading-tight tracking-tight text-[color:var(--ink)] sm:text-[38px]">
+            {isRTL ? "بيع أجهزتك الإلكترونية" : "Sell Your Electronic Devices"}
+          </h1>
+          <span className="gold-rule mx-auto mt-5 block h-px w-24" />
+          <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-[color:var(--brand-muted)]">
+            {isRTL ? "لديك هاتف أو جهاز لوحي أو حاسوب محمول أو جهاز لم تعد بحاجة إليه؟" : "Got a phone, tablet, laptop, or gadget you no longer need?"}
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-[color:var(--brand-muted)]">
+            {isRTL ? (
+              <>
+                أرسل جهازك — بمجرد مراجعة فريقنا والموافقة عليه، سيتم إدراجه في متجر UAQ Deals مع شارة <span className="font-semibold text-[color:var(--brand-maroon)]">مستعمل</span> ليجده المشترون.
+              </>
+            ) : (
+              <>
+                Submit your device — once our team reviews and approves it, it will be listed in the UAQ Deals shop with a <span className="font-semibold text-[color:var(--brand-maroon)]">USED</span> badge for buyers to find.
+              </>
+            )}
+          </p>
+        </Reveal>
+
+        <Reveal delay={90} className="premium-card mt-8 p-6 text-start sm:p-7">
+          <p className="eyebrow">{isRTL ? "كيف تعمل الخدمة" : "How it works"}</p>
+          <div className="mt-4 space-y-4">
+            {[
+              isRTL ? "أدخل تفاصيل جهازك وارفع الصور" : "Fill in your device details and upload photos",
+              isRTL ? "يراجع فريقنا طلبك ويحدد سعراً عادلاً" : "Our team reviews your submission and sets a fair price",
+              isRTL ? "يُنشر جهازك في المتجر — ويتواصل معنا المشترون مباشرة" : "Your device goes live in the shop — buyers contact us directly",
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-3.5">
+                <span className="bg-brand-gradient flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm">{i + 1}</span>
+                <p className="pt-0.5 text-[14px] leading-relaxed text-neutral-700">{step}</p>
+              </div>
+            ))}
           </div>
-          <div className="flex items-start gap-3">
-            <span className="w-6 h-6 rounded-full bg-[#C72931] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-            <p className="text-sm text-neutral-600">{isRTL ? "يراجع فريقنا طلبك ويحدد سعراً عادلاً" : "Our team reviews your submission and sets a fair price"}</p>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="w-6 h-6 rounded-full bg-[#C72931] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-            <p className="text-sm text-neutral-600">{isRTL ? "يُنشر جهازك في المتجر — ويتواصل معنا المشترون مباشرة" : "Your device goes live in the shop — buyers contact us directly"}</p>
-          </div>
-        </div>
-        <Link
-          href="/marketplace/used_items/sell"
-          className="inline-block rounded-xl bg-gradient-to-r from-[#8E1B3A] to-[#C72931] px-8 py-3.5 text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity"
-        >
-          {isRTL ? "أدرج جهازي ←" : "List My Device →"}
-        </Link>
+        </Reveal>
+
+        <Reveal delay={160}>
+          <Link
+            href="/marketplace/used_items/sell"
+            className="bg-brand-gradient mt-8 inline-flex items-center rounded-full px-8 py-3.5 text-[14px] font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110"
+          >
+            {isRTL ? "أدرج جهازي ←" : "List My Device →"}
+          </Link>
+        </Reveal>
       </div>
       </>
     );

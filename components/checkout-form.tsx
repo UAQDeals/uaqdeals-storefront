@@ -412,8 +412,8 @@ export function CheckoutForm({
       <div className="space-y-6">
         {/* ── Fulfilment method (only when store pickup is enabled) ─────── */}
         {fulfilment.pickupEnabled && (
-          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("deliveryMethod")}</h2>
+          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
+            <h2 className="eyebrow">{t("deliveryMethod")}</h2>
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <MethodCard
                 active={!pickup}
@@ -442,8 +442,8 @@ export function CheckoutForm({
           </section>
         )}
 
-        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{pickup ? t("contactDetails") : t("deliveryAddress")}</h2>
+        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
+          <h2 className="eyebrow">{pickup ? t("contactDetails") : t("deliveryAddress")}</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t("fullName")}>
               <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" />
@@ -472,7 +472,7 @@ export function CheckoutForm({
             <div className="mt-4">
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--brand-maroon)] text-xs font-bold text-white">3</span>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">Delivery Location</h2>
+                <h2 className="eyebrow">Delivery Location</h2>
                 {!mapConfirmed && (
                   <span className="ms-auto rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-bold text-amber-700">Required</span>
                 )}
@@ -518,8 +518,8 @@ export function CheckoutForm({
           )}
         </section>
 
-        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("payment")}</h2>
+        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
+          <h2 className="eyebrow">{t("payment")}</h2>
           <div className="mt-4 flex items-start gap-3 rounded-xl border-2 border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)] p-4">
             <input type="radio" checked readOnly className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]" />
             <div>
@@ -530,8 +530,8 @@ export function CheckoutForm({
           <p className="mt-2 text-xs text-neutral-500">{t("cardsSoon")}</p>
         </section>
 
-        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("coupon")}</h2>
+        <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
+          <h2 className="eyebrow">{t("coupon")}</h2>
           {coupon ? (
             <div className="mt-4 flex items-center justify-between rounded-xl bg-green-50 p-3 text-sm">
               <span className="inline-flex items-center gap-2 font-semibold text-green-700">
@@ -542,7 +542,7 @@ export function CheckoutForm({
           ) : (
             <div className="mt-4 flex gap-2">
               <input value={couponInput} onChange={(e) => setCouponInput(e.target.value)} placeholder={t("enterCode")} className="input flex-1 uppercase" />
-              <button onClick={applyCoupon} disabled={couponBusy || !couponInput.trim()} className="inline-flex items-center justify-center rounded-full border border-[color:var(--brand-maroon)] px-4 py-2 text-sm font-semibold text-[color:var(--brand-maroon)] hover:bg-[color:var(--brand-maroon)] hover:text-white disabled:opacity-50">
+              <button onClick={applyCoupon} disabled={couponBusy || !couponInput.trim()} className="inline-flex shrink-0 items-center justify-center rounded-full border border-[color:var(--brand-maroon)] px-5 py-2 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:bg-[color:var(--brand-maroon)] hover:text-white disabled:opacity-50">
                 {couponBusy ? "…" : tc("apply")}
               </button>
             </div>
@@ -550,8 +550,8 @@ export function CheckoutForm({
         </section>
 
         {coinBalance > 0 && (
-          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("coins")}</h2>
+          <section className="rounded-2xl border border-[color:var(--brand-gold)]/30 bg-gradient-to-br from-white to-[color:var(--brand-gold)]/[0.06] p-5 shadow-[var(--shadow-sm)] sm:p-6">
+            <h2 className="eyebrow">{t("coins")}</h2>
             <div className="mt-3 flex items-start gap-3">
               <input id="coins" type="checkbox" disabled={coinBalance < MIN_REDEEM} checked={useCoins} onChange={(e) => setUseCoins(e.target.checked)} className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]" />
               <label htmlFor="coins" className="text-sm">
@@ -569,8 +569,8 @@ export function CheckoutForm({
         )}
 
         {walletBalance > 0 && (
-          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("walletBalance")}</h2>
+          <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
+            <h2 className="eyebrow">{t("walletBalance")}</h2>
             <div className="mt-3 flex items-start gap-3">
               <input
                 id="wallet"
@@ -595,9 +595,9 @@ export function CheckoutForm({
         )}
       </div>
 
-      <aside className="h-fit rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 lg:sticky lg:top-20">
+      <aside className="h-fit rounded-3xl border border-[color:var(--brand-border)] bg-white p-6 shadow-[var(--shadow-card)] lg:sticky lg:top-20">
         {blocker && <CheckoutBlockAlert blocker={blocker} t={t} />}
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">{t("orderSummary")}</h2>
+        <h2 className="eyebrow">{t("orderSummary")}</h2>
         <ul className="mt-4 max-h-56 space-y-3 overflow-y-auto pe-1">
           {items.map((i) => (
             <li key={i.id} className="flex gap-3 text-sm">
@@ -633,10 +633,11 @@ export function CheckoutForm({
           {!deliveryBlocked && walletApplied > 0 && <Row label={t("walletApplied")} value={`-${aed(walletApplied)}`} valueClass="text-green-600" />}
         </dl>
 
-        <div className="mt-4 flex items-end justify-between border-t border-[color:var(--brand-border)] pt-4">
+        <div className="gold-rule my-4" />
+        <div className="flex items-end justify-between">
           <span className="text-sm font-semibold text-neutral-700">{walletApplied > 0 && !deliveryBlocked ? t("amountDue") : t("total")}</span>
           {/* No valid order exists while a tier is undeliverable — suppress the total. */}
-          <span className="text-2xl font-extrabold text-[color:var(--brand-maroon)]">{deliveryBlocked ? "—" : `AED ${amountDue.toFixed(2)}`}</span>
+          <span className="font-display text-[26px] font-semibold text-[color:var(--brand-maroon)]">{deliveryBlocked ? "—" : `AED ${amountDue.toFixed(2)}`}</span>
         </div>
         {!deliveryBlocked && <p className="mt-1 text-[11px] text-neutral-500">{t("earnCoins", { count: coinsEarned.toLocaleString() })}</p>}
 
@@ -645,22 +646,25 @@ export function CheckoutForm({
             📍 Please set your delivery location above to continue
           </p>
         )}
-        <button onClick={placeOrder} disabled={placing || blocker != null || (!pickup && !mapConfirmed)} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+        <button onClick={placeOrder} disabled={placing || blocker != null || (!pickup && !mapConfirmed)} className="bg-brand-gradient mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-white shadow-[var(--shadow-card)] transition hover:brightness-110 disabled:opacity-60 disabled:hover:brightness-100">
           {placing ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("placing")}</> : blocker ? blockedLabel : <>{t("placeOrder")} · AED {amountDue.toFixed(2)}</>}
         </button>
-        <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 hover:bg-neutral-100">
+        <Link href="/cart" className="mt-2 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-[color:var(--brand-muted)] transition hover:bg-[color:var(--paper-2)] hover:text-[color:var(--brand-maroon)]">
           {t("backToCart")}
         </Link>
       </aside>
 
       <style jsx>{`
         :global(.input) {
-          height: 42px; width: 100%; border-radius: 0.75rem;
-          border: 1px solid #e5e7eb; background: #fff;
-          padding: 0 0.875rem; font-size: 0.9rem; outline: none;
-          transition: border-color 0.15s;
+          height: 44px; width: 100%; border-radius: 0.75rem;
+          border: 1px solid var(--brand-border); background: #fff;
+          padding: 0 0.9rem; font-size: 0.9rem; outline: none;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
-        :global(.input:focus) { border-color: var(--brand-maroon); }
+        :global(.input:focus) {
+          border-color: var(--brand-maroon);
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-gold) 40%, transparent);
+        }
       `}</style>
     </div>
   );
@@ -720,8 +724,8 @@ function MethodCard({ active, onClick, icon, title, sub }: { active: boolean; on
       type="button"
       onClick={onClick}
       className={
-        "flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-colors " +
-        (active ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]" : "border-neutral-200 hover:border-neutral-300")
+        "flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition-all " +
+        (active ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)] shadow-[var(--shadow-sm)]" : "border-[color:var(--brand-border)] hover:border-[color:var(--brand-gold)]/50")
       }
     >
       <span className={"mt-0.5 " + (active ? "text-[color:var(--brand-maroon)]" : "text-neutral-400")}>{icon}</span>
