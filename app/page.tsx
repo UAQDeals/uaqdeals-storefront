@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { type BannerCard } from "@/components/home-banners";
 import { HomeHero } from "@/components/home-hero";
-import { QuickAccessStrip } from "@/components/quick-access-strip";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
 import { EditorialBand } from "@/components/editorial-band";
 import { ProductCarousel, type CarouselProduct } from "@/components/product-carousel";
@@ -18,8 +17,7 @@ import { ServiceRail, TravelButtons, SellGadgetsBanner } from "@/components/home
 import { GamesSpotlight } from "@/components/games-spotlight";
 import { QuickNav, type QuickNavItem } from "@/components/quick-nav";
 import { dedicatedFor } from "@/lib/service-routes";
-import { getHomeTilesBySection, getQuickAccessImages, getEnabledGames } from "@/lib/home-data";
-import { type QuickTile } from "@/components/quick-access-strip";
+import { getHomeTilesBySection, getEnabledGames } from "@/lib/home-data";
 
 export const revalidate = 60;
 
@@ -202,31 +200,12 @@ export default async function HomePage() {
     { label: "Services", href: "/services" },
     ...((await isTypeEnabled("real_estate")) ? [{ label: "Real Estate", href: "/marketplace/real_estate" }] : []),
   ];
-  const quickTiles = [
-    ...((await isTypeEnabled("fish_market")) ? ["fish"] : []),
-    ...(enabledNames.has("Pharmacy") ? ["pharmacy"] : []),
-    ...((await isTypeEnabled("restaurant")) ? ["food"] : []),
-  ];
-
-  // Real data for service tiles, quick-access imagery, and the Games spotlight.
-  const [tilesBySection, quickImgs, games] = await Promise.all([
+  // Real data for service tiles and the Games spotlight.
+  const [tilesBySection, games] = await Promise.all([
     getHomeTilesBySection(),
-    getQuickAccessImages(),
     getEnabledGames(),
   ]);
   const quickServiceTiles = tilesBySection["Our Quick Services"] ?? [];
-  const QA_META: Record<string, { href: string; title: string; badge?: string | null }> = {
-    fish: { href: "/categories/fish_market", title: "Fresh Fish Market" },
-    pharmacy: { href: "/categories/pharmacy", title: "Pharmacy" },
-    food: { href: "/categories/restaurant", title: "Order Food" },
-  };
-  const quickAccessTiles: QuickTile[] = quickTiles.map((k) => ({
-    key: k,
-    href: QA_META[k]?.href ?? "/",
-    title: QA_META[k]?.title ?? k,
-    imageUrl: quickImgs[k] ?? null,
-    badge: QA_META[k]?.badge ?? null,
-  }));
 
   // The customer app's 4 quick-nav tiles (Shop / Services / Order Food / Games),
   // gated to what this emirate offers. Rendered right under the hero.
@@ -265,7 +244,8 @@ export default async function HomePage() {
       );
       insertGames();
     } else if (key === "quick_access_tiles") {
-      out.push(<QuickAccessStrip key="qat" tiles={quickAccessTiles} />);
+      // Removed from web: the fish/pharmacy/food image tiles. The 4 quick-nav
+      // tiles under the hero cover this on the storefront.
     } else if (key === "quick_services") {
       out.push(<ServiceQuickAccess key="qs" tiles={quickServiceTiles} />);
     } else if (type === "category_carousel") {
