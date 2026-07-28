@@ -21,9 +21,9 @@ function EmirateChip() {
   if (!emirate) return null;
   return (
     <Link href="/select-emirate"
-      className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-neutral-700 hover:bg-neutral-100 transition-colors max-w-[180px]"
+      className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-bold text-neutral-700 transition-colors hover:bg-[color:var(--paper-2)] hover:text-[color:var(--brand-maroon)] max-w-[180px]"
       title="Change location">
-      <MapPin className="w-4 h-4 shrink-0" />
+      <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
       <span className="truncate">{emirate}</span>
       <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-70" />
     </Link>
@@ -151,7 +151,7 @@ function MobileEmirateChip() {
   return (
     <Link
       href="/select-emirate"
-      className="md:hidden flex items-center gap-1 px-3 py-1.5 rounded-full border border-neutral-200 text-[12px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+      className="md:hidden flex items-center gap-1 px-3 py-1.5 rounded-full border border-[color:var(--brand-border)] text-[12px] font-semibold text-neutral-700 hover:bg-[color:var(--paper-2)] hover:border-[color:var(--brand-gold)]/50 transition-colors shrink-0"
       title="Change location"
     >
       <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
@@ -375,15 +375,15 @@ export function SiteHeader({
       `}</style>
       <div className="sticky top-0 z-30">
       <AnnouncementBar />
-      <header className="relative bg-white border-b border-neutral-200"
-        style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+      <header className="relative border-b border-[color:var(--brand-border)]"
+        style={{ background: "color-mix(in srgb, var(--paper) 88%, white)", boxShadow: "var(--shadow-sm)", backdropFilter: "saturate(1.05)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
         <div className="mx-auto flex h-[112px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
 
           {/* Hamburger mobile */}
           <button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0 order-first"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full text-neutral-700 hover:bg-[color:var(--paper-2)] transition-colors shrink-0 order-first"
             onClick={() => { setMobileOpen(true); setMobileGroup(null); }}
             aria-label="Open menu"
           >
@@ -400,7 +400,8 @@ export function SiteHeader({
 
           {/* Search bar — always visible on desktop, hidden on mobile */}
           <div ref={searchRef} className="hidden md:flex w-[480px] relative ms-auto">
-            <form onSubmit={handleSearchSubmit} className="flex w-full">
+            <form onSubmit={handleSearchSubmit} className="flex w-full items-center gap-1.5 rounded-full bg-white p-1 ps-5 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] transition focus-within:ring-[color:var(--brand-gold)]/50 focus-within:shadow-[var(--shadow-card)]">
+              <Search className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
               <input
                 ref={inputRef}
                 type="text"
@@ -408,11 +409,11 @@ export function SiteHeader({
                 onChange={handleSearchChange}
                 onFocus={() => setSearchFocused(true)}
                 placeholder={isRTL ? "ابحث عن منتجات وعروض وخدمات…" : "Search products, deals, services…"}
-                className="flex-1 h-11 bg-neutral-100 border border-neutral-200 border-e-0 rounded-s-full px-5 text-[14px] font-semibold text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-neutral-50"
+                className="flex-1 h-9 bg-transparent text-[14px] font-semibold text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none"
               />
               <button
                 type="submit"
-                className="h-11 px-5 bg-[color:var(--brand-maroon)] border border-[color:var(--brand-maroon)] border-s-0 rounded-e-full text-white hover:opacity-90 transition-opacity shrink-0 flex items-center justify-center"
+                className="bg-brand-gradient h-9 px-5 rounded-full text-[13px] font-bold text-white transition hover:brightness-110 shrink-0 flex items-center justify-center gap-1.5"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -420,7 +421,7 @@ export function SiteHeader({
 
             {/* Suggestions dropdown */}
             {showDropdown && (
-              <div className="absolute top-[calc(100%+2px)] left-0 right-0 bg-white border border-neutral-200 shadow-lg z-50 max-h-80 overflow-y-auto">
+              <div className="absolute top-[calc(100%+6px)] left-0 right-0 bg-white rounded-2xl border border-[color:var(--brand-border)] shadow-[var(--shadow-card-hover)] z-50 max-h-80 overflow-y-auto overflow-hidden">
                 {sugLoading && (
                   <div className="px-4 py-3 text-[12.5px] text-neutral-400">Searching…</div>
                 )}
@@ -474,12 +475,12 @@ export function SiteHeader({
           <div className="flex items-center gap-1 shrink-0">
             <EmirateChip />
             <div className="text-neutral-700 [&_button]:text-neutral-700 [&_button]:border-neutral-300 [&_button:hover]:bg-neutral-100"><LanguageSwitcher /></div>
-            <div className="w-px h-5 bg-neutral-200 mx-1 hidden md:block" />
-            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold text-neutral-700 hover:bg-neutral-100 transition-colors">
+            <div className="w-px h-5 bg-[color:var(--brand-border)] mx-1 hidden md:block" />
+            <Link href="/account" className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-bold text-neutral-700 transition-colors hover:bg-[color:var(--paper-2)] hover:text-[color:var(--brand-maroon)]">
               <User className="w-4 h-4" />
               {t("account")}
             </Link>
-            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors">
+            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-full text-neutral-700 hover:bg-[color:var(--paper-2)] transition-colors">
               <User className="w-5 h-5" />
             </Link>
             <div className="hidden md:block text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
@@ -487,25 +488,26 @@ export function SiteHeader({
         </div>
 
         {/* ── Mobile Row 2: Emirate + Search ── */}
-        <div className="md:hidden border-t border-neutral-100 px-4 py-2 flex items-center gap-2">
+        <div className="md:hidden border-t border-[color:var(--brand-border)] px-4 py-2 flex items-center gap-2">
           <MobileEmirateChip />
-          <form className="flex-1 flex" onSubmit={handleSearchSubmit}>
+          <form className="flex-1 flex items-center gap-1.5 rounded-full bg-white ps-3.5 p-0.5 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] focus-within:ring-[color:var(--brand-gold)]/50" onSubmit={handleSearchSubmit}>
+            <Search className="w-3.5 h-3.5 shrink-0 text-[color:var(--brand-maroon)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder={isRTL ? "ابحث عن منتجات وعروض…" : "Search products, deals…"}
-              className="flex-1 h-9 bg-neutral-100 rounded-s-full px-4 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none border border-neutral-200 border-e-0"
+              className="flex-1 h-8 bg-transparent text-[13px] text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none"
             />
             <button type="submit"
-              className="h-9 px-3 bg-[color:var(--brand-maroon)] rounded-e-full text-white flex items-center justify-center border border-[color:var(--brand-maroon)] border-s-0">
+              className="bg-brand-gradient h-8 px-3.5 rounded-full text-white flex items-center justify-center">
               <Search className="w-3.5 h-3.5" />
             </button>
           </form>
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
-        <div className="hidden md:block bg-white border-t border-neutral-100">
+        <div className="hidden md:block border-t border-[color:var(--brand-border)]">
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <nav className="flex items-center gap-0.5 w-full">
 
@@ -513,11 +515,11 @@ export function SiteHeader({
               <div className="relative" ref={shopRef}>
                 <div className="w-0 h-0 overflow-hidden">
                 {shopOpen && (
-                  <div className="absolute top-[calc(100%+1px)] bg-white rounded-b-2xl overflow-hidden"
-                    style={{ ...megaPos, width: 780, border: "1px solid rgba(0,0,0,0.08)", borderTop: "none", boxShadow: "0 20px 60px rgba(0,0,0,0.13)" }}>
+                  <div className="absolute top-[calc(100%+1px)] bg-white rounded-b-3xl overflow-hidden"
+                    style={{ ...megaPos, width: 780, border: "1px solid var(--brand-border)", borderTop: "none", boxShadow: "var(--shadow-card-hover)" }}>
                     <div className="flex" style={{ minHeight: 320 }}>
                       {/* Left: Group tabs */}
-                      <div className="w-44 shrink-0 bg-neutral-50 border-e border-neutral-100 py-2">
+                      <div className="w-44 shrink-0 bg-[color:var(--paper)] border-e border-[color:var(--brand-border)] py-2">
                         {shopGroups.map((g, i) => (
                           <button key={i} onMouseEnter={() => setActiveGroup(i)}
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-[12.5px] font-medium transition-colors text-start"
@@ -534,14 +536,14 @@ export function SiteHeader({
                             const img = catImages[item.slug];
                             return (
                               <Link key={item.slug} href={`/categories/${item.slug}`} onClick={() => setShopOpen(false)}
-                                className="group flex flex-col overflow-hidden border border-neutral-100 hover:border-[color:var(--brand-maroon)] transition-colors">
-                                <div className="aspect-[4/3] bg-neutral-100 overflow-hidden">
+                                className="group flex flex-col overflow-hidden rounded-xl border border-[color:var(--brand-border)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-gold)]/60 hover:shadow-[var(--shadow-card)]">
+                                <div className="aspect-[4/3] bg-[color:var(--paper-2)] overflow-hidden">
                                   {img ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={img} alt={itemName(item)}
-                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                                      className="w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110" />
                                   ) : (
-                                    <div className="w-full h-full bg-neutral-200 flex items-center justify-center">
+                                    <div className="w-full h-full bg-[color:var(--paper-2)] flex items-center justify-center">
                                       <span className="text-[10px] text-neutral-400 font-medium text-center px-1 leading-snug">{itemName(item)}</span>
                                     </div>
                                   )}
@@ -557,7 +559,7 @@ export function SiteHeader({
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-50 border-t border-neutral-100">
+                    <div className="flex items-center justify-between px-4 py-2.5 bg-[color:var(--paper)] border-t border-[color:var(--brand-border)]">
                       <span className="text-[11px] text-neutral-400">38 vendor types across UAQ</span>
                       <Link href="/categories" onClick={() => setShopOpen(false)} className="text-[11.5px] font-semibold text-[color:var(--brand-maroon)] hover:underline">
                         {isRTL ? "← تصفح كل الفئات" : "Browse all categories →"}
@@ -582,22 +584,22 @@ export function SiteHeader({
                   { label: "Books",          ar: "كتب",            id: "books" },
                 ].filter(stripOn).map((c) => (
                   <Link key={c.id} href={"/shop/" + c.id}
-                    className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                    className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
                     {isRTL ? c.ar : c.label}
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
+                    <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
                   </Link>
                 ))}
                 <div className="w-px h-4 bg-neutral-200 mx-1" />
                 </>)}
                 <Link href="/services"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
                   {t("services")}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
+                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
                 <Link href="/marketplace/real_estate"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[#8E1B3A]">
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
                   {isRTL ? "السوق" : "Marketplace"}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#8E1B3A] rounded-full transition-all duration-200 group-hover:w-full" />
+                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
               </div>
               {showProducts && (
@@ -634,9 +636,10 @@ export function SiteHeader({
         {/* Mobile search */}
         {mobileGroup === null && (
           <div className="px-4 py-3 border-b border-neutral-100">
-            <form onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.querySelector("input") as HTMLInputElement).value.trim(); if (q) { closeMobile(); router.push(`/search?q=${encodeURIComponent(q)}`); } }} className="flex gap-2">
-              <input type="text" placeholder={isRTL ? "بحث…" : "Search…"} className="flex-1 h-10 border border-neutral-300 px-3 text-[13.5px] focus:outline-none focus:border-neutral-900" />
-              <button type="submit" className="h-10 px-4 bg-[color:var(--brand-maroon)] text-white flex items-center justify-center">
+            <form onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.querySelector("input") as HTMLInputElement).value.trim(); if (q) { closeMobile(); router.push(`/search?q=${encodeURIComponent(q)}`); } }} className="flex items-center gap-1.5 rounded-full bg-white ps-4 p-1 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] focus-within:ring-[color:var(--brand-gold)]/50">
+              <Search className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
+              <input type="text" placeholder={isRTL ? "بحث…" : "Search…"} className="flex-1 h-8 bg-transparent text-[13.5px] text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none" />
+              <button type="submit" className="bg-brand-gradient h-9 px-4 rounded-full text-white flex items-center justify-center">
                 <Search className="w-4 h-4" />
               </button>
             </form>

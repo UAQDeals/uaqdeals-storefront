@@ -1,4 +1,5 @@
 import { Truck, ShieldCheck, BadgeCheck, Coins, Headphones, MapPin } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 const ITEMS = [
   { icon: Truck,       title: "Fast Local Delivery",   desc: "Same-day across Umm Al Quwain" },
@@ -11,27 +12,28 @@ const ITEMS = [
 
 export function TrustBand() {
   return (
-    <section className="bg-gradient-to-b from-white to-neutral-50 border-t border-neutral-100">
-      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-6 md:py-8">
-        <div className="text-center mb-5">
-          <p className="text-[11px] font-bold tracking-[3px] uppercase text-[#C72931] mb-2">Why UAQ Deals</p>
-          <h2 className="text-lg md:text-xl font-extrabold tracking-tight text-neutral-900">
+    <section className="border-t border-[color:var(--brand-border)] bg-gradient-to-b from-[color:var(--paper)] to-[color:var(--paper-2)]">
+      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-14">
+        <Reveal className="mb-8 text-center">
+          <p className="eyebrow">Why UAQ Deals</p>
+          <h2 className="font-display mt-1 text-[24px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[28px]">
             The trusted way to shop in Umm Al Quwain
           </h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-          {ITEMS.map(({ icon: Icon, title, desc }) => (
-            <div key={title}
-              className="group relative flex flex-col items-center text-center gap-2 p-3 rounded-2xl bg-white border border-neutral-100 hover:border-[#8E1B3A]/20 hover:shadow-md transition-all duration-300">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl text-white transition-transform duration-300 group-hover:scale-110"
-                style={{ background: "linear-gradient(135deg, #C72931, #8E1B3A)" }}>
-                <Icon className="w-5 h-5" strokeWidth={1.8} />
+          <span className="mx-auto mt-4 block h-px w-24 bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+        </Reveal>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-6">
+          {ITEMS.map(({ icon: Icon, title, desc }, i) => (
+            <Reveal key={title} delay={i * 70}>
+              <div className="premium-card group relative flex h-full flex-col items-center gap-3 p-5 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] text-white shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                  <Icon className="h-5 w-5" strokeWidth={1.8} />
+                </div>
+                <div>
+                  <p className="text-[12.5px] font-bold leading-tight text-[color:var(--ink)]">{title}</p>
+                  <p className="mt-1 text-[10.5px] leading-snug text-[color:var(--brand-muted)]">{desc}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[12px] font-extrabold text-neutral-900 leading-tight">{title}</p>
-                <p className="mt-0.5 text-[10px] text-neutral-500 leading-snug">{desc}</p>
-              </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

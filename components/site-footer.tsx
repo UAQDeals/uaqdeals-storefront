@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { MapPin, Phone, Mail, MessageCircle, ArrowRight } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 type FooterLink = { key: string; href: string; lead?: boolean };
 
@@ -100,7 +101,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="mb-4 text-[11px] font-bold uppercase tracking-[2px] text-neutral-500">
+      <p className="eyebrow mb-4 text-[color:var(--brand-gold)]">
         {title}
       </p>
       <ul className="space-y-2.5">
@@ -110,8 +111,8 @@ function FooterColumn({
               href={l.href}
               className={
                 l.lead
-                  ? "text-[12.5px] font-bold text-white transition-colors hover:text-[color:var(--brand-orange)]"
-                  : "text-[12.5px] text-neutral-400 transition-colors hover:text-white"
+                  ? "group inline-flex items-center gap-1 text-[12.5px] font-bold text-white transition-colors hover:text-[color:var(--brand-gold)]"
+                  : "text-[12.5px] text-white/55 transition-colors hover:text-[color:var(--brand-gold)]"
               }
             >
               {t(l.key)}
@@ -122,7 +123,7 @@ function FooterColumn({
       {cta && (
         <Link
           href={cta.href}
-          className="group mt-5 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-white transition-colors hover:text-[color:var(--brand-orange)]"
+          className="group mt-5 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-gold)]/30 bg-white/5 px-4 py-2 text-[12px] font-bold text-white transition-all hover:border-[color:var(--brand-gold)]/60 hover:bg-white/10 hover:text-[color:var(--brand-gold)]"
         >
           {cta.label}
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
@@ -138,23 +139,26 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-neutral-950 text-neutral-400 pb-20 md:pb-0">
-      {/* Brand gradient hairline */}
-      <div className="h-1 w-full bg-brand-gradient" />
+    <footer
+      className="relative overflow-hidden text-white/60 pb-20 md:pb-0"
+      style={{ background: "linear-gradient(180deg, var(--ink) 0%, #1a100f 55%, var(--brand-maroon-deep) 220%)" }}
+    >
+      {/* Gold hairline top divider */}
+      <div className="gold-rule" />
 
       {/* Ambient brand glow */}
       <span
-        className="pointer-events-none absolute -top-24 end-0 h-72 w-72 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C72931 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -top-24 end-0 h-72 w-72 rounded-full opacity-25 blur-3xl"
+        style={{ background: "radial-gradient(circle, var(--brand-gold) 0%, transparent 70%)" }}
         aria-hidden
       />
       <span
-        className="pointer-events-none absolute -bottom-28 start-1/4 h-72 w-72 rounded-full opacity-10 blur-3xl"
-        style={{ background: "radial-gradient(circle, #F24732 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -bottom-28 start-1/4 h-72 w-72 rounded-full opacity-15 blur-3xl"
+        style={{ background: "radial-gradient(circle, var(--brand-maroon) 0%, transparent 70%)" }}
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-16">
+      <Reveal className="relative mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-16">
         <div
           className={
             "grid grid-cols-2 gap-x-8 gap-y-10 " +
@@ -165,18 +169,18 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
         >
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2.5">
+            <Link href="/" className="inline-flex items-center gap-3">
               <Image
                 src="/uaq-logo.png"
                 alt="UAQ Deals"
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-xl object-cover"
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-2xl object-cover ring-1 ring-[color:var(--brand-gold)]/30"
               />
-              <span className="text-xl font-extrabold tracking-tight text-white">UAQ Deals</span>
+              <span className="font-display text-[22px] font-semibold tracking-tight text-white">UAQ Deals</span>
             </Link>
 
-            <p className="mt-4 max-w-xs text-[12.5px] leading-relaxed text-neutral-500">
+            <p className="mt-4 max-w-xs text-[12.5px] leading-relaxed text-white/50">
               {tf("tagline")}
             </p>
 
@@ -184,20 +188,20 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
             <div className="mt-5 space-y-2.5">
               <a
                 href="tel:+971542205885"
-                className="flex items-center gap-2.5 text-[12.5px] text-neutral-400 transition-colors hover:text-white"
+                className="flex items-center gap-2.5 text-[12.5px] text-white/60 transition-colors hover:text-white"
               >
-                <Phone className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
+                <Phone className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-gold)]" />
                 +971 54 220 5885
               </a>
               <Link
                 href="/contact"
-                className="flex items-center gap-2.5 text-[12.5px] text-neutral-400 transition-colors hover:text-white"
+                className="flex items-center gap-2.5 text-[12.5px] text-white/60 transition-colors hover:text-white"
               >
-                <Mail className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
+                <Mail className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-gold)]" />
                 {tf("contactSupport")}
               </Link>
-              <p className="flex items-center gap-2.5 text-[12.5px] text-neutral-500">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-orange)]" />
+              <p className="flex items-center gap-2.5 text-[12.5px] text-white/50">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-[color:var(--brand-gold)]" />
                 {tf("location")}
               </p>
             </div>
@@ -211,7 +215,7 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
                   aria-label={label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white/5 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-neutral-400 transition-all duration-200 hover:scale-105 hover:bg-white/10 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--brand-gold)]/50 hover:bg-white/10 hover:text-[color:var(--brand-gold)]"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -240,19 +244,19 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
           {/* Help */}
           <FooterColumn title={tf("colHelp")} links={HELP_LINKS} t={tf} />
         </div>
-      </div>
+      </Reveal>
 
       {/* Bottom bar */}
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-[1320px] flex-col gap-4 px-5 md:px-8 py-5 md:flex-row md:items-center md:justify-between">
-          <p className="text-[11.5px] text-neutral-600">
+          <p className="text-[11.5px] text-white/40">
             {t("copyright", { year })} · Umm Al Quwain, UAE
           </p>
           <div className="flex items-center gap-2">
             {PAYMENTS.map((p) => (
               <span
                 key={p}
-                className="bg-white/5 rounded-md border border-white/10 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-neutral-400"
+                className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white/55"
               >
                 {p}
               </span>

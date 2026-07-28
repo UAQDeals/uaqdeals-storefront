@@ -1,34 +1,156 @@
 @import "tailwindcss";
 
 :root {
+  /* ── Brand — luxury maroon & gold signature ── */
   --brand-maroon: #8e1b3a;
+  --brand-maroon-deep: #6c1027;
   --brand-gold: #c9a24b;
+  --brand-gold-deep: #9c7a2e;
   --brand-red: #c72931;
   --brand-orange: #f24732;
-  --brand-cream: #fdfafa;
-  --brand-dark: #1a1a1a;
-  --brand-muted: #6b6b6b;
-  --brand-border: #ececec;
 
-  --bg: var(--brand-cream);
-  --fg: var(--brand-dark);
+  /* ── Warm premium neutrals ── */
+  --brand-cream: #fbf8f4;
+  --paper: #fbf8f4;
+  --paper-2: #f4eee6;
+  --ink: #1b1614;
+  --brand-dark: #1b1614;
+  --brand-muted: #6b6260;
+  --brand-border: #eae3dc;
+
+  --bg: var(--paper);
+  --fg: var(--ink);
+
+  /* ── Elevation — soft, warm-tinted ── */
+  --shadow-sm: 0 1px 2px rgba(27, 22, 20, 0.04), 0 1px 3px rgba(27, 22, 20, 0.06);
+  --shadow-card: 0 2px 6px rgba(27, 22, 20, 0.05), 0 10px 26px -10px rgba(27, 22, 20, 0.12);
+  --shadow-card-hover: 0 8px 18px rgba(27, 22, 20, 0.08), 0 26px 46px -14px rgba(142, 27, 58, 0.20);
+  --shadow-premium: 0 30px 60px -22px rgba(27, 22, 20, 0.30);
 }
 
 html, body {
   background: var(--bg);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+/* ── Premium display serif (Fraunces via next/font --font-display) ── */
+.font-display {
+  font-family: var(--font-display), "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* ── Gold eyebrow label ── */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-gold-deep);
+}
+
+/* ── Premium card — white, warm hairline, lifts on hover ── */
+.premium-card {
+  background: #fff;
+  border: 1px solid var(--brand-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.45s ease;
+}
+.premium-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--brand-gold) 45%, transparent);
+}
+
+/* ── Gold hairline rule ── */
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brand-gold), transparent);
+}
+
+/* ── Vertical accent bar for section headers ── */
+.accent-bar {
+  background: linear-gradient(180deg, var(--brand-gold), var(--brand-maroon));
+}
+
+/* ── Text & background gradients ── */
 .text-brand-gradient {
   background: linear-gradient(90deg, var(--brand-maroon), var(--brand-red), var(--brand-orange));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-
+.text-gold-gradient {
+  background: linear-gradient(90deg, var(--brand-gold-deep), var(--brand-gold), #e8cf8f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .bg-brand-gradient {
   background: linear-gradient(90deg, var(--brand-maroon), var(--brand-red), var(--brand-orange));
+}
+.bg-maroon-radial {
+  background:
+    radial-gradient(120% 120% at 15% 0%, #a12447 0%, transparent 55%),
+    linear-gradient(135deg, #8e1b3a 0%, #c72931 52%, #f24732 100%);
+}
+
+/* ── Subtle rise-in for above-the-fold copy ── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rise-in { animation: riseIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* ── Glass surfaces ── */
+.glass-dark {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--brand-gold) 28%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.glass-light {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Gold shine sweep (hover) ── */
+@keyframes shine {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(220%) skewX(-18deg); }
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+.shine:hover::after { animation: shine 0.9s ease; }
+
+/* ── Slow float for decorative coins/orbs ── */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(6deg); }
+}
+.animate-floaty { animation: floaty 6s ease-in-out infinite; }
+
+/* ── Gentle continuous shimmer for gold text/badges ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 3.5s linear infinite;
 }
 
 @keyframes marquee {

@@ -15,7 +15,10 @@ import { TrustBand } from "@/components/trust-band";
 import { ServiceHero } from "@/components/service-hero";
 import { ServiceQuickAccess } from "@/components/service-quick-access";
 import { ServiceRail, TravelButtons, SellGadgetsBanner } from "@/components/home-service-blocks";
+import { GamesSpotlight } from "@/components/games-spotlight";
 import { dedicatedFor } from "@/lib/service-routes";
+import { getHomeTilesBySection, getQuickAccessImages, getEnabledGames } from "@/lib/home-data";
+import { type QuickTile } from "@/components/quick-access-strip";
 
 export const revalidate = 60;
 
@@ -44,10 +47,16 @@ export default async function HomePage() {
 
   // ── Services-only emirates: a distinct services home. ──
   if (!showProducts) {
+    const tilesBySection = await getHomeTilesBySection();
+    const svcQuickTiles = tilesBySection["Our Quick Services"] ?? [];
+    const storyTiles = [
+      ...(tilesBySection["Tours, Trips and Packages"] ?? []),
+      ...(tilesBySection["Travel"] ?? []),
+    ];
     return (
       <>
         <ServiceHero />
-        <ServiceQuickAccess />
+        <ServiceQuickAccess tiles={svcQuickTiles} />
         <EditorialBand
           eyebrow="Book in seconds"
           title={"Trusted services,\nright at your doorstep."}
@@ -68,7 +77,7 @@ export default async function HomePage() {
           dark={true}
           flip={false}
         />
-        <StoriesGrid />
+        <StoriesGrid tiles={storyTiles} />
         <TrustBand />
         <AppDownloadCta />
       </>
@@ -198,9 +207,36 @@ export default async function HomePage() {
     ...((await isTypeEnabled("restaurant")) ? ["food"] : []),
   ];
 
+  // Real data for service tiles, quick-access imagery, and the Games spotlight.
+  const [tilesBySection, quickImgs, games] = await Promise.all([
+    getHomeTilesBySection(),
+    getQuickAccessImages(),
+    getEnabledGames(),
+  ]);
+  const quickServiceTiles = tilesBySection["Our Quick Services"] ?? [];
+  const QA_META: Record<string, { href: string; title: string; badge?: string | null }> = {
+    fish: { href: "/categories/fish_market", title: "Fresh Fish Market" },
+    pharmacy: { href: "/categories/pharmacy", title: "Pharmacy" },
+    food: { href: "/categories/restaurant", title: "Order Food" },
+  };
+  const quickAccessTiles: QuickTile[] = quickTiles.map((k) => ({
+    key: k,
+    href: QA_META[k]?.href ?? "/",
+    title: QA_META[k]?.title ?? k,
+    imageUrl: quickImgs[k] ?? null,
+    badge: QA_META[k]?.badge ?? null,
+  }));
+
   // ── Render sections in the admin-defined order ──
   const out: ReactNode[] = [];
   let travelDone = false;
+  let gamesInserted = false;
+  const insertGames = () => {
+    if (!gamesInserted && games.length) {
+      out.push(<GamesSpotlight key="games" games={games} />);
+      gamesInserted = true;
+    }
+  };
   for (const s of sections) {
     const type = s.section_type as string;
     const key = s.section_key as string;
@@ -215,10 +251,11 @@ export default async function HomePage() {
       out.push(
         <DealsStrip key="deals" deals={deals} title={t("dealsStrip.title")} subtitle={t("dealsStrip.subtitle")} seeAll={t("common.seeAll")} />
       );
+      insertGames();
     } else if (key === "quick_access_tiles") {
-      out.push(<QuickAccessStrip key="qat" visible={quickTiles} />);
+      out.push(<QuickAccessStrip key="qat" tiles={quickAccessTiles} />);
     } else if (key === "quick_services") {
-      out.push(<ServiceQuickAccess key="qs" />);
+      out.push(<ServiceQuickAccess key="qs" tiles={quickServiceTiles} />);
     } else if (type === "category_carousel") {
       const name = cfg.category_name as string | undefined;
       if (name && enabledNames.has(name)) {
@@ -257,6 +294,9 @@ export default async function HomePage() {
       }
     }
   }
+
+  // Guarantee the Games spotlight appears even if there's no flash-deals section.
+  insertGames();
 
   return <>{out}</>;
 }

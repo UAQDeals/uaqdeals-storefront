@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
@@ -14,6 +14,13 @@ import { showProducts as emirateShowProducts, availabilitySnapshot } from "@/lib
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
+// Premium editorial display serif for headings — exposed as --font-display.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "900"],
+});
 
 export const metadata: Metadata = {
   title: { default: "UAQ Deals", template: "%s — UAQ Deals" },
@@ -57,7 +64,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={isRTL ? "rtl" : "ltr"}>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${fraunces.variable}`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Suspense fallback={null}>
             <TopLoader />

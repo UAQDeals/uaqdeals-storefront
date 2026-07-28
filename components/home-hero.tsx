@@ -91,27 +91,25 @@ export function HomeHero({
   const translatePct = (isRTL ? 1 : -1) * index * 100;
 
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #8E1B3A 0%, #C72931 52%, #F24732 100%)" }}
-    >
-      {/* decorative glows */}
-      <span className="pointer-events-none absolute -top-24 -end-24 h-72 w-72 rounded-full bg-white/10" aria-hidden />
-      <span className="pointer-events-none absolute -bottom-28 -start-20 h-80 w-80 rounded-full bg-black/10" aria-hidden />
+    <section className="bg-maroon-radial relative overflow-hidden">
+      {/* gold hairline + soft decorative glows */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/70 to-transparent" aria-hidden />
+      <span className="pointer-events-none absolute -top-24 -end-24 h-72 w-72 rounded-full bg-[color:var(--brand-gold)]/15 blur-2xl" aria-hidden />
+      <span className="pointer-events-none absolute -bottom-28 -start-20 h-80 w-80 rounded-full bg-black/15 blur-2xl" aria-hidden />
 
-      <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 py-9 md:py-14">
+      <div className="relative mx-auto max-w-[1320px] px-5 md:px-8 py-12 md:py-20">
         <div className="grid items-center gap-8 md:grid-cols-2 md:gap-10">
           {/* Left — copy, search, chips */}
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11.5px] font-bold text-white backdrop-blur-sm">
-              <MapPin className="h-3.5 w-3.5" />
+          <div className="rise-in">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-gold)]/40 bg-white/10 px-3.5 py-1.5 text-[11.5px] font-semibold tracking-wide text-white backdrop-blur-sm">
+              <MapPin className="h-3.5 w-3.5 text-[color:var(--brand-gold)]" />
               {placeName}
             </span>
-            <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.5px] text-white sm:text-[40px]">
-              {isRTL ? (<>كل شيء في {placeName}،<br className="hidden sm:block" /> يصلك اليوم.</>)
-                     : (<>Everything in {placeName},<br className="hidden sm:block" /> delivered today.</>)}
+            <h1 className="font-display mt-5 text-[34px] font-medium leading-[1.05] tracking-[-0.01em] text-white sm:text-[52px]">
+              {isRTL ? (<>كل شيء في <span className="text-gold-gradient">{placeName}</span>،<br className="hidden sm:block" /> يصلك اليوم.</>)
+                     : (<>Everything in <span className="text-gold-gradient">{placeName}</span>,<br className="hidden sm:block" /> delivered today.</>)}
             </h1>
-            <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/85 sm:text-[15px]">
+            <p className="mt-4 max-w-md text-[14px] leading-relaxed text-white/80 sm:text-[15.5px]">
               {isRTL
                 ? `بقالة وطعام وصيدلية وخدمات وقوائم محلية — تطبيق واحد شامل لكل ${placeName}.`
                 : `Groceries, food, pharmacy, services and local listings — one super-app for all of ${placeName}.`}
@@ -120,21 +118,24 @@ export function HomeHero({
             {/* Search (routes to /search) */}
             <Link
               href="/search"
-              className="mt-6 flex w-full max-w-md items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg transition hover:shadow-xl"
+              className="group mt-7 flex w-full max-w-md items-center gap-3 rounded-full bg-white p-1.5 ps-5 shadow-lg ring-1 ring-[color:var(--brand-gold)]/30 transition hover:shadow-xl"
             >
-              <Search className="h-4.5 w-4.5 shrink-0 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
-              <span className="text-[13.5px] font-medium text-neutral-400">
+              <Search className="shrink-0 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
+              <span className="flex-1 text-[13.5px] font-medium text-neutral-400">
                 {isRTL ? "ابحث عن منتجات وعروض وخدمات…" : "Search products, deals, services…"}
+              </span>
+              <span className="bg-brand-gradient hidden shrink-0 items-center rounded-full px-4 py-2.5 text-[12.5px] font-bold text-white transition group-hover:brightness-110 sm:inline-flex">
+                {isRTL ? "بحث" : "Search"}
               </span>
             </Link>
 
             {/* Quick chips */}
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-2">
               {(chips ?? CHIPS).map((c) => (
                 <Link
                   key={c.href}
                   href={c.href}
-                  className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                  className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-sm transition hover:border-[color:var(--brand-gold)]/60 hover:bg-white/20"
                 >
                   {isRTL ? (AR_CHIP[c.href] ?? (c as { ar?: string }).ar ?? c.label) : c.label}
                 </Link>
@@ -144,7 +145,7 @@ export function HomeHero({
 
           {/* Right — banner carousel in a glass frame */}
           {count > 0 && (
-            <div className="rounded-3xl border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-sm">
+            <div className="rounded-[26px] border border-[color:var(--brand-gold)]/25 bg-white/10 p-2.5 shadow-[var(--shadow-premium)] backdrop-blur-md">
               <div
                 className="group relative overflow-hidden rounded-2xl bg-black/10"
                 onMouseEnter={() => setPaused(true)}

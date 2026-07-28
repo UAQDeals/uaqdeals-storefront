@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 /** A titled "service" section with a brand CTA card — the web counterpart of the
  *  app's service carousels (config-driven from home_sections). */
@@ -14,23 +16,31 @@ export function ServiceRail({
   subtitle?: string;
 }) {
   return (
-    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="h-5 w-1 rounded-full" style={{ background: "linear-gradient(180deg,#E7C56A,#C9A24B)" }} />
-        <h2 className="text-lg font-bold tracking-tight text-neutral-900">{title}</h2>
-      </div>
-      <Link
-        href={href}
-        className="group flex items-center gap-4 overflow-hidden rounded-2xl p-5 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
-        style={{ background: "linear-gradient(135deg, #8E1B3A, #C72931)" }}
-      >
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20 text-2xl">{emoji}</span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-bold leading-tight">{title}</span>
-          <span className="block text-[12.5px] text-white/85">{subtitle ?? `Browse ${title} in Umm Al Quwain`}</span>
-        </span>
-        <span className="shrink-0 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold text-[#8E1B3A]">Browse →</span>
-      </Link>
+    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-8 md:py-10">
+      <Reveal className="mb-4 flex items-center gap-3.5">
+        <span className="accent-bar h-9 w-1.5 rounded-full" />
+        <h2 className="font-display text-[22px] font-semibold tracking-tight text-[color:var(--ink)] sm:text-[26px]">{title}</h2>
+      </Reveal>
+      <Reveal>
+        <Link
+          href={href}
+          className="shine bg-maroon-radial group relative flex items-center gap-4 overflow-hidden rounded-3xl p-6 text-white shadow-[var(--shadow-premium)] transition-all duration-500 hover:-translate-y-1"
+        >
+          <span className="pointer-events-none absolute -end-10 -top-10 h-40 w-40 rounded-full bg-[color:var(--brand-gold)]/15 blur-3xl" aria-hidden />
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] text-2xl shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+            {emoji}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="font-display block text-[17px] font-semibold leading-tight">{title}</span>
+            <span className="mt-0.5 block text-[12.5px] text-white/80">{subtitle ?? `Browse ${title} in Umm Al Quwain`}</span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[color:var(--brand-gold)]/40 bg-white/10 px-4 py-2 text-[12.5px] font-bold backdrop-blur-sm transition group-hover:bg-white/20">
+            Browse
+            <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
+          </span>
+        </Link>
+      </Reveal>
     </section>
   );
 }
@@ -55,21 +65,27 @@ export function TravelButtons({ showFlight = true, showHotel = true }: { showFli
   ].filter(Boolean) as { label: string; sub: string; emoji: string; href: string; grad: string[] }[];
   if (!cards.length) return null;
   return (
-    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {cards.map((c) => (
-          <Link
-            key={c.href}
-            href={c.href}
-            className="flex items-center gap-3 rounded-2xl p-4 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${c.grad[0]}, ${c.grad[1]})` }}
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 text-xl">{c.emoji}</span>
-            <span>
-              <span className="block text-[15px] font-bold leading-tight">{c.label}</span>
-              <span className="block text-[12px] text-white/85">{c.sub}</span>
-            </span>
-          </Link>
+    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-8 md:py-10">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {cards.map((c, i) => (
+          <Reveal key={c.href} delay={i * 70}>
+            <Link
+              href={c.href}
+              className="shine group relative flex items-center gap-4 overflow-hidden rounded-3xl p-5 text-white shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
+              style={{ background: `linear-gradient(135deg, ${c.grad[0]}, ${c.grad[1]})` }}
+            >
+              <span className="pointer-events-none absolute -end-8 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" aria-hidden />
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" aria-hidden />
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-2xl shadow-inner backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                {c.emoji}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="font-display block text-[16px] font-semibold leading-tight">{c.label}</span>
+                <span className="mt-0.5 block text-[12px] text-white/85">{c.sub}</span>
+              </span>
+              <ArrowUpRight className="h-5 w-5 shrink-0 text-white/70 transition group-hover:translate-x-0.5 group-hover:text-white rtl:-scale-x-100" />
+            </Link>
+          </Reveal>
         ))}
       </div>
     </section>
@@ -79,19 +95,28 @@ export function TravelButtons({ showFlight = true, showHotel = true }: { showFli
 /** "List your Used gadgets" CTA banner (web mirror of the app banner). */
 export function SellGadgetsBanner() {
   return (
-    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
-      <Link
-        href="/marketplace/used_items/sell"
-        className="flex items-center gap-4 overflow-hidden rounded-2xl p-5 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
-        style={{ background: "linear-gradient(135deg, #4B2A86, #7C3AED)" }}
-      >
-        <span className="min-w-0 flex-1">
-          <span className="block text-lg font-extrabold leading-tight">List your Used gadgets!</span>
-          <span className="mt-0.5 block text-[13px] text-white/85">Turn old phones &amp; devices into cash</span>
-          <span className="mt-2 inline-block rounded-full bg-white px-3.5 py-1.5 text-[12px] font-extrabold text-[#6D28D9]">List Now →</span>
-        </span>
-        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/18 text-3xl">📱</span>
-      </Link>
+    <section className="mx-auto max-w-[1320px] px-5 md:px-8 py-8 md:py-10">
+      <Reveal>
+        <Link
+          href="/marketplace/used_items/sell"
+          className="shine group relative flex items-center gap-4 overflow-hidden rounded-3xl p-6 text-white shadow-[var(--shadow-premium)] transition-all duration-500 hover:-translate-y-1"
+          style={{ background: "linear-gradient(135deg, #4B2A86, #7C3AED)" }}
+        >
+          <span className="pointer-events-none absolute -start-10 -bottom-10 h-44 w-44 rounded-full bg-[color:var(--brand-gold)]/15 blur-3xl" aria-hidden />
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+          <span className="min-w-0 flex-1">
+            <span className="font-display block text-[20px] font-semibold leading-tight">List your Used gadgets!</span>
+            <span className="mt-1 block text-[13px] text-white/85">Turn old phones &amp; devices into cash</span>
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] px-4 py-2 text-[12.5px] font-extrabold text-[#3B1F63] shadow-lg">
+              List Now
+              <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
+            </span>
+          </span>
+          <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/15 text-4xl shadow-inner backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+            📱
+          </span>
+        </Link>
+      </Reveal>
     </section>
   );
 }

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Reveal } from "@/components/reveal";
 
 export type EditorialBandProps = {
   eyebrow: string;
@@ -23,46 +25,64 @@ export function EditorialBand({
   dark = true,
   bgImage,
 }: EditorialBandProps) {
-  const bg = dark ? "bg-neutral-900" : "bg-[#f5f0ee]";
-  const eyebrowColor = dark ? "text-neutral-500" : "text-[color:var(--brand-maroon)]";
-  const titleColor = dark ? "text-white" : "text-neutral-900";
-  const bodyColor = dark ? "text-neutral-400" : "text-neutral-600";
-  const ctaBg = dark ? "bg-white text-neutral-900 hover:bg-neutral-100" : "bg-neutral-900 text-white hover:bg-neutral-700";
+  const onDark = dark || !!bgImage;
+  const eyebrowColor = onDark ? "text-[color:var(--brand-gold)]" : "text-[color:var(--brand-maroon)]";
+  const titleColor = onDark ? "text-white" : "text-[color:var(--ink)]";
+  const bodyColor = onDark ? "text-white/75" : "text-neutral-600";
+  const ctaClass = onDark
+    ? "bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] text-[#2a1408] shadow-lg hover:brightness-105"
+    : "bg-[color:var(--brand-maroon)] text-white shadow-lg hover:bg-[color:var(--brand-maroon-deep)]";
 
   const imgBlock = bgImage ? null : (
     <div
-      className="hidden md:flex items-center justify-center text-8xl min-h-[300px]"
-      style={{ background: dark ? "#1a1a1a" : "#e8ddd4" }}
+      className={`group/img relative hidden items-center justify-center overflow-hidden md:flex min-h-[320px] ${
+        dark ? "bg-maroon-radial" : "bg-[color:var(--paper-2)]"
+      }`}
     >
-      {emoji}
+      <span className="pointer-events-none absolute -end-12 -top-12 h-48 w-48 rounded-full bg-[color:var(--brand-gold)]/15 blur-3xl" aria-hidden />
+      <span className="pointer-events-none absolute -start-12 -bottom-12 h-40 w-40 rounded-full bg-[color:var(--brand-gold)]/10 blur-3xl" aria-hidden />
+      <Reveal className="relative">
+        <span className="animate-floaty flex h-32 w-32 items-center justify-center rounded-[2rem] bg-gradient-to-br from-[color:var(--brand-gold)] to-[color:var(--brand-gold-deep)] text-6xl shadow-[var(--shadow-premium)] ring-1 ring-white/20">
+          {emoji}
+        </span>
+      </Reveal>
     </div>
   );
 
   const textBlock = (
-    <div className="flex flex-col justify-center px-8 md:px-14 py-14">
-      <p className={`text-[10.5px] font-bold tracking-[2px] uppercase mb-3 ${eyebrowColor}`}>
-        {eyebrow}
-      </p>
-      <h2 className={`text-[28px] md:text-[34px] font-extrabold leading-[1.1] tracking-[-1px] mb-4 ${titleColor}`}>
-        {title}
-      </h2>
-      <p className={`text-[13.5px] leading-relaxed mb-8 max-w-sm ${bodyColor}`}>
-        {body}
-      </p>
-      <Link
-        href={ctaHref}
-        className={`inline-block self-start px-7 py-3 text-[13px] font-bold tracking-wide transition-colors ${ctaBg}`}
-      >
-        {ctaLabel}
-      </Link>
+    <div className="flex flex-col justify-center px-8 py-14 md:px-14">
+      <Reveal>
+        <div className="mb-4 flex items-center gap-3.5">
+          <span className="accent-bar h-9 w-1.5 rounded-full" />
+          <p className={`eyebrow ${eyebrowColor}`}>{eyebrow}</p>
+        </div>
+        <h2 className={`font-display mb-4 text-[28px] font-semibold leading-[1.12] tracking-tight md:text-[36px] ${titleColor}`}>
+          {title}
+        </h2>
+        <p className={`mb-8 max-w-sm text-[13.5px] leading-relaxed ${bodyColor}`}>{body}</p>
+        <Link
+          href={ctaHref}
+          className={`inline-flex items-center gap-1.5 self-start rounded-full px-7 py-3 text-[13px] font-bold tracking-wide transition ${ctaClass}`}
+        >
+          {ctaLabel}
+          <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
+        </Link>
+      </Reveal>
     </div>
   );
 
   return (
-    <section className={`w-full relative ${bg}`}
-      style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
-      {bgImage && <div className="absolute inset-0 bg-black/55" />}
-      <div className={`relative mx-auto max-w-[1320px] min-h-[300px] ${bgImage ? "flex items-center" : "grid grid-cols-1 md:grid-cols-2"}`}>
+    <section
+      className={`relative w-full overflow-hidden ${bgImage ? "" : dark ? "bg-maroon-radial" : "bg-[color:var(--paper-2)]"}`}
+      style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+    >
+      {bgImage && <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+      <div
+        className={`relative mx-auto max-w-[1320px] min-h-[320px] ${
+          bgImage ? "flex items-center" : "grid grid-cols-1 md:grid-cols-2"
+        }`}
+      >
         {flip ? (
           <>
             {textBlock}

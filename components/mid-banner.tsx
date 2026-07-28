@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Reveal } from "@/components/reveal";
 
 export type BannerItem = { id: string; title: string | null; image_url: string; mobile_image_url?: string | null; link_type: string | null; link_value: string | null };
 
@@ -18,28 +19,42 @@ export function MidBanner({ banners }: { banners: BannerItem[] }) {
   if (banners.length === 1) {
     const b = banners[0];
     return (
-      <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
-        <Link href={bannerHref(b)} className="block overflow-hidden rounded-2xl">
-          <picture>
-            {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={b.image_url} alt={b.title ?? ""} className="aspect-[2/1] w-full object-cover hover:scale-[1.01] transition-transform duration-500 md:aspect-[16/5]" />
-          </picture>
-        </Link>
+      <div className="mx-auto max-w-[1320px] px-5 py-8 md:px-8 md:py-10">
+        <Reveal>
+          <Link
+            href={bannerHref(b)}
+            className="group relative block overflow-hidden rounded-3xl shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-border)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
+          >
+            <picture>
+              {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={b.image_url} alt={b.title ?? ""} className="aspect-[2/1] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105 md:aspect-[16/5]" />
+            </picture>
+            <span className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" aria-hidden />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+          </Link>
+        </Reveal>
       </div>
     );
   }
   return (
-    <div className="mx-auto max-w-[1320px] px-5 md:px-8 py-6">
-      <div className="grid grid-cols-2 gap-3">
-        {banners.slice(0, 2).map((b) => (
-          <Link key={b.id} href={bannerHref(b)} className="block overflow-hidden rounded-2xl">
-            <picture>
-              {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={b.image_url} alt={b.title ?? ""} className="aspect-[16/9] w-full object-cover hover:scale-[1.01] transition-transform duration-500" />
-            </picture>
-          </Link>
+    <div className="mx-auto max-w-[1320px] px-5 py-8 md:px-8 md:py-10">
+      <div className="grid grid-cols-2 gap-4">
+        {banners.slice(0, 2).map((b, i) => (
+          <Reveal key={b.id} delay={i * 70}>
+            <Link
+              href={bannerHref(b)}
+              className="group relative block overflow-hidden rounded-3xl shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-border)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
+            >
+              <picture>
+                {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={b.image_url} alt={b.title ?? ""} className="aspect-[16/9] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105" />
+              </picture>
+              <span className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" aria-hidden />
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
+            </Link>
+          </Reveal>
         ))}
       </div>
     </div>
