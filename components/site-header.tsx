@@ -390,9 +390,19 @@ export function SiteHeader({
             <Menu className="w-[22px] h-[22px]" />
           </button>
 
-          {/* Logo — small on mobile, large on desktop */}
-          <Link href="/" className="flex shrink-0 items-center me-0 md:me-4">
-            <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[42px] w-[42px] rounded-[11px] md:h-[92px] md:w-[92px] md:rounded-2xl object-cover uaq-logo-anim" /></div>
+          {/* Brand — icon + serif wordmark on mobile; large logo on desktop */}
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 me-0 md:me-4">
+            <div className="uaq-logo-wrap shrink-0">
+              <Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[46px] w-[46px] rounded-xl md:h-[92px] md:w-[92px] md:rounded-2xl object-cover uaq-logo-anim" />
+            </div>
+            <span className="md:hidden flex flex-col leading-none">
+              <span className="font-display text-[20px] font-extrabold leading-none tracking-tight text-[color:var(--brand-maroon)]">
+                UAQ<span className="text-gold-gradient"> Deals</span>
+              </span>
+              <span className="mt-[3px] text-[7.5px] font-bold uppercase tracking-[0.32em] text-[color:var(--brand-gold-deep)]">
+                Super-App
+              </span>
+            </span>
           </Link>
 
           {/* Mobile: emirate selector, then spacer pushes language + profile right */}
