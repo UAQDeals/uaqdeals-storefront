@@ -59,6 +59,54 @@ export async function getQuickAccessImages(): Promise<Record<string, string | nu
   return map;
 }
 
+export type SquareItem = { id: string; imageUrl: string; href: string };
+export type SquareSection = {
+  id: string;
+  title: string | null;
+  titleAr: string | null;
+  subtitle: string | null;
+  subtitleAr: string | null;
+  shape: string;
+  emirates: string[] | null;
+  items: SquareItem[];
+};
+
+function squareHref(linkType: string | null, v: string | null): string {
+  if (!linkType || !v) return "#";
+  switch (linkType) {
+    case "category": return `/shop/${v}`;
+    case "deal": return `/deals/${v}`;
+    case "product": return `/products/${v}`;
+    case "vendor": return `/vendors/${v}`;
+    case "external": return v;
+    default: return "#";
+  }
+}
+
+/** Active square-banner sections keyed by id, each with its active items in order. */
+export async function getSquareBanners(): Promise<Map<string, SquareSection>> {
+  const supabase = await createClient();
+  const [{ data: secs }, { data: its }] = await Promise.all([
+    supabase.from("square_banner_sections").select("*").eq("is_active", true),
+    supabase.from("square_banner_items").select("*").eq("is_active", true)
+      .order("sort_order", { ascending: true }),
+  ]);
+  const map = new Map<string, SquareSection>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const s of (secs ?? []) as any[]) {
+    map.set(s.id, {
+      id: s.id, title: s.title, titleAr: s.title_ar, subtitle: s.subtitle,
+      subtitleAr: s.subtitle_ar, shape: s.shape ?? "square", emirates: s.emirates ?? null, items: [],
+    });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const it of (its ?? []) as any[]) {
+    const sec = map.get(it.section_id);
+    if (sec && it.image_url) sec.items.push({ id: it.id, imageUrl: it.image_url, href: squareHref(it.link_type, it.link_value) });
+  }
+  return map;
+}
+
 export type WebGame = { key: string; maxCoins: number };
 
 /** Enabled games with their top reward, for the web Games spotlight. Public read. */

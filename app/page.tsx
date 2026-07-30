@@ -16,8 +16,9 @@ import { ServiceQuickAccess } from "@/components/service-quick-access";
 import { ServiceRail, TravelButtons, SellGadgetsBanner } from "@/components/home-service-blocks";
 import { GamesSpotlight } from "@/components/games-spotlight";
 import { QuickNav, type QuickNavItem } from "@/components/quick-nav";
+import { SquareBannerRow } from "@/components/square-banner-row";
 import { dedicatedFor } from "@/lib/service-routes";
-import { getHomeTilesBySection, getEnabledGames } from "@/lib/home-data";
+import { getHomeTilesBySection, getEnabledGames, getSquareBanners } from "@/lib/home-data";
 
 export const revalidate = 60;
 
@@ -209,10 +210,11 @@ export default async function HomePage() {
     { label: "Services", href: "/services" },
     ...((await isTypeEnabled("real_estate")) ? [{ label: "Real Estate", href: "/marketplace/real_estate" }] : []),
   ];
-  // Real data for service tiles and the Games spotlight.
-  const [tilesBySection, games] = await Promise.all([
+  // Real data for service tiles, the Games spotlight, and square-banner rows.
+  const [tilesBySection, games, squareBanners] = await Promise.all([
     getHomeTilesBySection(),
     getEnabledGames(),
+    getSquareBanners(),
   ]);
   const quickServiceTiles = tilesBySection["Our Quick Services"] ?? [];
 
@@ -257,6 +259,12 @@ export default async function HomePage() {
       // tiles under the hero cover this on the storefront.
     } else if (key === "quick_services") {
       out.push(<ServiceQuickAccess key="qs" tiles={quickServiceTiles} />);
+    } else if (type === "square_banners") {
+      const sec = squareBanners.get(String(cfg.square_id));
+      const emOk = !sec?.emirates?.length || (emirate ? sec.emirates.includes(emirate) : false);
+      if (sec && sec.items.length && emOk) {
+        out.push(<SquareBannerRow key={`sq-${sec.id}`} section={sec} isAr={isAr} />);
+      }
     } else if (type === "category_carousel") {
       const name = cfg.category_name as string | undefined;
       if (name && enabledNames.has(name)) {
