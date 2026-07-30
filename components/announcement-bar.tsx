@@ -4,7 +4,7 @@ import Link from "next/link";
 const ITEMS = [
   { text: "🔥 60% OFF on Deals today", href: "/deals" },
   { text: "💰 Earn 25 Welcome Coins on Signup", href: "/login" },
-  { text: "🚚 Free delivery on orders above AED 100", href: "/shop/a1000000-0000-0000-0000-000000000002" },
+  { text: "🚚 Free delivery on orders above AED 100", href: "/shop/grocery" },
   { text: "🏥 Pharmacy now available — upload prescription", href: "/categories/pharmacy" },
 ];
 

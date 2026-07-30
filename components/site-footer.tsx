@@ -47,13 +47,13 @@ function YouTubeIcon({ className }: { className?: string }) {
 
 const SHOP_LINKS: FooterLink[] = [
   { key: "allProducts",  href: "/products", lead: true },
-  { key: "electronics",  href: "/shop/a1000000-0000-0000-0000-000000000001" },
-  { key: "grocery",      href: "/shop/a1000000-0000-0000-0000-000000000002" },
-  { key: "beauty",       href: "/shop/a1000000-0000-0000-0000-000000000003" },
-  { key: "homeKitchen",  href: "/shop/a1000000-0000-0000-0000-000000000004" },
-  { key: "fashion",      href: "/shop/a1000000-0000-0000-0000-000000000005" },
-  { key: "health",       href: "/shop/a1000000-0000-0000-0000-000000000009" },
-  { key: "books",        href: "/shop/a1000000-0000-0000-0000-000000000011" },
+  { key: "electronics",  href: "/shop/electronics" },
+  { key: "grocery",      href: "/shop/grocery" },
+  { key: "beauty",       href: "/shop/beauty-fragrance" },
+  { key: "homeKitchen",  href: "/shop/home-kitchen" },
+  { key: "fashion",      href: "/shop/fashion" },
+  { key: "health",       href: "/shop/health-nutrition" },
+  { key: "books",        href: "/shop/books" },
   { key: "marketplace",  href: "/marketplace/real_estate" },
 ];
 

@@ -7,7 +7,7 @@ import { Reveal } from "@/components/reveal";
 import type { ProductCard } from "@/components/featured-products";
 import { rowHasOptions } from "@/lib/variants";
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; name: string; slug?: string | null };
 
 export function ShopCategoryDesktop({
   category,
@@ -36,7 +36,7 @@ export function ShopCategoryDesktop({
               {i === breadcrumb.length - 1 ? (
                 <span className="font-semibold text-[color:var(--ink)]">{b.name}</span>
               ) : (
-                <Link href={"/shop/" + b.id} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>
+                <Link href={"/shop/" + (b.slug || b.id)} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>
               )}
             </span>
           ))}

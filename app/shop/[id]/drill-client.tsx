@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; name: string; slug?: string | null };
 
 function catEmoji(name: string): string {
   const map: Record<string, string> = {
@@ -66,7 +66,7 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
     setLoadingRight(true);
     supabase
       .from("categories")
-      .select("id, name")
+      .select("id, name, slug")
       .eq("parent_id", selectedSidebar.id)
       .eq("is_active", true)
       .order("sort_order")
@@ -95,7 +95,7 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
               <ChevronRight className="h-3 w-3 flex-shrink-0 rtl:rotate-180" />
               {i === breadcrumb.length - 1
                 ? <span className="font-semibold text-[color:var(--ink)]">{b.name}</span>
-                : <Link href={"/shop/" + b.id} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>}
+                : <Link href={"/shop/" + (b.slug || b.id)} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>}
             </span>
           ))}
         </nav>
@@ -146,7 +146,7 @@ export function ShopDrillClient({ category, children, breadcrumb }: {
               {rightItems.map((c) => (
                 <Link
                   key={c.id}
-                  href={"/shop/" + c.id}
+                  href={"/shop/" + (c.slug || c.id)}
                   className="premium-card group flex flex-col items-center gap-2 p-3 transition-transform active:scale-95"
                 >
                   <div className="bg-brand-gradient flex h-12 w-12 items-center justify-center rounded-xl text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110">

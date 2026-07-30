@@ -44,13 +44,13 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   if (!children || children.length === 0) redirect("/products?cat=" + id);
 
   // Build breadcrumb
-  const breadcrumb: { id: string; name: string }[] = [{ id: cat.id, name: cat.name }];
+  const breadcrumb: { id: string; name: string; slug: string | null }[] = [{ id: cat.id, name: cat.name, slug: cat.slug }];
   let current = cat;
   while (current.parent_id) {
     const { data: parent } = await supabase.from("categories")
       .select("id, name, parent_id, slug").eq("id", current.parent_id).maybeSingle();
     if (!parent) break;
-    breadcrumb.unshift({ id: parent.id, name: parent.name });
+    breadcrumb.unshift({ id: parent.id, name: parent.name, slug: parent.slug });
     current = parent;
   }
 
@@ -60,11 +60,11 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
   //    category_id; the tree is walked via parent_id. ──
   // Page through ALL categories — there are >1000 and PostgREST caps a single
   // response at 1000, which would otherwise orphan deep branches from the tree.
-  const allCats: { id: string; name: string; parent_id: string | null; sort_order: number | null }[] = [];
+  const allCats: { id: string; name: string; parent_id: string | null; sort_order: number | null; slug: string | null }[] = [];
   for (let from = 0; ; from += 1000) {
     const { data: pageCats } = await supabase
       .from("categories")
-      .select("id, name, parent_id, sort_order")
+      .select("id, name, parent_id, sort_order, slug")
       .range(from, from + 999);
     const rows = pageCats ?? [];
     allCats.push(...rows);
@@ -139,7 +139,7 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
     .filter((c) => !c.parent_id)
     .filter((c) => enabledRootIds.has(c.id as string))
     .sort(sortCat)
-    .map((c) => ({ id: c.id as string, name: c.name as string }));
+    .map((c) => ({ id: c.id as string, name: c.name as string, slug: c.slug as string }));
   const activeTopId = breadcrumb[0]?.id ?? id;
   const sections = (children ?? []).map((child) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -155,10 +155,11 @@ export default async function ShopDrillPage({ params }: { params: Promise<{ id: 
         return {
           id: g.id as string,
           name: g.name as string,
+          slug: g.slug as string,
           image: pics.length ? pics[Math.floor(Math.random() * pics.length)] : null,
         };
       });
-    return { id: child.id as string, name: child.name as string, children: grand };
+    return { id: child.id as string, name: child.name as string, slug: child.slug, children: grand };
   });
 
 

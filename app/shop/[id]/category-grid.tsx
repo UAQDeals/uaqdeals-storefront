@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, ArrowRight } from "lucide-react";
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; name: string; slug?: string | null };
 
 // Maps a category name to an emoji when one fits; otherwise the caller falls
 // back to a monogram. Mirrors the mobile drill so icons stay consistent.
@@ -60,7 +60,7 @@ export function ShopCategoryGrid({
               {i === breadcrumb.length - 1 ? (
                 <span className="font-semibold text-neutral-800">{b.name}</span>
               ) : (
-                <Link href={"/shop/" + b.id} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>
+                <Link href={"/shop/" + (b.slug || b.id)} className="transition-colors hover:text-[color:var(--brand-maroon)]">{b.name}</Link>
               )}
             </span>
           ))}
@@ -83,7 +83,7 @@ export function ShopCategoryGrid({
             return (
               <Link
                 key={c.id}
-                href={"/shop/" + c.id}
+                href={"/shop/" + (c.slug || c.id)}
                 className="premium-card group relative flex flex-col items-center gap-3.5 overflow-hidden p-6 text-center transition-all duration-300 hover:-translate-y-1"
               >
                 <span

@@ -3,7 +3,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-type Cat = { id: string; name: string };
+type Cat = { id: string; name: string; slug?: string | null };
 
 const EMOJI_MAP: Record<string, string> = {
   Phone: "📱", Mobile: "📱", Tablet: "📟", Laptop: "💻", TV: "📺",
@@ -65,7 +65,7 @@ export function CategoryRail({
           return (
             <Link
               key={c.id}
-              href={"/shop/" + c.id}
+              href={"/shop/" + (c.slug || c.id)}
               className="group flex w-[92px] shrink-0 flex-col items-center gap-2.5 text-center"
             >
               <span className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-[color:var(--brand-gold)] group-hover:shadow-md">

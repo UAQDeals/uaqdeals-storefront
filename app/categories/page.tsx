@@ -158,7 +158,7 @@ export default async function CategoriesPage() {
                   : (CAT_IMAGES[c.name] ?? DEFAULT_IMG);
                 return (
                   <Reveal key={c.id} delay={i * 45}>
-                    <Link href={"/shop/" + c.id}
+                    <Link href={"/shop/" + (c.slug || c.id)}
                       className="group relative block overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-[color:var(--brand-gold)]/15 transition-all duration-500 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] hover:ring-[color:var(--brand-gold)]/40"
                       style={{ aspectRatio: "16/9" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}

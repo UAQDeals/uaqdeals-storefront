@@ -3,9 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
-type Cat = { id: string; name: string };
-type Grand = { id: string; name: string; image: string | null };
-type Section = { id: string; name: string; children: Grand[] };
+type Cat = { id: string; name: string; slug?: string | null };
+type Grand = { id: string; name: string; image: string | null; slug?: string | null };
+type Section = { id: string; name: string; children: Grand[]; slug?: string | null };
 
 const EMOJI_MAP: Record<string, string> = {
   Phone: "📱", Mobile: "📱", Tablet: "📟", Laptop: "💻", TV: "📺",
@@ -65,7 +65,7 @@ export function MobileCategoryNoon({
           return (
             <Link
               key={d.id}
-              href={"/shop/" + d.id}
+              href={"/shop/" + (d.slug || d.id)}
               className={
                 "flex items-center px-3 py-3.5 text-[12.5px] font-semibold leading-tight transition-colors " +
                 (active ? "bg-white text-[color:var(--brand-maroon)]" : "text-neutral-600 hover:bg-white/60")
@@ -92,7 +92,7 @@ export function MobileCategoryNoon({
             return (
               <Link
                 key={sec.id}
-                href={"/shop/" + sec.id}
+                href={"/shop/" + (sec.slug || sec.id)}
                 className="flex items-center justify-between border-b border-[color:var(--brand-border)] px-4 py-3.5 transition-colors hover:bg-[color:var(--paper-2)]/50"
               >
                 <span className="text-[14px] font-bold text-[color:var(--ink)]">{sec.name}</span>
@@ -115,7 +115,7 @@ export function MobileCategoryNoon({
                   {sec.children.map((g) => {
                     const icon = iconFor(g.name);
                     return (
-                      <Link key={g.id} href={"/shop/" + g.id} className="group flex flex-col items-center gap-1.5">
+                      <Link key={g.id} href={"/shop/" + (g.slug || g.id)} className="group flex flex-col items-center gap-1.5">
                         <span className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--brand-border)] bg-[color:var(--paper-2)] shadow-[var(--shadow-sm)] transition group-hover:-translate-y-0.5 group-hover:border-[color:var(--brand-gold)]">
                           {g.image ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -133,7 +133,7 @@ export function MobileCategoryNoon({
                     );
                   })}
                   <Link
-                    href={"/shop/" + sec.id}
+                    href={"/shop/" + (sec.slug || sec.id)}
                     className="flex items-center justify-center rounded-2xl border border-dashed border-[color:var(--brand-gold)]/50 bg-[color:var(--paper-2)]/40 p-2 text-center transition hover:bg-[color:var(--paper-2)]"
                   >
                     <span className="text-[12px] font-bold text-[color:var(--brand-maroon)]">Shop all</span>
