@@ -151,7 +151,7 @@ function MobileEmirateChip() {
   return (
     <Link
       href="/select-emirate"
-      className="md:hidden flex items-center gap-1 px-3 py-1.5 rounded-full border border-[color:var(--brand-border)] text-[12px] font-semibold text-neutral-700 hover:bg-[color:var(--paper-2)] hover:border-[color:var(--brand-gold)]/50 transition-colors shrink-0"
+      className="md:hidden flex h-10 max-w-[130px] items-center gap-1 rounded-full border border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)] px-3 text-[12px] font-bold text-[color:var(--ink)] shadow-[var(--shadow-sm)] transition hover:border-[color:var(--brand-gold)] hover:brightness-[0.98] shrink-0"
       title="Change location"
     >
       <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
@@ -379,20 +379,20 @@ export function SiteHeader({
         style={{ background: "color-mix(in srgb, var(--paper) 88%, white)", boxShadow: "var(--shadow-sm)", backdropFilter: "saturate(1.05)" }}>
 
         {/* ── Row 1: Logo · Actions ── */}
-        <div className="mx-auto flex h-[112px] max-w-[1320px] items-center px-5 md:px-8 gap-4">
+        <div className="mx-auto flex h-[60px] md:h-[112px] max-w-[1320px] items-center px-3.5 md:px-8 gap-2 md:gap-4">
 
           {/* Hamburger mobile */}
           <button
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full text-neutral-700 hover:bg-[color:var(--paper-2)] transition-colors shrink-0 order-first"
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full text-[color:var(--brand-maroon)] bg-[color:var(--paper-2)] hover:brightness-95 transition shrink-0 order-first"
             onClick={() => { setMobileOpen(true); setMobileGroup(null); }}
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-[22px] h-[22px]" />
           </button>
 
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center me-4">
-            <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[100px] w-[100px] rounded-2xl object-cover uaq-logo-anim" /></div>
+          {/* Logo — small on mobile, large on desktop */}
+          <Link href="/" className="flex shrink-0 items-center me-0 md:me-4">
+            <div className="uaq-logo-wrap"><Image src="/uaq-logo.png" alt="UAQ Deals" width={200} height={200} priority className="h-[42px] w-[42px] rounded-[11px] md:h-[92px] md:w-[92px] md:rounded-2xl object-cover uaq-logo-anim" /></div>
           </Link>
 
           {/* Mobile: emirate selector, then spacer pushes language + profile right */}
@@ -480,28 +480,28 @@ export function SiteHeader({
               <User className="w-4 h-4" />
               {t("account")}
             </Link>
-            <Link href="/account" className="md:hidden flex items-center justify-center w-9 h-9 rounded-full text-neutral-700 hover:bg-[color:var(--paper-2)] transition-colors">
-              <User className="w-5 h-5" />
+            <Link href="/account" className="md:hidden flex items-center justify-center w-10 h-10 rounded-full text-[color:var(--brand-maroon)] bg-[color:var(--paper-2)] hover:brightness-95 transition">
+              <User className="w-[22px] h-[22px]" />
             </Link>
             <div className="hidden md:block text-neutral-700 [&_svg]:text-neutral-700"><CartIcon /></div>
           </div>
         </div>
 
         {/* ── Mobile Row 2: Emirate + Search ── */}
-        <div className="md:hidden border-t border-[color:var(--brand-border)] px-4 py-2 flex items-center gap-2">
+        <div className="md:hidden border-t border-[color:var(--brand-border)] px-3.5 pt-2 pb-2.5 flex items-center gap-2">
           <MobileEmirateChip />
-          <form className="flex-1 flex items-center gap-1.5 rounded-full bg-white ps-3.5 p-0.5 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] focus-within:ring-[color:var(--brand-gold)]/50" onSubmit={handleSearchSubmit}>
-            <Search className="w-3.5 h-3.5 shrink-0 text-[color:var(--brand-maroon)]" />
+          <form className="flex-1 flex items-center gap-2 rounded-full bg-white ps-4 p-1 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] transition focus-within:ring-2 focus-within:ring-[color:var(--brand-gold)]/50 focus-within:shadow-[var(--shadow-card)]" onSubmit={handleSearchSubmit}>
+            <Search className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder={isRTL ? "ابحث عن منتجات وعروض…" : "Search products, deals…"}
-              className="flex-1 h-8 bg-transparent text-[13px] text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none"
+              className="flex-1 h-8 bg-transparent text-[13.5px] font-medium text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none"
             />
-            <button type="submit"
-              className="bg-brand-gradient h-8 px-3.5 rounded-full text-white flex items-center justify-center">
-              <Search className="w-3.5 h-3.5" />
+            <button type="submit" aria-label="Search"
+              className="bg-brand-gradient h-8 w-8 rounded-full text-white flex items-center justify-center shrink-0 shadow-sm transition hover:brightness-110">
+              <Search className="w-4 h-4" />
             </button>
           </form>
         </div>
