@@ -151,12 +151,13 @@ function MobileEmirateChip() {
   return (
     <Link
       href="/select-emirate"
-      className="md:hidden flex h-10 max-w-[130px] items-center gap-1 rounded-full border border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)] px-3 text-[12px] font-bold text-[color:var(--ink)] shadow-[var(--shadow-sm)] transition hover:border-[color:var(--brand-gold)] hover:brightness-[0.98] shrink-0"
+      className="md:hidden flex h-11 w-full items-center gap-2 rounded-full border border-[color:var(--brand-gold)]/40 bg-[color:var(--paper-2)] px-4 text-[13px] text-[color:var(--ink)] shadow-[var(--shadow-sm)] transition hover:border-[color:var(--brand-gold)] hover:brightness-[0.98]"
       title="Change location"
     >
       <MapPin className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
-      <span className="truncate">{emirate}</span>
-      <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-70" />
+      <span className="text-[color:var(--brand-muted)] font-medium shrink-0">Deliver to</span>
+      <span className="font-bold truncate">{emirate}</span>
+      <ChevronDown className="w-4 h-4 shrink-0 opacity-70 ms-auto" />
     </Link>
   );
 }
@@ -497,23 +498,9 @@ export function SiteHeader({
           </div>
         </div>
 
-        {/* ── Mobile Row 2: Emirate + Search ── */}
-        <div className="md:hidden border-t border-[color:var(--brand-border)] px-3.5 pt-2 pb-2.5 flex items-center gap-2">
+        {/* ── Mobile Row 2: Delivery location (search lives in the sidebar) ── */}
+        <div className="md:hidden border-t border-[color:var(--brand-border)] px-3.5 py-2">
           <MobileEmirateChip />
-          <form className="flex-1 flex items-center gap-2 rounded-full bg-white ps-4 p-1 ring-1 ring-[color:var(--brand-border)] shadow-[var(--shadow-sm)] transition focus-within:ring-2 focus-within:ring-[color:var(--brand-gold)]/50 focus-within:shadow-[var(--shadow-card)]" onSubmit={handleSearchSubmit}>
-            <Search className="w-4 h-4 shrink-0 text-[color:var(--brand-maroon)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder={isRTL ? "ابحث عن منتجات وعروض…" : "Search products, deals…"}
-              className="flex-1 h-8 bg-transparent text-[13.5px] font-medium text-[color:var(--ink)] placeholder:text-neutral-400 focus:outline-none"
-            />
-            <button type="submit" aria-label="Search"
-              className="bg-brand-gradient h-8 w-8 rounded-full text-white flex items-center justify-center shrink-0 shadow-sm transition hover:brightness-110">
-              <Search className="w-4 h-4" />
-            </button>
-          </form>
         </div>
 
         {/* ── Row 2: Desktop Nav ── */}
