@@ -28,7 +28,7 @@ export function MidBanner({ banners }: { banners: BannerItem[] }) {
             <picture>
               {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={b.image_url} alt={b.title ?? ""} className="aspect-[2/1] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105 md:aspect-[16/5]" />
+              <img src={b.image_url} alt={b.title ?? ""} className="aspect-[14/9] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105" />
             </picture>
             <span className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" aria-hidden />
             <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />
@@ -49,7 +49,7 @@ export function MidBanner({ banners }: { banners: BannerItem[] }) {
               <picture>
                 {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={b.image_url} alt={b.title ?? ""} className="aspect-[16/9] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105" />
+                <img src={b.image_url} alt={b.title ?? ""} className="aspect-[14/9] w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105" />
               </picture>
               <span className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" aria-hidden />
               <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-gold)]/60 to-transparent" aria-hidden />

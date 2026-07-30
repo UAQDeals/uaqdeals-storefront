@@ -163,7 +163,7 @@ export function HomeHero({
                       <picture>
                         {b.mobile_image_url && <source media="(max-width: 768px)" srcSet={b.mobile_image_url} />}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={b.image_url} alt={b.title ?? "Banner"} className="aspect-[2/1] w-full object-cover md:aspect-[16/5]" />
+                        <img src={b.image_url} alt={b.title ?? "Banner"} className="aspect-[14/9] w-full object-cover" />
                       </picture>
                       {b.title && (
                         <span className="absolute bottom-3 start-3 rounded-md bg-black/55 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
