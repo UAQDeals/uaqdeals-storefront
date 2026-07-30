@@ -71,7 +71,9 @@ export default async function RootLayout({
           </Suspense>
           <div className="flex min-h-[100dvh] flex-col">
             <SiteHeader showProducts={showProd} availability={availability} />
-            <main className="flex-1">{children}</main>
+            {/* min-h keeps the (tall) footer below the fold while a page's
+                content is still loading, so it never rides up under the header. */}
+            <main className="flex-1 min-h-[85dvh]">{children}</main>
             <SiteFooter showProducts={showProd} />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />
