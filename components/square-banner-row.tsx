@@ -41,7 +41,10 @@ export function SquareBannerRow({ section, isAr }: { section: SquareSection; isA
               <div>
                 {subtitle && <p className={eyebrowCls}>{subtitle}</p>}
                 {title && (
-                  <h2 className={`font-display mt-0.5 text-[24px] font-semibold tracking-tight sm:text-[28px] ${titleCls}`}>
+                  <h2
+                    className={`font-display mt-0.5 text-[24px] font-semibold tracking-tight sm:text-[28px] ${section.titleColor ? "" : titleCls}`}
+                    style={section.titleColor ? { color: section.titleColor } : undefined}
+                  >
                     {title}
                   </h2>
                 )}

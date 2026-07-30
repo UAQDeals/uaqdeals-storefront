@@ -73,6 +73,7 @@ export type SquareSection = {
   bgColor2: string | null;
   bgImageUrl: string | null;
   textLight: boolean;
+  titleColor: string | null;
   items: SquareItem[];
 };
 
@@ -103,7 +104,7 @@ export async function getSquareBanners(): Promise<Map<string, SquareSection>> {
       id: s.id, title: s.title, titleAr: s.title_ar, subtitle: s.subtitle,
       subtitleAr: s.subtitle_ar, shape: s.shape ?? "square", emirates: s.emirates ?? null,
       bgType: s.bg_type ?? "none", bgColor: s.bg_color ?? null, bgColor2: s.bg_color2 ?? null,
-      bgImageUrl: s.bg_image_url ?? null, textLight: !!s.text_light, items: [],
+      bgImageUrl: s.bg_image_url ?? null, textLight: !!s.text_light, titleColor: s.title_color ?? null, items: [],
     });
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
