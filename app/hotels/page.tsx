@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { TravelWidget } from "@/components/TravelWidget";
 
 // Paste the Travelpayouts hotel-search widget script URL here.
@@ -23,7 +24,21 @@ export default function HotelsPage() {
       </p>
       <div className="gold-rule mt-8" />
       <div className="mt-8">
-        <TravelWidget scriptSrc={HOTELS_WIDGET_SRC} minHeight={560} />
+        {HOTELS_WIDGET_SRC.startsWith("PASTE") ? (
+          <div className="premium-card p-8 text-center sm:p-12">
+            <p className="text-[15.5px] leading-relaxed text-neutral-700">
+              Hotel booking is launching soon on UAQ Deals.
+            </p>
+            <Link
+              href="/"
+              className="mt-5 inline-flex items-center gap-1.5 text-[13.5px] font-bold text-[color:var(--brand-maroon)] transition hover:text-[color:var(--brand-maroon-deep)]"
+            >
+              ← Back to home
+            </Link>
+          </div>
+        ) : (
+          <TravelWidget scriptSrc={HOTELS_WIDGET_SRC} minHeight={560} />
+        )}
       </div>
     </div>
   );
