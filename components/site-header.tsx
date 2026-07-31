@@ -598,6 +598,16 @@ export function SiteHeader({
                   {isRTL ? "السوق" : "Marketplace"}
                   <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
                 </Link>
+                <Link href="/flights"
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
+                  {isRTL ? "الطيران" : "Flights"}
+                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
+                </Link>
+                <Link href="/hotels"
+                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
+                  {isRTL ? "الفنادق" : "Hotels"}
+                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
+                </Link>
               </div>
               {showProducts && (
               <Link href="/deals"
@@ -687,6 +697,8 @@ export function SiteHeader({
                 {[
                   { label: isRTL ? "السوق" : "Marketplace", href: "/marketplace/real_estate", emoji: "🏗️" },
                   { label: t("services"), href: "/services", emoji: "🔧" },
+                  { label: isRTL ? "الطيران" : "Flights", href: "/flights", emoji: "✈️" },
+                  { label: isRTL ? "الفنادق" : "Hotels", href: "/hotels", emoji: "🏨" },
                   { label: t("account"), href: "/account", emoji: "👤" },
                   { label: t("about"), href: "/about", emoji: "ℹ️" },
                   { label: t("contact"), href: "/contact", emoji: "📞" },

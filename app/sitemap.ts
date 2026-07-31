@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/services/explore-uaq", "/services/zoo-events",
     "/services/tech-services", "/services/job-portal",
     "/services/hotel-booking", "/services/flight-booking",
+    "/flights", "/hotels",
     "/marketplace/real_estate", "/marketplace/automotive",
     "/marketplace/used_items", "/marketplace/fancy_numbers",
     "/about", "/contact", "/blog", "/privacy", "/terms",

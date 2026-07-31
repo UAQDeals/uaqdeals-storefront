@@ -67,6 +67,8 @@ const SERVICES_LINKS: FooterLink[] = [
   { key: "businessSetup", href: "/categories/business_setup" },
   { key: "exploreUaq",    href: "/services/explore-uaq" },
   { key: "hotelBooking",  href: "/services/hotel-booking" },
+  { key: "flights",       href: "/flights" },
+  { key: "hotels",        href: "/hotels" },
 ];
 
 const HELP_LINKS: FooterLink[] = [
