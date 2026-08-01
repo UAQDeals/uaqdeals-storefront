@@ -55,14 +55,14 @@ export async function TravelButtons({ showFlight = true, showHotel = true }: { s
       label: t("bookFlight"),
       sub: t("flightsWorldwide"),
       emoji: "✈️",
-      href: "/services/flight-booking",
+      href: "/flights",
       grad: ["#2E7DF6", "#1B4FC4"],
     },
     showHotel && {
       label: t("hotelsResorts"),
       sub: t("stayUnwind"),
       emoji: "🏨",
-      href: "/services/hotel-booking",
+      href: "/hotels",
       grad: ["#14B8A6", "#0D8A7C"],
     },
   ].filter(Boolean) as { label: string; sub: string; emoji: string; href: string; grad: string[] }[];

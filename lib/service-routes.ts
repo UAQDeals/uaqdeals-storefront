@@ -3,8 +3,8 @@
 export const DEDICATED: Record<string, string> = {
   business_setup:       "/services/enquiry/business_setup",
   typing_center:        "/services/enquiry/typing_center",
-  hotel_booking:        "/services/hotel-booking",
-  flight_booking:       "/services/flight-booking",
+  hotel_booking:        "/hotels",
+  flight_booking:       "/flights",
   explore_uaq:          "/services/explore-uaq",
   zoo_events:           "/services/zoo-events",
   job_portal:           "/services/job-portal",
