@@ -115,10 +115,11 @@ export function HomeHero({
                 : `Groceries, food, pharmacy, services and local listings — one super-app for all of ${placeName}.`}
             </p>
 
-            {/* Search (routes to /search) */}
+            {/* Search (routes to /search). Mobile only — on md+ the sticky site
+                header already carries a persistent search, so this would double it. */}
             <Link
               href="/search"
-              className="group mt-7 flex w-full max-w-md items-center gap-3 rounded-full bg-white p-1.5 ps-5 shadow-lg ring-1 ring-[color:var(--brand-gold)]/30 transition hover:shadow-xl"
+              className="group mt-7 flex w-full max-w-md items-center gap-3 rounded-full bg-white p-1.5 ps-5 shadow-lg ring-1 ring-[color:var(--brand-gold)]/30 transition hover:shadow-xl md:hidden"
             >
               <Search className="shrink-0 text-[color:var(--brand-maroon)]" style={{ width: 18, height: 18 }} />
               <span className="flex-1 text-[13.5px] font-medium text-neutral-400">

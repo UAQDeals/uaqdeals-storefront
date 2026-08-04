@@ -13,7 +13,8 @@ import { AppDownloadCta } from "@/components/app-download-cta";
 import { TrustBand } from "@/components/trust-band";
 import { ServiceHero } from "@/components/service-hero";
 import { ServiceQuickAccess } from "@/components/service-quick-access";
-import { ServiceRail, TravelButtons, SellGadgetsBanner } from "@/components/home-service-blocks";
+import { TravelButtons, SellGadgetsBanner } from "@/components/home-service-blocks";
+import { ServiceGrid, type ServiceGridItem } from "@/components/service-grid";
 import { GamesSpotlight } from "@/components/games-spotlight";
 import { QuickNav, type QuickNavItem } from "@/components/quick-nav";
 import { SquareBannerRow } from "@/components/square-banner-row";
@@ -232,6 +233,12 @@ export default async function HomePage() {
   const out: ReactNode[] = [];
   let travelDone = false;
   let gamesInserted = false;
+  // Every generic service/marketplace rail collapses into ONE scannable grid,
+  // anchored at the first such section's position. We reserve that slot in `out`
+  // during the loop and fill it once `serviceItems` is fully collected — the
+  // grid must not read a still-mutating array (react-hooks/immutability).
+  const serviceItems: ServiceGridItem[] = [];
+  let serviceGridSlot = -1;
   const insertGames = () => {
     if (!gamesInserted && games.length) {
       out.push(<GamesSpotlight key="games" games={games} />);
@@ -300,7 +307,11 @@ export default async function HomePage() {
           out.push(<SellGadgetsBanner key="sell" />);
         } else {
           const railTitle = isAr ? (vtNameAr.get(slug) ?? name) : name;
-          out.push(<ServiceRail key={`svc-${slug}`} title={railTitle} href={serviceHref(slug)} emoji={SLUG_EMOJI[slug] ?? "🧩"} />);
+          serviceItems.push({ title: railTitle, href: serviceHref(slug), emoji: SLUG_EMOJI[slug] ?? "🧩" });
+          if (serviceGridSlot === -1) {
+            serviceGridSlot = out.length;
+            out.push(null); // reserved; filled after the loop with the full grid
+          }
         }
       }
     }
@@ -308,6 +319,11 @@ export default async function HomePage() {
 
   // Guarantee the Games spotlight appears even if there's no flash-deals section.
   insertGames();
+
+  // Fill the reserved slot now that every service/marketplace item is collected.
+  if (serviceGridSlot !== -1) {
+    out[serviceGridSlot] = <ServiceGrid key="service-grid" items={serviceItems} />;
+  }
 
   return <>{out}</>;
 }
