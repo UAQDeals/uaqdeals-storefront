@@ -7,6 +7,7 @@ import { HomeHero } from "@/components/home-hero";
 import { DealsStrip, type DealCard } from "@/components/deals-strip";
 import { EditorialBand } from "@/components/editorial-band";
 import { ProductCarousel, type CarouselProduct } from "@/components/product-carousel";
+import { ElectronicsGrid } from "@/components/electronics-grid";
 import { MidBanner, type BannerItem } from "@/components/mid-banner";
 import { StoriesGrid } from "@/components/stories-grid";
 import { AppDownloadCta } from "@/components/app-download-cta";
@@ -229,6 +230,45 @@ export default async function HomePage() {
     ...(games.length ? [{ key: "games", label: th("games"), href: "/games" }] : []),
   ];
 
+  // ── Electronics grid (shown right under the QuickNav tiles) ──
+  //    All electronics products across the Electronics category subtree, capped
+  //    at 15 (fills 5×3 on desktop; the grid itself trims to 10 on mobile).
+  let electronicsProducts: CarouselProduct[] = [];
+  const electronicsRoot = catByName.get("Electronics");
+  if (electronicsRoot && enabledNames.has("Electronics")) {
+    const { data: allCatRows } = await supabase
+      .from("categories")
+      .select("id, parent_id")
+      .eq("is_active", true);
+    const childrenMap = new Map<string, string[]>();
+    for (const c of (allCatRows ?? []) as Row[]) {
+      if (!c.parent_id) continue;
+      const arr = childrenMap.get(c.parent_id) ?? [];
+      arr.push(c.id);
+      childrenMap.set(c.parent_id, arr);
+    }
+    const subtree = new Set<string>([electronicsRoot.id]);
+    const stack = [electronicsRoot.id];
+    while (stack.length) {
+      const cur = stack.pop()!;
+      for (const ch of childrenMap.get(cur) ?? []) {
+        if (!subtree.has(ch)) { subtree.add(ch); stack.push(ch); }
+      }
+    }
+    const { data: elecRaw } = await supabase
+      .from("products")
+      .select("id, name, price, sale_price, thumbnail_url, images")
+      .eq("status", "active")
+      .in("category_id", Array.from(subtree))
+      .order("is_featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(15);
+    electronicsProducts = ((elecRaw ?? []) as Row[]).map((p) => ({
+      id: p.id, name: p.name, price: p.price, sale_price: p.sale_price,
+      thumbnail_url: p.thumbnail_url, images: p.images ?? null,
+    }));
+  }
+
   // ── Render sections in the admin-defined order ──
   const out: ReactNode[] = [];
   let travelDone = false;
@@ -253,6 +293,17 @@ export default async function HomePage() {
     if (key === "banner_top") {
       out.push(<HomeHero key={key} banners={pos1Banners} emirate={emirate} chips={heroChips} />);
       out.push(<QuickNav key="quicknav" items={quickNavItems} />);
+      if (electronicsProducts.length) {
+        out.push(
+          <ElectronicsGrid
+            key="electronics-grid"
+            products={electronicsProducts}
+            title={isAr ? (electronicsRoot?.nameAr ?? "الإلكترونيات") : "Electronics"}
+            viewAllHref={`/shop/${electronicsRoot?.slug ?? "electronics"}`}
+            viewAllLabel={th("viewAll")}
+          />
+        );
+      }
     } else if (type === "banner_pos") {
       const b = bannersAt(Number(cfg.pos) || 0);
       if (b.length) out.push(<MidBanner key={`bp-${cfg.pos}`} banners={b} />);
