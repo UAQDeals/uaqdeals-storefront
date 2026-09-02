@@ -10,6 +10,7 @@ const EMIRATE_EXEMPT = [
   "/api",
   "/privacy",
   "/terms",
+  "/refund",
 ];
 
 export async function middleware(request: NextRequest) {

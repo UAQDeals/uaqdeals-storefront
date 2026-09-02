@@ -77,6 +77,7 @@ const HELP_LINKS: FooterLink[] = [
   { key: "about",      href: "/about" },
   { key: "terms",      href: "/terms" },
   { key: "privacy",    href: "/privacy" },
+  { key: "refund",     href: "/refund" },
 ];
 
 const SOCIALS = [
