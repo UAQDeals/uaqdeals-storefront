@@ -255,6 +255,31 @@ export function SiteHeader({
   const shopRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
 
+  // "More" links (mobile drawer's utility list) — admin-editable via
+  // Content > Menus (storefront_header_more). Empty => built-in defaults.
+  type MoreLink = { label: string; href: string; icon: string | null };
+  const [dbMoreLinks, setDbMoreLinks] = useState<MoreLink[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("nav_links")
+          .select("label, label_ar, href, icon, sort_order")
+          .eq("location", "storefront_header_more")
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true });
+        if (!cancelled && data?.length) {
+          setDbMoreLinks(
+            data.map((r: any) => ({ label: (isRTL && r.label_ar) ? r.label_ar : r.label, href: r.href, icon: r.icon ?? null }))
+          );
+        }
+      } catch (_) { /* keep built-in defaults */ }
+    })();
+    return () => { cancelled = true; };
+  }, [isRTL]);
+
   // Mobile state
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileGroup, setMobileGroup] = useState<number | null>(null);
@@ -694,18 +719,18 @@ export function SiteHeader({
               {/* Other links */}
               <div className="px-2">
                 <p className="px-3 py-2 text-[10.5px] font-bold tracking-[2px] uppercase text-neutral-400">{t("more")}</p>
-                {[
-                  { label: isRTL ? "السوق" : "Marketplace", href: "/marketplace/real_estate", emoji: "🏗️" },
-                  { label: t("services"), href: "/services", emoji: "🔧" },
-                  { label: isRTL ? "الطيران" : "Flights", href: "/flights", emoji: "✈️" },
-                  { label: isRTL ? "الفنادق" : "Hotels", href: "/hotels", emoji: "🏨" },
-                  { label: t("account"), href: "/account", emoji: "👤" },
-                  { label: t("about"), href: "/about", emoji: "ℹ️" },
-                  { label: t("contact"), href: "/contact", emoji: "📞" },
-                ].map((item) => (
+                {(dbMoreLinks ?? [
+                  { label: isRTL ? "السوق" : "Marketplace", href: "/marketplace/real_estate", icon: "🏗️" },
+                  { label: t("services"), href: "/services", icon: "🔧" },
+                  { label: isRTL ? "الطيران" : "Flights", href: "/flights", icon: "✈️" },
+                  { label: isRTL ? "الفنادق" : "Hotels", href: "/hotels", icon: "🏨" },
+                  { label: t("account"), href: "/account", icon: "👤" },
+                  { label: t("about"), href: "/about", icon: "ℹ️" },
+                  { label: t("contact"), href: "/contact", icon: "📞" },
+                ]).map((item) => (
                   <Link key={item.href} href={item.href} onClick={closeMobile}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
-                    <span className="text-xl">{item.emoji}</span>
+                    {item.icon && <span className="text-xl">{item.icon}</span>}
                     {item.label}
                   </Link>
                 ))}

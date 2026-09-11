@@ -13,8 +13,38 @@ const EMIRATE_EXEMPT = [
   "/refund",
 ];
 
+// Admin-editable via Content > Redirects (retiring old URLs without a code
+// deploy). A single indexed lookup — fails open (no redirect) on any error
+// or timeout so a slow/unreachable Supabase never blocks a request.
+async function findRedirect(pathname: string): Promise<{ to: string; status: number } | null> {
+  try {
+    const url =
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/redirects` +
+      `?from_path=eq.${encodeURIComponent(pathname)}&is_active=eq.true&select=to_path,status_code&limit=1`;
+    const res = await fetch(url, {
+      headers: {
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+      },
+      signal: AbortSignal.timeout(1200),
+    });
+    if (!res.ok) return null;
+    const rows: { to_path: string; status_code: number }[] = await res.json();
+    return rows.length ? { to: rows[0].to_path, status: rows[0].status_code } : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const redirectMatch = await findRedirect(pathname);
+  if (redirectMatch) {
+    const dest = /^https?:\/\//i.test(redirectMatch.to) ? redirectMatch.to : new URL(redirectMatch.to, request.url);
+    return NextResponse.redirect(dest, redirectMatch.status);
+  }
+
   const hasEmirate = request.cookies.has("emirate");
   const isExempt = EMIRATE_EXEMPT.some((p) => pathname === p || pathname.startsWith(p + "/") || pathname.startsWith(p));
 

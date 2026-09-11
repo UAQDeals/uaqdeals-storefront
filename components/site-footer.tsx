@@ -1,10 +1,34 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { MapPin, Phone, Mail, MessageCircle, ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/reveal";
+import { createClient } from "@/lib/supabase/server";
 
-type FooterLink = { key: string; href: string; lead?: boolean };
+type FooterLink = { key?: string; label?: string; href: string; lead?: boolean };
+
+type NavLinkRow = {
+  location: string;
+  label: string;
+  label_ar: string | null;
+  href: string;
+  is_lead: boolean;
+  sort_order: number;
+};
+
+// Admin-editable via Content > Menus. Empty for a location => fall back to
+// the built-in defaults below, so this is a zero-risk addition until an
+// admin actually adds a link.
+async function fetchFooterLinks() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("nav_links")
+    .select("location, label, label_ar, href, is_lead, sort_order")
+    .in("location", ["storefront_footer_shop", "storefront_footer_services", "storefront_footer_help"])
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  return (data ?? []) as NavLinkRow[];
+}
 
 // Brand glyphs — lucide-react removed Instagram/Facebook (trademark), so inline them.
 function InstagramIcon({ className }: { className?: string }) {
@@ -118,7 +142,7 @@ function FooterColumn({
                   : "text-[12.5px] text-white/55 transition-colors hover:text-[color:var(--brand-gold)]"
               }
             >
-              {t(l.key)}
+              {l.label ?? t(l.key!)}
             </Link>
           </li>
         ))}
@@ -139,7 +163,22 @@ function FooterColumn({
 export async function SiteFooter({ showProducts = true }: { showProducts?: boolean }) {
   const t = await getTranslations("common");
   const tf = await getTranslations("footer");
+  const locale = await getLocale();
   const year = new Date().getFullYear();
+
+  const dbLinks = await fetchFooterLinks();
+  const toFooterLinks = (rows: NavLinkRow[]): FooterLink[] =>
+    rows
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((r) => ({ label: locale === "ar" && r.label_ar ? r.label_ar : r.label, href: r.href, lead: r.is_lead }));
+
+  const dbShop = toFooterLinks(dbLinks.filter((r) => r.location === "storefront_footer_shop"));
+  const dbServices = toFooterLinks(dbLinks.filter((r) => r.location === "storefront_footer_services"));
+  const dbHelp = toFooterLinks(dbLinks.filter((r) => r.location === "storefront_footer_help"));
+
+  const shopLinks = dbShop.length ? dbShop : SHOP_LINKS;
+  const servicesLinks = dbServices.length ? dbServices : SERVICES_LINKS;
+  const helpLinks = dbHelp.length ? dbHelp : HELP_LINKS;
 
   return (
     <footer
@@ -230,7 +269,7 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
           {showProducts && (
             <FooterColumn
               title={tf("colShop")}
-              links={SHOP_LINKS}
+              links={shopLinks}
               cta={{ label: tf("sellCta"), href: "/vendor/signup" }}
               t={tf}
             />
@@ -239,13 +278,13 @@ export async function SiteFooter({ showProducts = true }: { showProducts?: boole
           {/* Services */}
           <FooterColumn
             title={tf("colServices")}
-            links={SERVICES_LINKS}
+            links={servicesLinks}
             cta={{ label: tf("listCta"), href: "/vendor/signup" }}
             t={tf}
           />
 
           {/* Help */}
-          <FooterColumn title={tf("colHelp")} links={HELP_LINKS} t={tf} />
+          <FooterColumn title={tf("colHelp")} links={helpLinks} t={tf} />
         </div>
       </Reveal>
 
