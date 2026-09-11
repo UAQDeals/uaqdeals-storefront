@@ -11,6 +11,11 @@ const EMIRATE_EXEMPT = [
   "/privacy",
   "/terms",
   "/refund",
+  // Crawlers/feed-fetchers (Google, Meta, search bots) never carry the
+  // emirate cookie a browser sets, so these must stay ungated.
+  "/feed",
+  "/sitemap.xml",
+  "/robots.txt",
 ];
 
 // Admin-editable via Content > Redirects (retiring old URLs without a code
