@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Check, Package, ShoppingBag, Truck } from "lucide-react";
+import { Check, FileText, Package, ShoppingBag, Truck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations, getLocale } from "next-intl/server";
 import { aed } from "@/lib/format";
@@ -223,6 +223,9 @@ export default async function OrderConfirmationPage({
       </section>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <Link href={`/orders/${order.id}/invoice`} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-border)] bg-white px-6 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:border-[color:var(--brand-maroon)]">
+          <FileText className="h-4 w-4" /> {t("viewInvoice")}
+        </Link>
         <Link href="/orders" className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-border)] bg-white px-6 py-3 text-sm font-semibold text-[color:var(--brand-maroon)] transition hover:border-[color:var(--brand-maroon)]">
           <Package className="h-4 w-4" /> {tord("title")}
         </Link>
