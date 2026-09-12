@@ -119,6 +119,13 @@ const SUGGESTIONS_DEFAULT = [
 
 type Suggestion = { type: "product" | "deal" | "category"; label: string; href: string };
 
+// The desktop nav strip's secondary links (Services/Marketplace/Flights/Hotels)
+// pull from the same storefront_header_more admin-editable set as the mobile
+// "more" list, filtered to just these — so hiding/reordering/renaming one in
+// Content > Menus is reflected on desktop too, without pulling in the
+// account/about/contact utility links that only ever showed on mobile.
+const DESKTOP_MORE_HREFS = new Set(["/services", "/marketplace/real_estate", "/flights", "/hotels"]);
+
 
 function DealsMark({ size = 16 }: { size?: number }) {
   const gid = useId();
@@ -613,26 +620,20 @@ export function SiteHeader({
                 ))}
                 <div className="w-px h-4 bg-neutral-200 mx-1" />
                 </>)}
-                <Link href="/services"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
-                  {t("services")}
-                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
-                </Link>
-                <Link href="/marketplace/real_estate"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
-                  {isRTL ? "السوق" : "Marketplace"}
-                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
-                </Link>
-                <Link href="/flights"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
-                  {isRTL ? "الطيران" : "Flights"}
-                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
-                </Link>
-                <Link href="/hotels"
-                  className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
-                  {isRTL ? "الفنادق" : "Hotels"}
-                  <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
-                </Link>
+                {(dbMoreLinks ?? [
+                  { label: t("services"), href: "/services", icon: null },
+                  { label: isRTL ? "السوق" : "Marketplace", href: "/marketplace/real_estate", icon: null },
+                  { label: isRTL ? "الطيران" : "Flights", href: "/flights", icon: null },
+                  { label: isRTL ? "الفنادق" : "Hotels", href: "/hotels", icon: null },
+                ])
+                  .filter((l) => DESKTOP_MORE_HREFS.has(l.href))
+                  .map((l) => (
+                    <Link key={l.href} href={l.href}
+                      className="relative px-3 py-3 text-[13px] font-semibold text-neutral-700 whitespace-nowrap group transition-colors hover:text-[color:var(--brand-maroon)]">
+                      {l.label}
+                      <span className="accent-bar absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 rounded-full transition-all duration-200 group-hover:w-full" />
+                    </Link>
+                  ))}
               </div>
               {showProducts && (
               <Link href="/deals"
