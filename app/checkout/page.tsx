@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { CheckoutForm } from "@/components/checkout-form";
+import { getNomodConfig } from "@/lib/payments/nomod";
 
 export async function generateMetadata() {
   const t = await getTranslations("checkout");
@@ -17,7 +18,7 @@ export default async function CheckoutPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/checkout");
 
-  const [{ data: profile }, { data: wallet }, { data: emiratesRaw }, { data: settingsRaw }] = await Promise.all([
+  const [{ data: profile }, { data: wallet }, { data: emiratesRaw }, { data: settingsRaw }, nomodConfig] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, phone_number, email, emirate, wallet_balance")
@@ -39,6 +40,7 @@ export default async function CheckoutPage() {
       .from("app_settings")
       .select("key, value")
       .in("key", ["pickup_enabled", "pickup_location", "service_charge_aed"]),
+    getNomodConfig(),
   ]);
 
   const emirates = (emiratesRaw ?? []).map((e) => ({
@@ -76,6 +78,7 @@ export default async function CheckoutPage() {
           emirates={emirates}
           fulfilment={fulfilment}
           defaultEmirate={defaultEmirate}
+          onlinePaymentEnabled={Boolean(nomodConfig)}
         />
       </div>
     </div>

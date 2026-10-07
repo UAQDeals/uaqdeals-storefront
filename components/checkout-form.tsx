@@ -56,6 +56,7 @@ export function CheckoutForm({
   emirates,
   fulfilment,
   defaultEmirate,
+  onlinePaymentEnabled,
 }: {
   userId: string;
   initialProfile: InitialProfile;
@@ -64,6 +65,7 @@ export function CheckoutForm({
   emirates: EmirateOpt[];
   fulfilment: Fulfilment;
   defaultEmirate: string | null;
+  onlinePaymentEnabled: boolean;
 }) {
   const t = useTranslations("checkout");
   const tc = useTranslations("common");
@@ -96,6 +98,7 @@ export function CheckoutForm({
 
   const [useCoins, setUseCoins] = useState(false);
   const [useWallet, setUseWallet] = useState(false);
+  const [payOnline, setPayOnline] = useState(false);
   const [placing, setPlacing] = useState(false);
 
   const pickup = fulfilmentType === "pickup";
@@ -326,6 +329,10 @@ export function CheckoutForm({
         p_lng: pickup ? null : mapLng,
         p_emirate: emirate,
         p_fulfilment_type: fulfilmentType,
+        // place_order_v3's payment_method is a fixed DB enum with no 'nomod'
+        // value — 'card' is the generic online-payment bucket; the specific
+        // instrument (card/Apple Pay/Tabby/...) is recorded by the webhook.
+        p_payment_method: payOnline ? "card" : "cod",
       });
 
       if (error || !orderId) {
@@ -395,6 +402,23 @@ export function CheckoutForm({
       }
 
       clear();
+
+      if (payOnline) {
+        const res = await fetch("/api/payments/nomod/create-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId }),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || !body.url) {
+          toast.error(body.error ?? t("orderFailed"));
+          window.location.assign(`/orders/${orderId}`);
+          return;
+        }
+        window.location.assign(body.url);
+        return;
+      }
+
       toast.success(t("orderPlaced"));
       window.location.assign(`/orders/${orderId}`);
     } catch (e) {
@@ -520,14 +544,26 @@ export function CheckoutForm({
 
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
           <h2 className="eyebrow">{t("payment")}</h2>
-          <div className="mt-4 flex items-start gap-3 rounded-xl border-2 border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)] p-4">
-            <input type="radio" checked readOnly className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]" />
-            <div>
-              <p className="text-sm font-semibold">{t("cod")}</p>
-              <p className="text-xs text-neutral-600">{t("codDesc")}</p>
-            </div>
+          <div className="mt-4 space-y-3">
+            <label className={"flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-colors " + (!payOnline ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]" : "border-[color:var(--brand-border)]")}>
+              <input type="radio" name="payment" checked={!payOnline} onChange={() => setPayOnline(false)} className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]" />
+              <div>
+                <p className="text-sm font-semibold">{t("cod")}</p>
+                <p className="text-xs text-neutral-600">{t("codDesc")}</p>
+              </div>
+            </label>
+            {onlinePaymentEnabled ? (
+              <label className={"flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-colors " + (payOnline ? "border-[color:var(--brand-maroon)] bg-[color:var(--brand-cream)]" : "border-[color:var(--brand-border)]")}>
+                <input type="radio" name="payment" checked={payOnline} onChange={() => setPayOnline(true)} className="mt-1 h-4 w-4 accent-[color:var(--brand-maroon)]" />
+                <div>
+                  <p className="text-sm font-semibold">{t("payOnline")}</p>
+                  <p className="text-xs text-neutral-600">{t("payOnlineDesc")}</p>
+                </div>
+              </label>
+            ) : (
+              <p className="text-xs text-neutral-500">{t("cardsSoon")}</p>
+            )}
           </div>
-          <p className="mt-2 text-xs text-neutral-500">{t("cardsSoon")}</p>
         </section>
 
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">

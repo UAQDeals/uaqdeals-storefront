@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Check, FileText, Package, ShoppingBag, Truck } from "lucide-react";
+import { Check, Clock3, FileText, Package, ShoppingBag, Truck, XCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations, getLocale } from "next-intl/server";
 import { aed } from "@/lib/format";
 import { Reveal } from "@/components/reveal";
+import { RetryPaymentButton } from "@/components/retry-payment-button";
 
 export async function generateMetadata() {
   const t = await getTranslations("orderConfirm");
@@ -27,10 +28,13 @@ type Row = any;
 
 export default async function OrderConfirmationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ payment?: string }>;
 }) {
   const { id } = await params;
+  const { payment } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,7 +50,7 @@ export default async function OrderConfirmationPage({
 
   const { data: order } = await supabase
     .from("orders")
-    .select("id, order_number, status, payment_method, subtotal, delivery_fee, coupon_discount, coin_discount, wallet_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, fulfilment_type, courier_id, tracking_number, couriers(name), order_items(*, products(thumbnail_url, name))")
+    .select("id, order_number, status, payment_method, payment_status, subtotal, delivery_fee, coupon_discount, coin_discount, wallet_discount, total, coins_earned, coins_redeemed, delivery_address, delivery_notes, expected_delivery_date, created_at, parent_order_id, vendor_id, delivery_tier, fulfilment_type, courier_id, tracking_number, couriers(name), order_items(*, products(thumbnail_url, name))")
     .eq("id", id)
     .eq("customer_id", user.id)
     .maybeSingle();
@@ -83,8 +87,29 @@ export default async function OrderConfirmationPage({
     : (order.order_items ?? []) as Row[];
   const ref = order.order_number ?? String(order.id).slice(0, 8).toUpperCase();
 
+  // Online-payment orders: the webhook is the source of truth for
+  // payment_status, not the redirect query string — it may lag a few
+  // seconds behind landing on this page.
+  const isOnlineOrder = order.payment_method === "card";
+  const isUnpaid = isOnlineOrder && order.payment_status !== "paid" && order.payment_status !== "refunded";
+  const showConfirming = isUnpaid && payment === "success";
+  const showFailed = isUnpaid && payment === "failed";
+
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 md:px-8">
+      {(showConfirming || showFailed) && (
+        <div className={"mb-6 flex items-start gap-3 rounded-2xl border p-4 text-sm " + (showFailed ? "border-red-200 bg-red-50 text-red-800" : "border-amber-200 bg-amber-50 text-amber-800")}>
+          {showFailed ? <XCircle className="mt-0.5 h-5 w-5 shrink-0" /> : <Clock3 className="mt-0.5 h-5 w-5 shrink-0" />}
+          <div className="flex-1">
+            <p className="font-medium">{showFailed ? t("paymentFailed") : t("paymentConfirming")}</p>
+            {showFailed && (
+              <div className="mt-3">
+                <RetryPaymentButton orderId={order.id} label={t("retryPayment")} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <Reveal className="flex flex-col items-center text-center">
         <span className="bg-brand-gradient inline-flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[var(--shadow-card)] ring-4 ring-[color:var(--brand-gold)]/20">
           <Check className="h-7 w-7" />
@@ -136,8 +161,14 @@ export default async function OrderConfirmationPage({
         </section>
         <section className="rounded-2xl border border-[color:var(--brand-border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6">
           <h2 className="eyebrow">{t("paymentSection")}</h2>
-          <p className="mt-3 text-sm font-medium">{order.payment_method === "cod" ? tco("cod") : order.payment_method}</p>
-          <p className="mt-1 text-xs text-neutral-500">{t("payAt", { amount: aed(order.total) })}</p>
+          <p className="mt-3 text-sm font-medium">{isOnlineOrder ? tco("payOnline") : tco("cod")}</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            {isOnlineOrder
+              ? order.payment_status === "paid"
+                ? t("paidOnline", { amount: aed(order.total) })
+                : t("paymentPending", { amount: aed(order.total) })
+              : t("payAt", { amount: aed(order.total) })}
+          </p>
         </section>
       </div>
 
