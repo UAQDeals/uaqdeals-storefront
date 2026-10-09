@@ -11,6 +11,7 @@ const EMIRATE_EXEMPT = [
   "/privacy",
   "/terms",
   "/refund",
+  "/delete-account",
   // Crawlers/feed-fetchers (Google, Meta, search bots) never carry the
   // emirate cookie a browser sets, so these must stay ungated.
   "/feed",
