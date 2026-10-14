@@ -27,6 +27,71 @@ function mapPaymentMethod(nomodMethod: string | null): "card" | "tabby" {
   return (nomodMethod ?? "").toLowerCase() === "tabby" ? "tabby" : "card";
 }
 
+// Credits a vendor's wallet for a completed Nomod top-up. The topup row is the
+// source of truth for the amount (never trust the webhook's total): we only act
+// on a row that's still 'pending', which also dedupes webhook retries.
+async function handleWalletTopup(
+  svc: ReturnType<typeof createServiceClient>,
+  topupId: string,
+  eventType: string,
+  charge: { chargeId: string; amount: number; currency: string },
+) {
+  const { data: topup } = await svc
+    .from("vendor_wallet_topups")
+    .select("id, vendor_id, amount, status")
+    .eq("id", topupId)
+    .maybeSingle();
+
+  if (!topup) return NextResponse.json({ ok: true }); // unknown ref — ack, don't retry
+
+  switch (eventType) {
+    case "charge.completed": {
+      if (topup.status === "paid") return NextResponse.json({ ok: true }); // already credited
+      const creditAmount = Number(topup.amount);
+      // Credit atomically via the same RPC the rest of the app uses; it writes
+      // the ledger row and updates vendors.wallet_balance in one transaction.
+      const { error: creditErr } = await svc.rpc("adjust_vendor_wallet", {
+        p_vendor_id: topup.vendor_id,
+        p_type: "credit",
+        p_amount: creditAmount,
+        p_description: "Wallet top-up via Nomod",
+        p_reference_type: "topup",
+        p_reference_id: topup.id,
+      });
+      if (creditErr) {
+        // Don't mark paid — let Nomod retry the webhook so we don't drop a credit.
+        return NextResponse.json({ error: "Failed to credit wallet" }, { status: 500 });
+      }
+      await svc
+        .from("vendor_wallet_topups")
+        .update({
+          status: "paid",
+          gateway_ref: charge.chargeId,
+          paid_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", topup.id);
+      break;
+    }
+    case "charge.failed":
+    case "charge.cancelled": {
+      if (topup.status === "pending") {
+        await svc
+          .from("vendor_wallet_topups")
+          .update({ status: "failed", gateway_ref: charge.chargeId, updated_at: new Date().toISOString() })
+          .eq("id", topup.id);
+      }
+      break;
+    }
+    default:
+      // charge.created / refunds / disputes — no wallet action; refunds on
+      // top-ups are handled manually (would require a debit + payout reversal).
+      break;
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
 export async function POST(req: Request) {
   const rawBody = await req.text();
   const svixId = req.headers.get("svix-id");
@@ -62,11 +127,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const orderId = String(event.data.referenceId);
+  const reference = String(event.data.referenceId);
   const chargeId = event.data.id;
   const amount = Number(event.data.total) || 0;
   const currency = event.data.currency || "AED";
   const method = mapPaymentMethod(event.data.paymentMethod);
+
+  // Vendor wallet top-ups (started by /api/payments/wallet/nomod/create-topup)
+  // carry a "wtop_<topupId>" reference instead of a bare order UUID. They credit
+  // the vendor wallet rather than flipping an order's payment_status.
+  if (reference.startsWith("wtop_")) {
+    return handleWalletTopup(svc, reference.slice(5), event.type, { chargeId, amount, currency });
+  }
+
+  const orderId = reference;
 
   async function recordPayment(status: "paid" | "failed" | "refunded", notes?: string) {
     // Dedupe webhook retries: skip if we've already logged this exact
