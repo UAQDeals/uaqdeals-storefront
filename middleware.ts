@@ -8,6 +8,7 @@ const EMIRATE_EXEMPT = [
   "/login",
   "/vendor",
   "/api",
+  "/wallet-topup",
   "/privacy",
   "/terms",
   "/refund",
