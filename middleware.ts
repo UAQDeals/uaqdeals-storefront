@@ -62,11 +62,14 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.searchParams.has("init_marker") ||
     request.nextUrl.searchParams.has("init_trs");
 
-  // First-visit: no emirate selected yet → send to the selector.
+  // First-visit: no emirate selected yet → send to the selector, remembering
+  // where the visitor was headed so we can return them there afterwards.
   if (!hasEmirate && !isExempt && !isTpVerify) {
+    const next = pathname + request.nextUrl.search;
     const url = request.nextUrl.clone();
     url.pathname = "/select-emirate";
     url.search = "";
+    if (next !== "/") url.searchParams.set("next", next);
     return NextResponse.redirect(url);
   }
 

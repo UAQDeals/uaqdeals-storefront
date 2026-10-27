@@ -4,7 +4,21 @@ import { Reveal } from "@/components/reveal";
 
 export const metadata = { title: "Choose Your Emirate — UAQ Deals" };
 
-export default function SelectEmiratePage() {
+// Only ever redirect back into our own app — never follow an absolute or
+// protocol-relative URL supplied via the query string.
+function safeNext(next: string | string[] | undefined): string {
+  const value = Array.isArray(next) ? next[0] : next;
+  if (value && value.startsWith("/") && !value.startsWith("//")) return value;
+  return "/";
+}
+
+export default async function SelectEmiratePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string | string[] }>;
+}) {
+  const next = safeNext((await searchParams).next);
+
   return (
     <section className="bg-maroon-radial relative min-h-screen w-full overflow-hidden">
       {/* gold hairline + soft decorative glows */}
@@ -28,7 +42,7 @@ export default function SelectEmiratePage() {
         </Reveal>
 
         <Reveal delay={120}>
-          <EmirateGrid emirates={ALL_EMIRATES} />
+          <EmirateGrid emirates={ALL_EMIRATES} next={next} />
         </Reveal>
 
         <p className="mt-9 text-center text-[12px] leading-relaxed text-white/60">

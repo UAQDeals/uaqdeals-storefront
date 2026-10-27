@@ -7,7 +7,7 @@ import { selectEmirate } from "./actions";
 
 type Em = { name: string; emoji: string; full: boolean; grad: string[] };
 
-export function EmirateGrid({ emirates }: { emirates: Em[] }) {
+export function EmirateGrid({ emirates, next = "/" }: { emirates: Em[]; next?: string }) {
   const router = useRouter();
   const [picking, setPicking] = useState<string | null>(null);
 
@@ -15,7 +15,7 @@ export function EmirateGrid({ emirates }: { emirates: Em[] }) {
     setPicking(name);
     try {
       await selectEmirate(name);
-      router.push("/");
+      router.push(next);
       router.refresh();
     } catch (e) {
       setPicking(null);
