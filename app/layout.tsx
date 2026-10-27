@@ -70,15 +70,20 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <TopLoader />
           </Suspense>
-          <div className="flex min-h-[100dvh] flex-col">
+          <div className="flex min-h-[100lvh] flex-col">
             <SiteHeader showProducts={showProd} availability={availability} />
             {/* Reserve a full viewport for the content area so the (tall) footer
                 stays below the fold while a page is still loading — including the
-                window where above-the-fold images haven't sized yet. A full 100dvh
+                window where above-the-fold images haven't sized yet. A full 100lvh
                 (not 85) is needed so it holds on tall desktop monitors too, where a
-                header + 85dvh still left the footer peeking. Loaded, content-rich
-                pages are far taller than this, so the floor only bites transiently. */}
-            <main className="flex-1 min-h-[100dvh]">{children}</main>
+                header + 85lvh still left the footer peeking. Loaded, content-rich
+                pages are far taller than this, so the floor only bites transiently.
+                Uses lvh (large viewport height), not dvh: dvh actively recalculates
+                as a mobile browser's toolbar collapses/expands while the page loads,
+                so a dvh-sized floor can itself shrink mid-load and let the footer
+                flash into view. lvh is the static, maximum viewport size and never
+                recalculates, so the floor can't collapse out from under the footer. */}
+            <main className="flex-1 min-h-[100lvh]">{children}</main>
             <SiteFooter showProducts={showProd} />
           </div>
           <Toaster richColors position="top-center" dir={isRTL ? "rtl" : "ltr"} />

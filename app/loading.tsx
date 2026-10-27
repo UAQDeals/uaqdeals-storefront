@@ -5,7 +5,7 @@
  */
 export default function Loading() {
   return (
-    <div className="flex min-h-[80dvh] w-full flex-col items-center justify-center gap-4">
+    <div className="flex min-h-[100lvh] w-full flex-col items-center justify-center gap-4">
       <div
         className="h-11 w-11 animate-spin rounded-full border-[3px] border-[color:var(--brand-border)] border-t-[color:var(--brand-maroon)]"
         role="status"
