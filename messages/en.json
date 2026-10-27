@@ -554,5 +554,580 @@
     "edList2Cta": "Browse listings",
     "svcGridEyebrow": "All in one place",
     "svcGridTitle": "Services & Local Listings"
+  },
+  "umrahPlatform": {
+    "metaTitle": "Umrah Booking Growth & Management Platform",
+    "metaDescription": "Proposal: a digital platform for Umrah package promotion, customer acquisition and booking management — built for Umm Al Quwain travel teams.",
+    "hero": {
+      "eyebrow": "Business & Technology Proposal",
+      "title": "Umrah Booking Growth & Management Platform",
+      "subtitle": "Umrah Package Promotion, Customer Acquisition & Booking Management System for Umm Al Quwain's travel teams — from package discovery to confirmed booking.",
+      "preparedForLabel": "Prepared for",
+      "preparedFor": "UAQ Deals",
+      "location": "Umm Al Quwain, UAE",
+      "status": "Proposed Implementation Plan"
+    },
+    "toc": {
+      "summary": "Summary",
+      "objectives": "Objectives",
+      "services": "Services",
+      "conversion": "Conversion",
+      "dashboards": "Dashboards",
+      "revenue": "Revenue",
+      "kpis": "KPIs",
+      "technical": "Technical",
+      "roadmap": "Roadmap",
+      "risk": "Risk",
+      "priorities": "Priorities",
+      "value": "Value",
+      "conclusion": "Conclusion"
+    },
+    "execSummary": {
+      "eyebrow": "01 — Executive Summary",
+      "title": "A growth platform, not just an ad listing",
+      "p1": "UAQ Deals aims to develop a digital platform that helps Umrah travel teams promote their packages, attract potential pilgrims, manage customer enquiries, improve sales follow-ups and convert enquiries into confirmed bookings.",
+      "p2": "The proposed application combines a public-facing Umrah package marketplace with a business management dashboard for participating travel teams — providing an end-to-end booking growth workflow, from package discovery and customer enquiry to sales follow-up, booking confirmation and performance reporting.",
+      "p3": "The main objective is to create a scalable digital service that benefits customers, Umrah operators and UAQ Deals."
+    },
+    "objectivesSection": {
+      "eyebrow": "02 — Business Objectives",
+      "title": "What the platform is built to achieve",
+      "items": [
+        "Increase the number of qualified Umrah package enquiries.",
+        "Help participating travel teams attract new customers.",
+        "Convert more enquiries into confirmed bookings through structured follow-ups.",
+        "Make Umrah packages easier to discover and compare.",
+        "Centralise customer enquiries and booking records.",
+        "Improve sales team productivity and accountability.",
+        "Establish sustainable revenue streams for UAQ Deals.",
+        "Build long-term relationships with customers and travel partners."
+      ]
+    },
+    "services": {
+      "eyebrow": "03 — Proposed Application Services",
+      "title": "Eight modules, one booking workflow",
+      "list": [
+        {
+          "title": "3.1 — Umrah Package Marketplace",
+          "desc": "Participating travel teams publish packages that customers can browse, compare and enquire about directly.",
+          "items": [
+            "Package name and description",
+            "Total price and applicable conditions",
+            "Departure date and duration",
+            "Flight information, where confirmed",
+            "Makkah and Madinah hotel details",
+            "Room and transport arrangements",
+            "Meals and other inclusions",
+            "Visa assistance details, where applicable",
+            "Available seats, based on verified operator information",
+            "Terms, cancellation conditions and exclusions",
+            "Contact details and enquiry options"
+          ]
+        },
+        {
+          "title": "3.2 — Customer Enquiry Generation",
+          "desc": "Multiple enquiry channels, each linked to a package and, where possible, its original marketing source — so teams can see which campaigns generate genuine interest.",
+          "items": [
+            "Website enquiry forms",
+            "WhatsApp enquiry links",
+            "Package-specific contact buttons",
+            "Group and family enquiry forms",
+            "Social media campaign links",
+            "Referral links",
+            "Promotional landing pages"
+          ]
+        },
+        {
+          "title": "3.3 — Customer Relationship Management (CRM)",
+          "desc": "A central CRM organises every enquiry and customer interaction, with controlled access and duplicate-lead detection.",
+          "items": [
+            "Customer name and contact details",
+            "Preferred package",
+            "Expected departure period",
+            "Number of travellers",
+            "Enquiry source",
+            "Assigned sales representative",
+            "Last contact date",
+            "Next follow-up date",
+            "Notes and customer preferences",
+            "Current enquiry status"
+          ],
+          "note": "Recommended lead statuses: New → Contacted → Interested → Follow-up Required → Booking Pending → Confirmed / Lost."
+        },
+        {
+          "title": "3.4 — Sales Team Management",
+          "desc": "Each participating travel team gets a dedicated workspace with role-based permissions.",
+          "items": [
+            "Create and manage staff accounts",
+            "Assign leads to sales representatives",
+            "Monitor follow-up activity",
+            "View individual and team performance",
+            "Track lead-to-booking conversion rates",
+            "Identify overdue follow-ups",
+            "Review booking history and changes"
+          ]
+        },
+        {
+          "title": "3.5 — Booking Management",
+          "desc": "The booking module organises the customer journey after an enquiry, distinguishing an enquiry, a booking request and a confirmed booking.",
+          "items": [
+            "1. Customer submits an enquiry",
+            "2. Sales staff contact the customer",
+            "3. Travel team confirms package details and availability",
+            "4. Customer receives booking terms and payment instructions",
+            "5. Operator records the booking and payment status",
+            "6. Customer receives a booking confirmation",
+            "7. Team manages pre-departure communication"
+          ],
+          "note": "A booking must not be marked confirmed until the authorised operator verifies the necessary details."
+        },
+        {
+          "title": "3.6 — WhatsApp Communication & Follow-up",
+          "desc": "WhatsApp as a key customer communication channel, using authorised integrations where required.",
+          "items": [
+            "Package-specific WhatsApp enquiry buttons",
+            "Pre-filled enquiry messages",
+            "Follow-up reminders",
+            "Booking confirmation message templates",
+            "Payment reminder templates",
+            "Departure information messages",
+            "Post-trip feedback requests"
+          ]
+        },
+        {
+          "title": "3.7 — Digital Marketing Support",
+          "desc": "Marketing tools for participating teams, with reports showing which sources produce enquiries and confirmed bookings.",
+          "items": [
+            "Package poster creation",
+            "Social media promotional creatives",
+            "Campaign-specific landing pages",
+            "Shareable package links",
+            "Referral campaign materials",
+            "Featured package placement",
+            "Promotional offer management",
+            "Campaign enquiry tracking"
+          ]
+        },
+        {
+          "title": "3.8 — Customer Assistance & Package Comparison",
+          "desc": "Useful information surfaced before a customer ever contacts a sales representative. All published details are verified by the responsible operator and kept up to date.",
+          "items": [
+            "Frequently asked questions",
+            "Package comparison",
+            "Hotel and transport information",
+            "Trip duration comparison",
+            "Group booking requests",
+            "Family travel enquiries",
+            "Contact support",
+            "Pre-departure information"
+          ]
+        }
+      ]
+    },
+    "breakQuote": "“Attract. Capture. Qualify. Follow up. Convert. Retain.”",
+    "breakImgAlt": "Pilgrims performing Umrah at the Kaaba",
+    "conversion": {
+      "eyebrow": "04 — Booking Conversion Strategy",
+      "title": "Not just enquiries — confirmed bookings",
+      "stages": [
+        {
+          "title": "Attract",
+          "desc": "Publish relevant packages and promote them through approved digital marketing channels."
+        },
+        {
+          "title": "Capture",
+          "desc": "Make it easy for customers to enquire through a short form or WhatsApp."
+        },
+        {
+          "title": "Qualify",
+          "desc": "Identify the customer's preferred dates, budget, group size and travel requirements."
+        },
+        {
+          "title": "Follow Up",
+          "desc": "Assign a sales representative and schedule appropriate follow-up reminders."
+        },
+        {
+          "title": "Convert",
+          "desc": "Help the operator confirm availability, provide accurate information and explain payment terms."
+        },
+        {
+          "title": "Retain",
+          "desc": "Request feedback after the trip and encourage referrals through approved referral programmes."
+        }
+      ]
+    },
+    "dashboards": {
+      "eyebrow": "05 — Recommended Dashboards",
+      "title": "Three roles, three focused views",
+      "cards": [
+        {
+          "title": "Admin Dashboard",
+          "items": [
+            "Total participating travel teams",
+            "Published packages",
+            "New customer enquiries",
+            "Enquiries awaiting follow-up",
+            "Confirmed bookings",
+            "Booking conversion rate",
+            "Campaign performance",
+            "Partner subscription status",
+            "Revenue and commission records"
+          ]
+        },
+        {
+          "title": "Travel Team Dashboard",
+          "items": [
+            "Its own packages",
+            "Assigned leads",
+            "Customer enquiries",
+            "Follow-up reminders",
+            "Booking records",
+            "Payment status",
+            "Sales representative performance",
+            "Reports for its own operations"
+          ]
+        },
+        {
+          "title": "Sales Representative Dashboard",
+          "items": [
+            "View assigned leads",
+            "Contact customers",
+            "Update enquiry statuses",
+            "Schedule follow-ups",
+            "Record relevant customer notes",
+            "Track their own conversion performance"
+          ]
+        }
+      ]
+    },
+    "revenue": {
+      "eyebrow": "06 — Revenue Model",
+      "title": "How UAQ Deals monetises the platform",
+      "colStream": "Revenue stream",
+      "colDesc": "Description",
+      "rows": [
+        {
+          "stream": "Partner subscription",
+          "desc": "Monthly or annual fee for team dashboard access"
+        },
+        {
+          "stream": "Featured listings",
+          "desc": "Fee for additional package visibility"
+        },
+        {
+          "stream": "Marketing services",
+          "desc": "Charges for promotional design and campaign management"
+        },
+        {
+          "stream": "Qualified leads",
+          "desc": "Agreed fee for eligible, genuine customer enquiries"
+        },
+        {
+          "stream": "Booking commission",
+          "desc": "Contractually agreed commission on eligible confirmed bookings"
+        },
+        {
+          "stream": "Premium reporting",
+          "desc": "Advanced reporting and management tools"
+        }
+      ],
+      "note": "Recommended approach: begin with a clear partner subscription or marketing service offering, then introduce additional revenue models once demand and operating costs are understood. Any commission or travel-related commercial arrangement must follow applicable UAE licensing and regulatory requirements."
+    },
+    "kpis": {
+      "eyebrow": "07 — Key Performance Indicators",
+      "title": "How success will be measured",
+      "colKpi": "KPI",
+      "colPurpose": "Purpose",
+      "rows": [
+        {
+          "kpi": "Total enquiries",
+          "purpose": "Measures customer interest"
+        },
+        {
+          "kpi": "Qualified enquiries",
+          "purpose": "Measures the quality of leads"
+        },
+        {
+          "kpi": "Contact response time",
+          "purpose": "Measures sales responsiveness"
+        },
+        {
+          "kpi": "Follow-up completion rate",
+          "purpose": "Measures consistency"
+        },
+        {
+          "kpi": "Enquiry-to-booking conversion",
+          "purpose": "Measures sales effectiveness"
+        },
+        {
+          "kpi": "Cost per qualified lead",
+          "purpose": "Measures marketing efficiency"
+        },
+        {
+          "kpi": "Cost per confirmed booking",
+          "purpose": "Measures acquisition cost"
+        },
+        {
+          "kpi": "Revenue per partner",
+          "purpose": "Measures commercial performance"
+        },
+        {
+          "kpi": "Customer satisfaction",
+          "purpose": "Measures service quality"
+        },
+        {
+          "kpi": "Referral-generated bookings",
+          "purpose": "Measures customer advocacy"
+        }
+      ],
+      "note": "Baseline performance should be measured during the initial pilot. Targets should be established using actual results rather than unsupported estimates."
+    },
+    "technical": {
+      "eyebrow": "08 — Technical Requirements",
+      "title": "Core components the build must include",
+      "items": [
+        "Responsive website suitable for mobile devices",
+        "Secure database and authenticated user accounts",
+        "Separate administrator, manager and staff permissions",
+        "Package management module",
+        "CRM and lead assignment module",
+        "Booking and payment-status tracking",
+        "WhatsApp integration options",
+        "Search and package filtering",
+        "Reporting and analytics",
+        "Notification and reminder system",
+        "Backup and recovery procedures",
+        "Audit logs for important actions"
+      ],
+      "note": "If the platform later supports online payments, the payment gateway should be integrated securely — the application must not store raw payment card details. Passport and other sensitive traveller information should be collected only when necessary, protected through encryption and restricted access, and retained according to applicable requirements."
+    },
+    "roadmap": {
+      "eyebrow": "09 — Implementation Roadmap",
+      "title": "From planning to growth, in four phases",
+      "phases": [
+        {
+          "phase": "Phase 1",
+          "title": "Planning",
+          "items": [
+            "Confirm the business model",
+            "Identify participating travel teams",
+            "Define package publication requirements",
+            "Agree on lead ownership and commercial terms",
+            "Confirm applicable licensing and compliance requirements"
+          ]
+        },
+        {
+          "phase": "Phase 2",
+          "title": "Minimum Viable Product (MVP)",
+          "items": [
+            "Public Umrah package listing",
+            "Package enquiry forms",
+            "WhatsApp enquiry links",
+            "Partner login",
+            "Lead management",
+            "Basic booking records",
+            "Follow-up reminders",
+            "Basic reporting"
+          ]
+        },
+        {
+          "phase": "Phase 3",
+          "title": "Pilot Launch",
+          "items": [
+            "Launch with a limited number of authorised travel partners",
+            "Test the complete enquiry-to-booking workflow",
+            "Monitor lead quality",
+            "Measure staff response times",
+            "Identify missing features",
+            "Collect feedback from operators and customers"
+          ]
+        },
+        {
+          "phase": "Phase 4",
+          "title": "Growth & Automation",
+          "items": [
+            "Advanced marketing attribution",
+            "Automated messaging through authorised integrations",
+            "Referral management",
+            "Enhanced analytics",
+            "Partner subscription management",
+            "Online payment integration",
+            "Additional languages",
+            "Mobile application development, if justified by demand"
+          ]
+        }
+      ]
+    },
+    "risk": {
+      "eyebrow": "10 — Risk Management & Compliance",
+      "title": "What must be addressed before launch",
+      "items": [
+        {
+          "title": "Package accuracy",
+          "desc": "Each operator must verify prices, departure dates, hotel details, inclusions and seat availability."
+        },
+        {
+          "title": "Customer privacy",
+          "desc": "Collect only necessary information, restrict access and apply appropriate data-protection controls."
+        },
+        {
+          "title": "Booking disputes",
+          "desc": "Clearly display payment terms, cancellation conditions, refund policies and the responsible operator's identity."
+        },
+        {
+          "title": "Lead ownership",
+          "desc": "Establish transparent rules for duplicate enquiries, reassignment and partner access."
+        },
+        {
+          "title": "Marketing integrity",
+          "desc": "Avoid misleading claims, fabricated reviews, false scarcity and unverified promotional offers."
+        },
+        {
+          "title": "Regulatory compliance",
+          "desc": "Confirm applicable UAE travel, tourism, advertising, data-protection and commercial requirements before launch."
+        },
+        {
+          "title": "Payment security",
+          "desc": "Use authorised payment providers and maintain reliable transaction records."
+        }
+      ]
+    },
+    "priorities": {
+      "eyebrow": "11 — Recommended Initial Priorities",
+      "title": "The first release, in order",
+      "items": [
+        "Professional Umrah package listings",
+        "Simple WhatsApp and website enquiries",
+        "Centralised lead management",
+        "Staff assignment and follow-up reminders",
+        "Booking status tracking",
+        "Marketing source tracking",
+        "Basic performance reports"
+      ],
+      "note": "These features provide a measurable starting point without requiring the expense and complexity of building every advanced feature at once."
+    },
+    "value": {
+      "eyebrow": "12 — Expected Business Value",
+      "title": "What this unlocks, if executed well",
+      "items": [
+        "Improve package visibility",
+        "Make customer enquiries easier",
+        "Reduce missed follow-ups",
+        "Improve sales team accountability",
+        "Identify effective marketing channels",
+        "Build better customer relationships",
+        "Measure the progress from enquiry to confirmed booking",
+        "Create recurring revenue opportunities for UAQ Deals"
+      ],
+      "note": "Actual booking growth will depend on package competitiveness, marketing reach, customer trust, lead quality, operator reliability and sales execution. Results should be assessed through pilot data."
+    },
+    "conclusion": {
+      "label": "Final Recommendation",
+      "title": "Build UAQ Deals as a customer-facing Umrah marketplace, supported by a dedicated partner management system — with booking conversion and customer experience as the primary performance objectives.",
+      "sub": "Begin with a focused MVP, validate demand through a controlled partner pilot, and expand based on measured business results.",
+      "ctaHowItWorks": "See how it works",
+      "ctaDiscuss": "Discuss this proposal",
+      "statusBadge": "Status: Proposed Implementation Plan",
+      "docNoteLabel": "Document note —",
+      "docNote": "This proposal describes a recommended business and technology model. Financial projections, market size, partner commitments, licensing status and implementation costs must be validated separately before investment or commercial launch."
+    },
+    "footnote": "Umrah Package Promotion, Customer Acquisition & Booking Management System — Umm Al Quwain, UAE"
+  },
+  "umrahHowItWorks": {
+    "metaTitle": "How It Works — Umrah Booking Platform",
+    "metaDescription": "A front-end walkthrough of the Umrah booking journey: discover packages, enquire, CRM hand-off, WhatsApp follow-up and confirmed booking.",
+    "backToProposal": "Back to proposal",
+    "eyebrow": "Front-End Demo",
+    "title": "How it works — from browsing to a confirmed booking",
+    "subtitle": "A hardcoded walkthrough of the customer journey: discover packages, enquire in seconds, land in the travel team's CRM, get followed up on WhatsApp, and walk away with a confirmed booking.",
+    "searchPlaceholder": "Search Umrah packages…",
+    "filters": "Filters",
+    "packages": [
+      {
+        "badge": "Flights Included",
+        "name": "Premium Umrah — 10 Days",
+        "hotel": "Swissôtel Al Maqam, Makkah · 350m from Haram"
+      },
+      {
+        "badge": "Best Seller",
+        "name": "Classic Umrah — 7 Days",
+        "hotel": "Dar Al Taqwa, Madinah · 200m from Haram"
+      },
+      {
+        "badge": "Family Package",
+        "name": "Family Umrah — 12 Days",
+        "hotel": "Makkah Towers + Madinah Oberoi"
+      }
+    ],
+    "step1": {
+      "tag": "Customer",
+      "title": "Discover & compare packages",
+      "desc": "Customers browse verified Umrah packages — price, hotel, dates and inclusions laid out clearly, so they can compare before they ever pick up the phone."
+    },
+    "step2": {
+      "tag": "Customer",
+      "title": "Enquire in seconds",
+      "desc": "A short form or a single WhatsApp tap — either way, the enquiry is captured against this exact package, with its marketing source attached automatically.",
+      "packageMeta": "Flights included · Departs 12 Mar · 10 days",
+      "packageName": "Premium Umrah — 10 Days",
+      "packageHotels": "Swissôtel Al Maqam, Makkah · Dar Al Taqwa, Madinah",
+      "formLabel": "Quick enquiry",
+      "fieldName": "Full name",
+      "fieldPhone": "Mobile number",
+      "fieldTravellers": "Travellers · 4",
+      "fieldMonth": "Preferred month",
+      "sendBtn": "Send enquiry",
+      "whatsappBtn": "WhatsApp"
+    },
+    "step3": {
+      "tag": "Travel Team",
+      "title": "The lead lands straight in the CRM",
+      "desc": "No spreadsheets, no missed enquiries. The lead appears instantly in the team's pipeline, ready to be assigned to a sales representative.",
+      "columns": [
+        "New",
+        "Contacted",
+        "Interested",
+        "Follow-up",
+        "Confirmed"
+      ],
+      "leadName": "Fatima Al Zaabi",
+      "leadPackage": "Premium Umrah · 4 pax",
+      "leadSource": "via WhatsApp · just now"
+    },
+    "step4": {
+      "tag": "Sales Representative",
+      "title": "Structured follow-up, on WhatsApp",
+      "desc": "The assigned rep sees exactly who to contact and when. Replies happen on WhatsApp, availability gets confirmed, and the lead status updates itself as the conversation moves forward.",
+      "dashLabel": "Sales Rep Dashboard",
+      "leadName": "Fatima Al Zaabi",
+      "statusBadge": "Follow-up Required",
+      "packageLine": "Premium Umrah — 10 Days · 4 travellers",
+      "nextFollowUp": "Next follow-up: Today, 5:00 PM",
+      "callBtn": "Call",
+      "whatsappBtn": "WhatsApp",
+      "chatMsg1": "Hi! I'm enquiring about the Premium Umrah 10-day package for 4 people around 12 March 🙏",
+      "chatMsg2": "Walaikumsalam Fatima! Yes, 12 Mar has 4 seats left at Swissôtel Al Maqam, 350m from Haram. Shall I hold them for you?",
+      "chatMsg3": "Yes please, that works 👍",
+      "msgPlaceholder": "Message"
+    },
+    "step5": {
+      "tag": "Operator & Customer",
+      "title": "Booking confirmed, end to end",
+      "desc": "Once the operator verifies seats and payment, the enquiry becomes a confirmed booking — with a record both the team and the customer can see.",
+      "stepperEnquiry": "Enquiry",
+      "stepperPending": "Booking Pending",
+      "stepperConfirmed": "Confirmed",
+      "confirmedTitle": "Booking UB-10492 confirmed",
+      "confirmedLine": "Premium Umrah — 10 Days · Departs 12 Mar",
+      "metaTravellers": "4 travellers",
+      "metaHotel": "Haram-view hotel",
+      "metaDeposit": "Deposit paid",
+      "metaFlights": "Flights booked"
+    },
+    "footer": {
+      "note1": "This is a hardcoded, illustrative walkthrough — not a live integration.",
+      "note2": "It demonstrates the intended customer and travel-team experience described in the proposal.",
+      "cta": "Back to the full proposal"
+    }
   }
 }
