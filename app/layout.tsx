@@ -10,7 +10,6 @@ import { SiteFooter } from "@/components/site-footer";
 import { CartDrawerLoader } from "@/components/cart-drawer-loader";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { TopLoader } from "@/components/top-loader";
-import { TravelpayoutsDrive } from "@/components/TravelpayoutsDrive";
 import { showProducts as emirateShowProducts, availabilitySnapshot } from "@/lib/emirate";
 import "./globals.css";
 
@@ -91,7 +90,6 @@ export default async function RootLayout({
           <MobileBottomNav showProducts={showProd} />
           <CartDrawerLoader />
         </NextIntlClientProvider>
-        <TravelpayoutsDrive />
       </body>
     </html>
   );
